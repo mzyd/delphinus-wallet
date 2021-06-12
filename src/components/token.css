@@ -1,0 +1,22 @@
+.token button {
+  height: 2.5rem;
+  font-family: 'KoHo';
+}
+
+.input {
+  height: 2.5rem;
+  font-family: 'KoHo';
+}
+
+.token span {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.sub span {
+  padding-left: 14px;
+}
+
+.button-placeholder {
+  height: 2.5rem;
+}

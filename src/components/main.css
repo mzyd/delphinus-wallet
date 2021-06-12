@@ -1,0 +1,21 @@
+.main input {
+  font-size: 1.2rem;
+  font-family: 'KoHo';
+  font-weight: bold;
+}
+
+.main input::placeholder {
+  font-size: 1.2rem;
+  font-family: 'KoHo';
+  font-weight: bold;
+}
+
+.main span {
+  font-size: 1.2rem;
+  font-family: 'KoHo';
+  font-weight: bold;
+}
+
+.button-placeholder {
+  height: 2.5rem;
+}

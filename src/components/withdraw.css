@@ -1,0 +1,17 @@
+.withdraw input {
+  font-size: 1.5rem;
+  font-family: 'KoHo';
+  font-weight: bold;
+}
+
+.withdraw input::placeholder {
+  font-size: 1.5rem;
+  font-family: 'KoHo';
+  font-weight: bold;
+}
+
+.withdraw span {
+  font-family: 'KoHo';
+  font-size: 1.5rem;
+  font-weight: bold;
+}
