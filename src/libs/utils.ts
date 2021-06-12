@@ -39,7 +39,8 @@ export async function queryTokenAmountAsync(
   const fn = async () => {
     const api = await getAPI();
     const accountId = ss58.addressToAddressId(accountAddress);
-    const result = await api.query.templateModule.balanceMap(
+    /* This should get wrapped into apis */
+    const result = await api.query.swapModule.balanceMap(
       accountId + compressToken(chainId, tokenAddress, true)
     );
     callback(result.toString());
@@ -47,7 +48,7 @@ export async function queryTokenAmountAsync(
   try {
     await fn();
   } catch (e) {
-    callback("failed");
+    callback("failed:" + tokenAddress + "[" + chainId + "]");
   }
 }
 
@@ -61,14 +62,14 @@ export async function queryPoolAmountAsync(
   const fn = async () => {
     const api = await getAPI();
     if (compressToken(chainId1, tokenAddress1) < compressToken(chainId2, tokenAddress2)) {
-      const result = await api.query.templateModule.poolMap(
+      const result = await api.query.swapModule.poolMap(
         "0x" +
         compressToken(chainId1, tokenAddress1, true) +
         compressToken(chainId2, tokenAddress2, true)
       );
       callback(result.toString());
     } else {
-      const result = await api.query.templateModule.poolMap(
+      const result = await api.query.swapModule.poolMap(
         "0x" +
         compressToken(chainId2, tokenAddress2, true) +
         compressToken(chainId1, tokenAddress1, true)
@@ -95,14 +96,14 @@ export async function queryPoolShareAsync(
     const api = await getAPI();
     const accountId = ss58.addressToAddressId(accountAddress);
     if (compressToken(chainId1, tokenAddress1) < compressToken(chainId2, tokenAddress2)) {
-      const result = await api.query.templateModule.shareMap(
+      const result = await api.query.swapModule.shareMap(
         accountId +
         compressToken(chainId1, tokenAddress1, true) +
         compressToken(chainId2, tokenAddress2, true)
       );
       callback(result.toString());
     } else {
-      const result = await api.query.templateModule.shareMap(
+      const result = await api.query.swapModule.shareMap(
         accountId +
         compressToken(chainId2, tokenAddress2, true) +
         compressToken(chainId1, tokenAddress1, true)
@@ -136,8 +137,8 @@ export async function deposit(
     (await api.query.system.account(sudoAddress)).nonce
   );
   const accountId = ss58.addressToAddressId(sudoAddress);
-  const l2nonce = await api.query.templateModule.nonceMap(accountId);
-  const tx = api.tx.templateModule.deposit(
+  const l2nonce = await api.query.swapModule.nonceMap(accountId);
+  const tx = api.tx.swapModule.deposit(
     accountAddress,
     compressToken(chainId, token),
     100,
@@ -160,7 +161,7 @@ export async function withdraw(
     const signer = keyring.addFromUri(`//${account}`);
     const nonce = new BN((await api.query.system.account(signer.address)).nonce);
     const accountId = ss58.addressToAddressId(signer.address);
-    const l2nonce = await api.query.templateModule.nonceMap(accountId);
+    const l2nonce = await api.query.swapModule.nonceMap(accountId);
     const l1account = await queryCurrentL1Account(chainId);
     try {
       new BN(amount);
@@ -168,7 +169,7 @@ export async function withdraw(
       alert("Bad amount: " + amount);
       return;
     }
-    const tx = api.tx.templateModule.withdraw(
+    const tx = api.tx.swapModule.withdraw(
       signer.address,
       l1account,
       compressToken(chainId, token),
@@ -231,7 +232,7 @@ export async function swap(
   const signer = keyring.addFromUri(`//${account}`);
   const nonce = new BN((await api.query.system.account(signer.address)).nonce);
   const accountId = ss58.addressToAddressId(signer.address);
-  const l2nonce = await api.query.templateModule.nonceMap(accountId);
+  const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
     checkNumberString(token_from, "token_from", true);
     checkNumberString(token_to, "token_to", true);
@@ -242,7 +243,7 @@ export async function swap(
     alert(e.message);
     return;
   }
-  const tx = api.tx.templateModule.swap(
+  const tx = api.tx.swapModule.swap(
     signer.address,
     compressToken(chain_from, token_from),
     compressToken(chain_to, token_to),
@@ -273,7 +274,7 @@ export async function supply(
   const signer = keyring.addFromUri(`//${account}`);
   const nonce = new BN((await api.query.system.account(signer.address)).nonce);
   const accountId = ss58.addressToAddressId(signer.address);
-  const l2nonce = await api.query.templateModule.nonceMap(accountId);
+  const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
     checkNumberString(token_from, "token", true);
     checkNumberString(token_to, "token", true);
@@ -285,7 +286,7 @@ export async function supply(
     alert(e.message);
     return;
   }
-  const tx = api.tx.templateModule.poolSupply(
+  const tx = api.tx.swapModule.poolSupply(
     signer.address,
     compressToken(chain_from, token_from),
     compressToken(chain_to, token_to),
@@ -317,7 +318,7 @@ export async function retrieve(
   const signer = keyring.addFromUri(`//${account}`);
   const nonce = new BN((await api.query.system.account(signer.address)).nonce);
   const accountId = ss58.addressToAddressId(signer.address);
-  const l2nonce = await api.query.templateModule.nonceMap(accountId);
+  const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
     checkNumberString(token_from, "token", true);
     checkNumberString(token_to, "token", true);
@@ -329,7 +330,7 @@ export async function retrieve(
     alert(e.message);
     return;
   }
-  const tx = api.tx.templateModule.poolRetrieve(
+  const tx = api.tx.swapModule.poolRetrieve(
     signer.address,
     compressToken(chain_from, token_from),
     compressToken(chain_to, token_to),

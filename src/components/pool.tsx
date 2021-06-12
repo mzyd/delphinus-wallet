@@ -77,13 +77,15 @@ export default function Pool(props: IProps) {
   const [poolInfoList, setPoolInfoList] = react.useState<PoolInfo[]>([
     {
       id: "1",
-      chainId1: "3",
-      tokenAddress1: L1TokenInfo.networks[3].address.replace(
+      //chainId1: "3",
+      chainId1: "15",
+      tokenAddress1: L1TokenInfo.networks[15].address.replace(
         "0x",
         ""
       ),
-      chainId2: "97",
-      tokenAddress2: L1TokenInfo.networks[97].address.replace(
+      //chainId2: "97",
+      chainId2: "16",
+      tokenAddress2: L1TokenInfo.networks[16].address.replace(
         "0x",
         ""
       ),
