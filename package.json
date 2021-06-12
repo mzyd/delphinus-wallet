@@ -23,7 +23,7 @@
     "substrate-ss58": "^1.0.3",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
-    "solidity": "git+https://github.com/ZhenXunGe/delphinus-solidity.git",
+    "solidity": "file:../solidity",
     "web3subscriber": "git+https://github.com/ZhenXunGe/delphinus-web3subscriber.git"
   },
   "scripts": {
