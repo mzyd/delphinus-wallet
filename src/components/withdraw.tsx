@@ -28,8 +28,8 @@ export default function WithdrawBox(props: IProps) {
         tokens={verticalGapStackTokens}
         className="withdraw"
       >
-        <Label styles={titleStyles}>Withdraw</Label>
-        <Label styles={boxLabelStyles}>Amount</Label>
+        <Label>Withdraw</Label>
+        <Label>Amount</Label>
         <TextField
           className="account"
           autoFocus
@@ -37,7 +37,6 @@ export default function WithdrawBox(props: IProps) {
             setAmount(e.target.value);
           }}
         />
-        {/*
         <Label styles={boxLabelStyles}>L1Account</Label>
         <TextField
           className="account"
@@ -45,9 +44,7 @@ export default function WithdrawBox(props: IProps) {
             setL1Account(e.target.value);
           }}
         />
-        */}
         <PrimaryButton
-          styles={buttonStyles}
           onClick={() =>
             amount &&
             withdraw(
@@ -59,9 +56,9 @@ export default function WithdrawBox(props: IProps) {
             props.close()
           }
         >
-          Ok
+        Ok
         </PrimaryButton>
-        <PrimaryButton styles={buttonStyles} onClick={props.close}>
+        <PrimaryButton onClick={props.close}>
           Cancel
         </PrimaryButton>
       </Stack>

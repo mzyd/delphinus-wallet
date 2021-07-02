@@ -3,14 +3,74 @@ import React, * as react from "react";
 
 import { Label } from "@fluentui/react";
 import { TextField } from "@fluentui/react/lib/TextField";
-import { PrimaryButton } from "@fluentui/react/lib/Button";
+import { DefaultButton, IconButton} from "@fluentui/react/lib/Button";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { Separator } from "@fluentui/react/lib/Separator";
+import { Nav, initializeIcons } from '@fluentui/react';
 import "./main.css";
 import { getAddressOfAccoutAsync } from "../libs/utils";
 import Token from "./token";
 import Pool from "./pool";
 import { buttonStyles, normalLabelStyles, separatorStyles, titleStyles, verticalGapStackTokens } from "./common-styles";
+
+const navigationStyles = {
+  root: {
+    height: '100vh',
+    boxSizing: 'border-box',
+    border: '1px solid #eee',
+    overflowY: 'auto',
+    paddingTop: '10vh',
+  },
+};
+
+const links = [
+  {
+    links: [
+      {
+        name: 'Wallet',
+        key:'key1',
+        url: '/',
+        iconProps: {
+          iconName: 'News',
+          styles: {
+            root: {
+              fontSize: 20,
+              color: '#106ebe',
+            },
+          }
+        }
+      },
+      {
+        name: 'Swap',
+        key: 'key2',
+        url: '/',
+        iconProps: {
+          iconName: 'PlayerSettings',
+          styles: {
+            root: {
+              fontSize: 20,
+              color: '#106ebe',
+            },
+          }
+        }
+      },
+      {
+        name: 'Liquid Pool',
+        key: 'key3',
+        url: '/',
+        iconProps: {
+          iconName: 'SwitcherStartEnd',
+          styles: {
+            root: {
+              fontSize: 20,
+              color: '#106ebe',
+            },
+          }
+        }
+      },
+    ],
+  },
+];
 
 interface IProps {
   account: string;
@@ -29,67 +89,42 @@ export default function Main(props: IProps) {
     );
   }
 
-  const basicInfo = [
-    {
-      label: "Account",
-      defaultValue: addressPair?.[0] || "",
-      editable: false,
-      buttonText: "Change",
+  const basicInfo = {
+      account: addressPair?.[0] || "",
       onClickButton: () => props.setAccount(""),
-    },
-    {
-      label: "Address",
-      defaultValue: addressPair?.[1] || "",
-      editable: false,
-    }
-  ];
+      address: addressPair?.[1] || "",
+  };
+
+  const navHead = {
+    backgroundColor: "#cccccc",
+    color: "white",
+    lineHeight: '50px',
+    padding: '0 20px',
+  };
 
   return (
-    <div className="h-100 w-100 d-flex justify-content-center main">
-      <Stack horizontalAlign={"center"} className="w-75">
-        <Label styles={titleStyles}>Swapper Wallet</Label>
-        <Stack horizontal tokens={verticalGapStackTokens}>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            {basicInfo.map((item) => (
-              <Label styles={normalLabelStyles} key={item.label}>
-                {item.label}
-              </Label>
-            ))}
-          </Stack>
-
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            {basicInfo.map((item) =>
-              item.editable ? (
-                <TextField defaultValue={item.defaultValue} key={item.label} />
-              ) : (
-                <Label styles={normalLabelStyles} key={item.label}>
-                  {item.defaultValue}
-                </Label>
-              )
-            )}
-          </Stack>
-
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            {basicInfo.map((item) =>
-              item.buttonText ? (
-                <PrimaryButton
-                  styles={buttonStyles}
-                  onClick={() => item.onClickButton?.()}
-                  key={item.label}
-                >
-                  {item.buttonText}
-                </PrimaryButton>
-              ) : (
-                <div className="button-placeholder" key={item.label}></div>
-              )
-            )}
-          </Stack>
+      <Stack horizontal className="vw-100">
+        <Stack>
+          <Nav
+            groups={links}
+            selectedKey='key1'
+            styles={navigationStyles}
+          />
         </Stack>
-        <Separator styles={separatorStyles} className="w-100" />
-        <Token account={props.account}/>
-        <Separator styles={separatorStyles} className="w-100" />
-        <Pool account={props.account}/>
+        <Stack disableShrink={true} grow={1}>
+          <div style={navHead}>
+            <Label key={basicInfo.account}>
+              {basicInfo.account}
+              <span className="navaddr"> {basicInfo.address} </span>
+              <DefaultButton className="navfr"
+                onClick={() => item.onClickButton?.()}
+                key={basicInfo.address} >
+              switch
+              </DefaultButton>
+            </Label>
+          </div>
+          <Token account={props.account}/>
+        </Stack>
       </Stack>
-    </div>
   );
 }

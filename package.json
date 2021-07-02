@@ -20,10 +20,10 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
+    "solidity": "file:../solidity",
     "substrate-ss58": "^1.0.3",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
-    "solidity": "file:../solidity",
     "web3subscriber": "git+https://github.com/ZhenXunGe/delphinus-web3subscriber.git"
   },
   "scripts": {

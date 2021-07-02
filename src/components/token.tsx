@@ -3,7 +3,11 @@ import * as react from "react";
 
 import { Label, TextField } from "@fluentui/react";
 import { DefaultButton } from "@fluentui/react/lib/Button";
+import { PivotLinkSize, PivotLinkFormat, PivotItem, Pivot } from '@fluentui/react/lib/Pivot';
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
+import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
+import { Separator } from "@fluentui/react/lib/Separator";
+import { buttonStyles, normalLabelStyles, separatorStyles, titleStyles, verticalGapStackTokens } from "./common-styles";
 import {
   getAddressOfAccoutAsync,
   queryTokenAmountAsync,
@@ -12,32 +16,26 @@ import {
 import { deposit, queryBalanceOnL1 } from "../libs/utils-l1";
 import "./token.css";
 import WithdrawBox from "./withdraw";
+import DepositBox from "./deposit";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
 import L1TokenInfo from "solidity/build/contracts/Token.json";
+import tokenList from "../config/tokenlist";
 
 interface IProps {
   account: string;
 }
 
-const verticalGapStackTokens: IStackTokens = {
-  childrenGap: "1rem",
-  padding: "0.5rem",
-};
-
-const titleStyles = {
-  root: [
-    {
-      fontFamily: "Girassol",
-      fontSize: "4rem",
-    },
-  ],
-};
+interface TXProps {
+  account: string;
+  chainId: string;
+  tokenAddress: string;
+}
 
 const normalStyles = {
   root: [
     {
       fontFamily: "KoHo",
-      fontSize: "1.2rem",
+      fontSize: "1rem",
     },
   ],
 };
@@ -51,29 +49,24 @@ interface TokenInfo {
   fresh?: boolean;
 }
 
-const defaultTokenInfoList = [
-  {
-    chainId: "15",
-    //chainId: "3",
-    //address: L1TokenInfo.networks["3"].address.replace("0x", ""),
-    address: L1TokenInfo.networks["15"].address.replace("0x", ""),
-  },
-  {
-    chainId: "16",
-    //chainId: "97",
-    //address: L1TokenInfo.networks["97"].address.replace("0x", ""),
-    address: L1TokenInfo.networks["16"].address.replace("0x", ""),
-  },
-];
-
 export default function Token(props: IProps) {
+  const [currentModal, setCurrentModal] = react.useState<string>();
+  const [currentTXProps, setCurrentTXProps] = react.useState<txprops>();
   const [withdrawToken, setWithdrawToken] = react.useState<TokenInfo>();
   const [addressPair, setAddressPair] = react.useState<[string, string]>();
   const [tokenInfoList, setTokenInfoList] =
-    react.useState<TokenInfo[]>(defaultTokenInfoList);
+    react.useState<TokenInfo[]>(tokenList);
   const [inputValues, setInputValues] = react.useState<string[]>(
-    defaultTokenInfoList.map((_) => "")
+    tokenList.map((_) => "")
   );
+
+  const setTXProps = (account, cid, addr) => {
+     setCurrentTXProps ({
+       account: account,
+       chainId: cid,
+       tokenAddress: addr,
+     });
+  }
 
   react.useEffect(() => {
     if (!addressPair || props.account !== addressPair[0]) {
@@ -116,7 +109,7 @@ export default function Token(props: IProps) {
           addressPair[1],
           token.chainId,
           token.address,
-          defaultTokenInfoList[0].chainId
+          tokenList[0].chainId
         ).then((value: string) => {
           setTokenInfoList((_list) =>
             _list?.map((e) =>
@@ -135,7 +128,7 @@ export default function Token(props: IProps) {
           addressPair[1],
           token.chainId,
           token.address,
-          defaultTokenInfoList[1].chainId
+          tokenList[1].chainId
         ).then((value: string) => {
           setTokenInfoList((_list) =>
             _list?.map((e) =>
@@ -148,6 +141,16 @@ export default function Token(props: IProps) {
       }
     };
 
+    for (let token of tokenInfoList) {
+      let r = async () => {
+        await updatorL2(token)();
+        await updatorETH1(token)();
+        await updatorETH2(token)();
+      };
+      r().then(() => {});
+    }
+
+    /*
     for (let token of tokenInfoList) {
       registerTask(
         token.chainId + token.address + "L2",
@@ -165,6 +168,7 @@ export default function Token(props: IProps) {
         30000
       );
     }
+    */
   }, [addressPair]);
 
   react.useEffect(() => {
@@ -177,124 +181,63 @@ export default function Token(props: IProps) {
     };
   }, []);
 
+  const _items: ICommandBarItemProps[] = [
+    {
+      key: 'share',
+      text: 'Share',
+      iconProps: { iconName: 'Share' },
+      onClick: () => console.log('Share'),
+    },
+    {
+      key: 'download',
+      text: 'Download',
+      iconProps: { iconName: 'Download' },
+      onClick: () => console.log('Download'),
+    },
+  ];
+
   return (
     <>
-      <Label styles={titleStyles}>Token List</Label>
-      <Stack
-        horizontal
-        horizontalAlign={"center"}
-        tokens={verticalGapStackTokens}
-        className="token w-100"
-      >
-        <Stack horizontal tokens={verticalGapStackTokens}>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label styles={normalStyles}>Chain</Label>
-            {tokenInfoList?.map((item) => (
-              <Label styles={normalStyles} key={item.chainId + item.address}>
-                {item.chainId}
-              </Label>
-            ))}
-          </Stack>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label styles={normalStyles}>Token Address</Label>
-            {tokenInfoList?.map((item) => (
-              <Label styles={normalStyles} key={item.chainId + item.address}>
-                0x{item.address}
-              </Label>
-            ))}
-          </Stack>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label styles={normalStyles}>Balance(L2)</Label>
-            {tokenInfoList?.map((item) => (
-              <Label styles={normalStyles} key={item.chainId + item.address}>
-                {item.amountOnL2 ?? "loading..."}
-              </Label>
-            ))}
-          </Stack>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label styles={normalStyles}>Balance(L1-3)</Label>
-            {tokenInfoList?.map((item) => (
-              <Label styles={normalStyles} key={item.chainId + item.address}>
-                {item.amountOnETH1 ?? "loading..."}
-              </Label>
-            ))}
-          </Stack>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label styles={normalStyles}>Balance(L1-97)</Label>
-            {tokenInfoList?.map((item) => (
-              <Label styles={normalStyles} key={item.chainId + item.address}>
-                {item.amountOnETH2 ?? "loading..."}
-              </Label>
-            ))}
-          </Stack>
-        </Stack>
-        <Stack horizontal tokens={verticalGapStackTokens}>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <div className="button-placeholder"></div>
-            {inputValues?.map((item, i) => (
-              <TextField
-                className="input"
-                value={inputValues?.[i] ?? ""}
-                onChange={(e: any) =>
-                  setInputValues((value) =>
-                    value?.map((v, _i) => (_i === i ? e.target.value : v))
-                  )
-                }
-                key={i}
-              />
-            ))}
-          </Stack>
-        </Stack>
-        <Stack horizontal tokens={verticalGapStackTokens}>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <div className="button-placeholder"></div>
+        <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
+          <Pivot>
             {tokenInfoList?.map((item, i) => (
-              <DefaultButton
-                text="Withdraw"
-                onClick={() =>
-                  addressPair?.[0] &&
-                  withdraw(
-                    addressPair?.[0],
-                    item.chainId,
-                    item.address,
-                    inputValues[i]
-                  )
-                }
-                key={item.chainId + item.address}
-              />
+            <PivotItem key={item.chainId + "-" + item.address} linkText={"Chain-" + item.chainId} className="p-2" >
+              <Label key={item.chainId + item.address}>
+                {item.chainId} - 0x{item.address}
+              </Label>
+              <Label>
+                <span> L2 Balance: {item.amountOnL2 ?? "loading..."}</span>
+                <DefaultButton text="Deposit" className="btn-pl2"
+                  onClick={() => {
+                    setTXProps(addressPair?.[1], item.chainId, item.address);
+                    setCurrentModal("Deposit")
+                  }}
+                />
+                <DefaultButton text="Withdraw" className="btn-pl2"
+                  onClick={() => {
+                    setTXProps(addressPair?.[1], item.chainId, item.address);
+                    setCurrentModal("Withdraw")
+                  }}
+                />
+              </Label>
+              <Label>
+              Synchronizing status
+              [Chain-{tokenInfoList[0].chainId}: {item.amountOnETH1 ?? "loading..."}]
+              [Chain-{tokenInfoList[1].chainId}: {item.amountOnETH2 ?? "loading..."}]
+              </Label>
+              <Separator styles={separatorStyles} className="w-100" />
+            </PivotItem>
             ))}
-          </Stack>
-        </Stack>
-        <Stack horizontal tokens={verticalGapStackTokens}>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <div className="button-placeholder"></div>
-            {tokenInfoList?.map((item, i) => (
-              <DefaultButton
-                text="Deposit"
-                onClick={() =>
-                  addressPair?.[1] &&
-                  deposit(
-                    addressPair?.[1],
-                    item.chainId,
-                    item.address,
-                    inputValues[i]
-                  )
-                }
-                key={item.chainId + item.address}
-              />
-            ))}
-          </Stack>
-        </Stack>
+          </Pivot>
       </Stack>
-      {addressPair && withdrawToken && (
-        <WithdrawBox
-          show={withdrawToken ? true : false}
-          close={() => setWithdrawToken(undefined)}
-          chainId={withdrawToken.chainId}
-          tokenAddress={withdrawToken.address}
-          account={addressPair[0]}
-        />
-      )}
+      <DepositBox show={currentModal==="Deposit"}
+          txprops = {currentTXProps}
+          close = {() => {setCurrentModal("")}}
+      />
+      <WithdrawBox show={currentModal==="Withdraw"}
+          txprops = {currentTXProps}
+          close = {() => {setCurrentModal("")}}
+      />
     </>
   );
 }
