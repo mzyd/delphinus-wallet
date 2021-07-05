@@ -1,25 +1,24 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as react from "react";
 
-import { Label, TextField } from "@fluentui/react";
+import { Label } from "@fluentui/react";
 import { DefaultButton } from "@fluentui/react/lib/Button";
-import { PivotLinkSize, PivotLinkFormat, PivotItem, Pivot } from '@fluentui/react/lib/Pivot';
+import { PivotItem, Pivot } from '@fluentui/react/lib/Pivot';
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
-import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
+import {  ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { Separator } from "@fluentui/react/lib/Separator";
-import { buttonStyles, normalLabelStyles, separatorStyles, titleStyles, verticalGapStackTokens } from "./common-styles";
+import { normalLabelStyles, separatorStyles, verticalGapStackTokens } from "./common-styles";
 import {
   getAddressOfAccoutAsync,
   queryTokenAmountAsync,
   withdraw,
 } from "../libs/utils";
-import { deposit, queryBalanceOnL1 } from "../libs/utils-l1";
+import { queryBalanceOnL1 } from "../libs/utils-l1";
 import "./token.css";
 import WithdrawBox from "./withdraw";
 import DepositBox from "./deposit";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
-import L1TokenInfo from "solidity/build/contracts/Token.json";
-import tokenList from "../config/tokenlist";
+import chainList from "../config/tokenlist";
 
 interface IProps {
   account: string;
@@ -40,27 +39,29 @@ const normalStyles = {
   ],
 };
 
+interface BalanceInfo {
+  [key:string]: string;
+}
+
 interface TokenInfo {
-  chainId: string;
   address: string;
-  amountOnL2?: string;
-  amountOnETH1?: string;
-  amountOnETH2?: string;
-  fresh?: boolean;
+  l2Balance?: string;
+  l1Balance?: BalanceInfo;
+}
+
+interface ChainInfo{
+  chainId: string;
+  tokens: TokenInfo[];
 }
 
 export default function Token(props: IProps) {
   const [currentModal, setCurrentModal] = react.useState<string>();
-  const [currentTXProps, setCurrentTXProps] = react.useState<txprops>();
-  const [withdrawToken, setWithdrawToken] = react.useState<TokenInfo>();
+  const [currentTXProps, setCurrentTXProps] = react.useState<TXProps>();
   const [addressPair, setAddressPair] = react.useState<[string, string]>();
-  const [tokenInfoList, setTokenInfoList] =
-    react.useState<TokenInfo[]>(tokenList);
-  const [inputValues, setInputValues] = react.useState<string[]>(
-    tokenList.map((_) => "")
-  );
+  const [chainInfoList, setTokenInfoList] =
+    react.useState<ChainInfo[]>(chainList);
 
-  const setTXProps = (account, cid, addr) => {
+  const setTXProps = (account:string, cid:string, addr:string) => {
      setCurrentTXProps ({
        account: account,
        chainId: cid,
@@ -83,159 +84,135 @@ export default function Token(props: IProps) {
     if (!addressPair) {
       return;
     }
-
-    const updatorL2 = (token: any) => async () => {
-      if (addressPair) {
-        await queryTokenAmountAsync(
-          addressPair[1],
-          token.chainId,
-          token.address,
-          (value: string) => {
-            setTokenInfoList((_list) =>
-              _list?.map((e) =>
-                e.chainId === token.chainId && e.address === token.address
-                  ? { ...e, amountOnL2: value }
-                  : e
-              )
-            );
-          }
-        );
-      }
-    };
-
-    const updatorETH1 = (token: any) => async () => {
-      if (addressPair) {
-        queryBalanceOnL1(
-          addressPair[1],
-          token.chainId,
-          token.address,
-          tokenList[0].chainId
-        ).then((value: string) => {
-          setTokenInfoList((_list) =>
-            _list?.map((e) =>
-              e.chainId === token.chainId && e.address === token.address
-                ? { ...e, amountOnETH1: value }
-                : e
-            )
-          );
-        });
-      }
-    };
-
-    const updatorETH2 = (token: any) => async () => {
-      if (addressPair) {
-        queryBalanceOnL1(
-          addressPair[1],
-          token.chainId,
-          token.address,
-          tokenList[1].chainId
-        ).then((value: string) => {
-          setTokenInfoList((_list) =>
-            _list?.map((e) =>
-              e.chainId === token.chainId && e.address === token.address
-                ? { ...e, amountOnETH2: value }
-                : e
-            )
-          );
-        });
-      }
-    };
-
-    for (let token of tokenInfoList) {
-      let r = async () => {
-        await updatorL2(token)();
-        await updatorETH1(token)();
-        await updatorETH2(token)();
-      };
-      r().then(() => {});
-    }
-
-    /*
-    for (let token of tokenInfoList) {
-      registerTask(
-        token.chainId + token.address + "L2",
-        updatorL2(token),
-        30000
-      );
-      registerTask(
-        token.chainId + token.address + "ETH1",
-        updatorETH1(token),
-        30000
-      );
-      registerTask(
-        token.chainId + token.address + "ETH2",
-        updatorETH2(token),
-        30000
-      );
-    }
-    */
   }, [addressPair]);
 
+  const updateTokenL2Balance = (chainId:string, tokenAddress:string,
+      tokenInfos:TokenInfo[], balance:string) => {
+    let tis = tokenInfos.map((e) =>
+      e.address === tokenAddress
+        ? { ...e, l2Balance: balance}
+        : e
+    );
+    return tis;
+  }
+
+  const updateL2Balance = async (chainId:string, tokenAddress:string) => {
+    if (addressPair) {
+      console.log("updateL2Balance");
+      await queryTokenAmountAsync(
+        addressPair[1],
+        chainId,
+        tokenAddress,
+        (value: string) => {
+          setTokenInfoList((_list) =>
+            _list?.map((e) =>
+              e.chainId === chainId
+                ? { ...e, tokens: updateTokenL2Balance(chainId, tokenAddress, e.tokens, value)}
+                : e
+            )
+          );
+        }
+      );
+    }
+  };
+
+  const updateTokenL1Balance = (chainId:string, tokenAddress:string,
+      tokenInfos:TokenInfo[], balance:string) => {
+    let tis = tokenInfos.map((e) =>
+      e.address === tokenAddress
+        ? { ...e, l1Balance: {...e.l1Balance, [chainId]:balance}}
+        : e
+    );
+    return tis;
+  }
+
+  const updateL1State = async (chainId:string, tokenAddress: string, queryId:string) => {
+    if (addressPair) {
+      await queryBalanceOnL1(
+        addressPair[1],
+        chainId,
+        tokenAddress,
+        queryId,
+      ).then((value: string) => {
+        setTokenInfoList((_list) =>
+          _list?.map((e) =>
+            e.chainId === chainId
+              ? { ...e, tokens: updateTokenL1Balance(queryId, tokenAddress, e.tokens, value)}
+              : e
+          )
+        );
+      });
+    }
+  };
+
+  const updateStates = async (chainId:string, tokenAddress: string) => {
+    await updateL2Balance(chainId, tokenAddress);
+    for (let chain of chainInfoList) {
+      console.log(chainId, chain.chainId);
+      await updateL1State(chainId, tokenAddress, chain.chainId);
+    }
+    return;
+  };
+
   react.useEffect(() => {
-    return () => {
-      for (let token of tokenInfoList) {
-        unregisterTask(token.chainId + token.address + "L2");
-        unregisterTask(token.chainId + token.address + "ETH1");
-        unregisterTask(token.chainId + token.address + "ETH2");
+    let p = new Promise((resolve,reject) => {resolve(1);});
+    for (let chain of chainInfoList) {
+      for (let token of chain.tokens) {
+        p = p.then(() => updateStates(chain.chainId, token.address))
       }
     };
-  }, []);
-
-  const _items: ICommandBarItemProps[] = [
-    {
-      key: 'share',
-      text: 'Share',
-      iconProps: { iconName: 'Share' },
-      onClick: () => console.log('Share'),
-    },
-    {
-      key: 'download',
-      text: 'Download',
-      iconProps: { iconName: 'Download' },
-      onClick: () => console.log('Download'),
-    },
-  ];
+    p.then(()=>console.log("done"));
+    //await p; // This is dangerous since ui might trigger switch bridge
+  }, [addressPair]);
 
   return (
     <>
         <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
           <Pivot>
-            {tokenInfoList?.map((item, i) => (
-            <PivotItem key={item.chainId + "-" + item.address} linkText={"Chain-" + item.chainId} className="p-2" >
-              <Label key={item.chainId + item.address}>
-                {item.chainId} - 0x{item.address}
-              </Label>
-              <Label>
-                <span> L2 Balance: {item.amountOnL2 ?? "loading..."}</span>
-                <DefaultButton text="Deposit" className="btn-pl2"
-                  onClick={() => {
-                    setTXProps(addressPair?.[1], item.chainId, item.address);
-                    setCurrentModal("Deposit")
-                  }}
-                />
-                <DefaultButton text="Withdraw" className="btn-pl2"
-                  onClick={() => {
-                    setTXProps(addressPair?.[1], item.chainId, item.address);
-                    setCurrentModal("Withdraw")
-                  }}
-                />
-              </Label>
-              <Label>
-              Synchronizing status
-              [Chain-{tokenInfoList[0].chainId}: {item.amountOnETH1 ?? "loading..."}]
-              [Chain-{tokenInfoList[1].chainId}: {item.amountOnETH2 ?? "loading..."}]
-              </Label>
-              <Separator styles={separatorStyles} className="w-100" />
+            {chainInfoList?.map((item, i) => (
+            <PivotItem key={item.chainId} linkText={"Chain-" + item.chainId} className="p-2" >
+              {item.tokens.map((token, i) => (
+              <div key={item.chainId + token.address}>
+                <Label >
+                  {item.chainId} - 0x{token.address}
+                </Label>
+                <Label>
+                  <span> L2 Balance: {token.l2Balance ?? "loading..."}</span>
+                  <DefaultButton text="Deposit" className="btn-pl2"
+                    onClick={() => {
+                      setTXProps(addressPair![1], item.chainId, token.address);
+                      setCurrentModal("Deposit")
+                    }}
+                  />
+                  <DefaultButton text="Withdraw" className="btn-pl2"
+                    onClick={() => {
+                      setTXProps(addressPair![1], item.chainId, token.address);
+                      setCurrentModal("Withdraw")
+                    }}
+                  />
+                </Label>
+                <Label>
+                Synchronizing status
+                {chainInfoList?.map((chain) => (
+                  <span key={chain.chainId + "-" + token.address + "-balance"}>
+                  [Chain-{chain.chainId}: {
+                    token.l1Balance?.[chain.chainId] ?? "loading..."}]
+                  </span>
+                ))}
+                </Label>
+                <Separator styles={separatorStyles} className="w-100" />
+              </div>
+              ))}
             </PivotItem>
             ))}
           </Pivot>
       </Stack>
       <DepositBox show={currentModal==="Deposit"}
-          txprops = {currentTXProps}
+          txprops = {currentTXProps!}
           close = {() => {setCurrentModal("")}}
       />
       <WithdrawBox show={currentModal==="Withdraw"}
-          txprops = {currentTXProps}
+          txprops = {currentTXProps!}
           close = {() => {setCurrentModal("")}}
       />
     </>

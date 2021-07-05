@@ -42,14 +42,15 @@ export default function SwapBox(props: IProps) {
   ];
 
   return (
-    <Modal isOpen={true} onDismiss={props.close} isBlocking={true}>
+    <Modal isOpen={true} onDismiss={props.close} isBlocking={true} className="withdraw">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a className="navbar-brand" href="#">Swap in Delphinus</a>
+      </nav>
       <Stack
         verticalAlign={"start"}
         tokens={verticalGapStackTokens}
-        className="withdraw"
       >
-        <Label styles={titleStyles}>Swap in Pool</Label>
-        <Label styles={boxLabelStyles}>From</Label>
+        <Label>From</Label>
         <Dropdown
           defaultSelectedKey={fromTokenKey}
           options={options}
@@ -59,14 +60,14 @@ export default function SwapBox(props: IProps) {
           styles={dropdownStyles}
         />
 
-        <Label styles={boxLabelStyles}>To</Label>
+        <Label>To</Label>
         <TextField
           className="account"
           value={options[1 - fromTokenKey].text}
           disabled
         />
 
-        <Label styles={boxLabelStyles}>
+        <Label>
           Will send amount of token {options[fromTokenKey].text}
         </Label>
         <TextField
@@ -77,13 +78,13 @@ export default function SwapBox(props: IProps) {
           }}
         />
 
-        <Label styles={boxLabelStyles}>
+        <Label>
           Will receive amount of token {options[1 - fromTokenKey].text}
         </Label>
         <TextField className="account" disabled value={amount} />
 
-        <PrimaryButton
-          styles={buttonStyles}
+        <div>
+        <button type="button" className="btn btn-sm btn-primary"
           onClick={() => {
             if (amount && fromTokenKey === 0) {
               swap(
@@ -109,10 +110,12 @@ export default function SwapBox(props: IProps) {
           }}
         >
           Ok
-        </PrimaryButton>
-        <PrimaryButton styles={buttonStyles} onClick={props.close}>
+        </button>
+        <button type="button" className="btn btn-sm btn-secondary"
+          onClick={props.close}>
           Cancel
-        </PrimaryButton>
+        </button>
+        </div>
       </Stack>
     </Modal>
   );

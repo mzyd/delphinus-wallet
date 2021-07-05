@@ -6,6 +6,7 @@ import { TextField } from "@fluentui/react/lib/TextField";
 import { PrimaryButton } from "@fluentui/react/lib/Button";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { deposit, queryBalanceOnL1 } from "../libs/utils-l1";
+import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
 import "./withdraw.css";
 import { verticalGapStackTokens, titleStyles, boxLabelStyles, buttonStyles } from "./common-styles";
 
@@ -23,40 +24,80 @@ interface IProps {
 
 export default function DepositBox(props: IProps) {
   const [amount, setAmount] = react.useState<string>();
-  const [progress, setProgress] = react.useState<string>();
+  const [process, setProcess] = react.useState<string>("");
+  const [approveProgress, setApproveProgress] = react.useState<string>();
+  const [depositProgress, setDepositProgress] = react.useState<string>();
+  const [finalizeProgress, setFinalizeProgress] = react.useState<string>();
+  const [progressInfo, setProgressInfo] = react.useState<number>(0);
   const [error, setError] = react.useState<string>();
   //const [l1account, setL1Account] = react.useState<string>();
 
-  if (props.txprops == undefined) {
+  if (props.txprops === undefined) {
     return (<></>);
   }
   const txprops = props.txprops;
   console.log(txprops);
 
-  const okclick = () => {
-    amount &&
-    deposit(
-      txprops.account,
-      txprops.chainId,
-      txprops.tokenAddress,
-      amount,
-      (x => setProgress(x)),
-      (x => setError(x)),
-    );
+  const initProgress = () => {
+    setProgressInfo(0);
+    setApproveProgress("Waiting");
+    setDepositProgress("Waiting");
+    setFinalizeProgress("Waiting");
   }
 
+  const setStateProgress = (state: string, hint: string, receipt: string, ratio: number) => {
+    if (state === "Approve") {
+      setApproveProgress(hint);
+    } else if (state === "Deposit") {
+      setDepositProgress(hint);
+    } else if (state === "Finalize") {
+      setFinalizeProgress(hint);
+    }
+    if (receipt != "") {
+      //setProgressInfo(state + " " + " " + hint + ":" + receipt);
+    }
+    setProgressInfo(ratio);
+  }
+
+  const setStateError = (error:string) => {
+    setError(error);
+    setProcess("");
+  }
+
+  const okclick = () => {
+    initProgress();
+    setError("");
+    if (amount) {
+      setProcess("processing");
+      deposit(
+        txprops.account,
+        txprops.chainId,
+        txprops.tokenAddress,
+        amount,
+        setStateProgress,
+        setStateError,
+      );
+    }
+  }
 
   return (
-    <Modal isOpen={props.show} onDismiss={props.close} isBlocking={true}>
+    <Modal isOpen={props.show} onDismiss={props.close} isBlocking={true} className="withdraw">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a className="navbar-brand" href="#">Deposit</a>
+      </nav>
       <Stack
         verticalAlign={"start"}
         tokens={verticalGapStackTokens}
-        className="withdraw"
       >
-        <Label>Despoit</Label>
-        {
-          progress &&
-          <div className="alert alert-primary" role="alert">{progress}</div>
+        {process === "processing" &&
+           <ProgressIndicator label="Processing" percentComplete={progressInfo/(100.0)} />
+        }
+        {process &&
+          <ul className="list-group">
+            <li className="list-group-item">Approving token usage:{approveProgress}</li>
+            <li className="list-group-item">Desposit:{depositProgress}</li>
+            <li className="list-group-item">Finalizing:{finalizeProgress}</li>
+          </ul>
         }
         {
           error &&
@@ -75,6 +116,7 @@ export default function DepositBox(props: IProps) {
             <TextField
               className="account"
               autoFocus
+              disabled = {process!=""}
               onChange={(e: any) => {
                 setAmount(e.target.value);
               }}
@@ -82,14 +124,27 @@ export default function DepositBox(props: IProps) {
             <Label>{txprops.account}</Label>
           </Stack>
         </Stack>
+        {!process &&
         <div>
-            <PrimaryButton onClick={okclick} >
+            <button type="button" className="btn btn-sm btn-primary"
+             onClick={okclick} >
              Ok
-            </PrimaryButton>
-            <PrimaryButton onClick={props.close}>
-              Cancel
-            </PrimaryButton>
+            </button>
+            <button type="button" className="btn btn-sm btn-secondary"
+             onClick={props.close}>
+             Cancel
+            </button>
         </div>
+        }
+        {progressInfo === 100 &&
+        <div>
+            <button type="button" className="btn btn-sm btn-primary"
+             onClick={props.close} >
+             Done
+            </button>
+        </div>
+        }
+
       </Stack>
     </Modal>
   );

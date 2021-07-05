@@ -152,7 +152,9 @@ export async function withdraw(
   account: string,
   chainId: string,
   token: string,
-  amount: string
+  amount: string,
+  progress: (m:string)=>void,
+  error: (m:string)=>void,
 ) {
   try {
     const api = await getAPI();

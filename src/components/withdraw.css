@@ -3,8 +3,14 @@
   font-family: 'KoHo';
   font-weight: bold;
 }
+
+.withdraw nav {
+  padding-left:1em;
+}
+
 .withdraw button {
   float: right;
+  margin-left: 5px;
 }
 
 .withdraw span {

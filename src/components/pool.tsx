@@ -36,15 +36,6 @@ const titleStyles = {
   ],
 };
 
-const normalStyles = {
-  root: [
-    {
-      fontFamily: "KoHo",
-      fontSize: "1.2rem",
-    },
-  ],
-};
-
 const buttonStyles = {
   root: [
     {
@@ -152,7 +143,6 @@ export default function Pool(props: IProps) {
 
   return (
     <>
-      <Label styles={titleStyles}>Pool List</Label>
       <Stack
         horizontal
         horizontalAlign={"center"}
@@ -161,32 +151,39 @@ export default function Pool(props: IProps) {
       >
         <Stack horizontal tokens={verticalGapStackTokens}>
           <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label styles={normalStyles}>Chain1 / Token1</Label>
+            <Label>Chain1 / Token1</Label>
             {poolInfoList.map((pi) => (
-              <span key={pi.id}>
-                {pi.chainId1} / 0x{pi.tokenAddress1}
+              <>
+              <span key={pi.id}>{pi.chainId1} /
               </span>
+              <span className="address"> 0x{pi.tokenAddress1}
+              </span>
+              </>
             ))}
           </Stack>
 
           <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label styles={normalStyles}>Chain2 / Token2</Label>
+            <Label>Chain2 / Token2</Label>
             {poolInfoList.map((pi) => (
+              <>
               <span key={pi.id}>
-                {pi.chainId2} / 0x{pi.tokenAddress2}
+                {pi.chainId2} /
               </span>
+              <span className="address"> 0x{pi.tokenAddress2}
+              </span>
+              </>
             ))}
           </Stack>
 
           <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label styles={normalStyles}>PoolAmount</Label>
+            <Label>PoolAmount</Label>
             {poolInfoList.map((pi) => (
               <span key={pi.id}>{pi.amount ?? "loading..."}</span>
             ))}
           </Stack>
 
           <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label styles={normalStyles}>Share</Label>
+            <Label>Share</Label>
             {poolInfoList.map((pi) => (
               <span key={pi.id}>{pi.share ?? "loading..."}</span>
             ))}
@@ -195,48 +192,35 @@ export default function Pool(props: IProps) {
           <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
             <div className="button-placeholder"></div>
             {poolInfoList.map((pi) => (
-              <DefaultButton
+              <>
+              <button type="button" className="btn btn-sm btn-primary"
                 key={pi.id}
-                styles={buttonStyles}
-                onClick={() => {
-                  setSelectedPool(pi);
-                  setSelectedPoolOps(PoolOps.Swap);
-                }}
-              >
-                Swap
-              </DefaultButton>
-            ))}
-          </Stack>
-
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <div className="button-placeholder"></div>
-            {poolInfoList.map((pi) => (
-              <DefaultButton
-                key={pi.id}
-                styles={buttonStyles}
                 onClick={() => {
                   setSelectedPool(pi);
                   setSelectedPoolOps(PoolOps.Supply);
                 }}
               >
                 Supply
-              </DefaultButton>
-            ))}
-          </Stack>
-
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <div className="button-placeholder"></div>
-            {poolInfoList.map((pi) => (
-              <DefaultButton
+              </button>
+              <button type="button" className="btn btn-sm btn-primary"
                 key={pi.id}
-                styles={buttonStyles}
+                onClick={() => {
+                  setSelectedPool(pi);
+                  setSelectedPoolOps(PoolOps.Swap);
+                }}
+              >
+                Swap
+              </button>
+              <button type="button" className="btn btn-sm btn-primary"
+                key={pi.id}
                 onClick={() => {
                   setSelectedPool(pi);
                   setSelectedPoolOps(PoolOps.Retrieve);
                 }}
               >
                 Retrieve
-              </DefaultButton>
+              </button>
+              </>
             ))}
           </Stack>
         </Stack>

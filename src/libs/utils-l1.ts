@@ -5,6 +5,7 @@ const ss58 = require("substrate-ss58");
 const configSelector: any = require("../config/config-selector");
 
 async function getBridge(chainId: string, mode = true) {
+    console.log("getBridge", configSelector.configMap[chainId]);
     try {
       let bridge = await abi.getBridge(configSelector.configMap[chainId], mode);
       return bridge;
@@ -19,23 +20,31 @@ async function getBridge(chainId: string, mode = true) {
 export async function deposit(
   accountAddress: string,
   chainId: string,
-  tokenAddress: string,
+  tokenAddress: string, // hex without 0x prefix
   amount: string,
-  progress: (string) => void,
-  error: (string) => void
+  progress: (s:string, h:string, r:string, ratio:number) => void,
+  error: (m:string) => void
 ) {
   console.log('call deposit');
   try {
     let bridge = await getBridge(chainId);
     let token_address = "0x" + tokenAddress;
-    console.log('token_address is ' + token_address);
     let token_id = ss58.addressToAddressId(accountAddress);
     let r = bridge.deposit(token_address, parseInt(amount), token_id);
-    r.when("Approve", "Sending", () => progress("Waiting For Approve ..."))
-     .when("Approve", "transactionHash", (tx) => progress("Approving Tx:" + tx))
-     .when("Approve", "receipt", (tx) => progress("Tx Approved:" + tx))
-     .when("snapshot", "Approving", () => progress("Approving ..."));
+    r.when("snapshot", "Approve",
+        () => progress("Approve", "Wait confirm ...", "", 10))
+     .when("Approve", "transactionHash",
+        (tx:string) => progress("Approve", "Transaction Sent", tx, 20))
+     .when("Approve", "receipt",
+        (tx:any) => progress("Approve", "Done", tx.blockHash, 30))
+     .when("snapshot", "Deposit",
+        () => progress("Deposit", "Wait confirm ...", "", 40))
+     .when("Deposit", "transactionHash",
+        (tx:string) => progress("Desposit", "Transaction Sent", tx, 50))
+     .when("Deposit", "receipt",
+        (tx:any) => progress("Deposit", "Done", tx.blockHash, 70));
     await r;
+   progress("Finalize", "Done", "", 100);
   } catch (e){
     error(e.message);
   }
@@ -48,8 +57,9 @@ export async function queryBalanceOnL1(
   fromChainId: string,
 ) {
   //console.log(tokenChainId, tokenAddress, fromChainId);
-  let bridge = await getBridge(tokenChainId, false);
+  let bridge = await getBridge(fromChainId, false);
   let fullTokenAddress = new BN(tokenChainId).shln(160).add(new BN(tokenAddress, 16));
+  console.log(fullTokenAddress.toString(16), ss58.addressToAddressId(accountAddress));
   let balance = await bridge.balanceOf(ss58.addressToAddressId(accountAddress), "0x" + fullTokenAddress.toString(16));
   return balance;
 }

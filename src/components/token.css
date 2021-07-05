@@ -12,6 +12,10 @@
   font-weight: bold;
 }
 
+.address {
+  font-size:8px;
+}
+
 .sub span {
   padding-left: 14px;
 }

@@ -19,58 +19,8 @@ const navigationStyles = {
     boxSizing: 'border-box',
     border: '1px solid #eee',
     overflowY: 'auto',
-    paddingTop: '10vh',
   },
 };
-
-const links = [
-  {
-    links: [
-      {
-        name: 'Wallet',
-        key:'key1',
-        url: '/',
-        iconProps: {
-          iconName: 'News',
-          styles: {
-            root: {
-              fontSize: 20,
-              color: '#106ebe',
-            },
-          }
-        }
-      },
-      {
-        name: 'Swap',
-        key: 'key2',
-        url: '/',
-        iconProps: {
-          iconName: 'PlayerSettings',
-          styles: {
-            root: {
-              fontSize: 20,
-              color: '#106ebe',
-            },
-          }
-        }
-      },
-      {
-        name: 'Liquid Pool',
-        key: 'key3',
-        url: '/',
-        iconProps: {
-          iconName: 'SwitcherStartEnd',
-          styles: {
-            root: {
-              fontSize: 20,
-              color: '#106ebe',
-            },
-          }
-        }
-      },
-    ],
-  },
-];
 
 interface IProps {
   account: string;
@@ -79,6 +29,59 @@ interface IProps {
 
 export default function Main(props: IProps) {
   const [addressPair, setAddressPair] = react.useState<[string, string]>();
+  const [currentPanel, setCurrentPanel] = react.useState<string>("wallet");
+
+  const links = [
+    {
+      links: [
+        {
+          name: 'Wallet',
+          key:'wallet',
+          url: '',
+          onClick: () => setCurrentPanel("wallet"),
+          iconProps: {
+            iconName: 'News',
+            styles: {
+              root: {
+                fontSize: 20,
+                color: '#106ebe',
+              },
+            }
+          }
+        },
+        {
+          name: 'Swap',
+          key: 'swap',
+          url: '',
+          onClick: () => setCurrentPanel("swap"),
+          iconProps: {
+            iconName: 'PlayerSettings',
+            styles: {
+              root: {
+                fontSize: 20,
+                color: '#106ebe',
+              },
+            }
+          }
+        },
+        {
+          name: 'Liquid Pool',
+          key: 'pool',
+          url: '',
+          onClick: () => setCurrentPanel("pool"),
+          iconProps: {
+            iconName: 'SwitcherStartEnd',
+            styles: {
+              root: {
+                fontSize: 20,
+                color: '#106ebe',
+              },
+            }
+          }
+        },
+      ],
+    },
+  ];
 
   if (!addressPair || props.account !== addressPair[0]) {
     getAddressOfAccoutAsync(
@@ -105,9 +108,10 @@ export default function Main(props: IProps) {
   return (
       <Stack horizontal className="vw-100">
         <Stack>
+          <div className="brand">Delphinus</div>
           <Nav
             groups={links}
-            selectedKey='key1'
+            selectedKey={currentPanel}
             styles={navigationStyles}
           />
         </Stack>
@@ -117,13 +121,17 @@ export default function Main(props: IProps) {
               {basicInfo.account}
               <span className="navaddr"> {basicInfo.address} </span>
               <DefaultButton className="navfr"
-                onClick={() => item.onClickButton?.()}
+                onClick={() => basicInfo.onClickButton?.()}
                 key={basicInfo.address} >
               switch
               </DefaultButton>
             </Label>
           </div>
-          <Token account={props.account}/>
+          {
+            (currentPanel === "wallet" && <Token account={props.account}/>)
+            || (currentPanel === "swap" && <Pool account={props.account}/>)
+            || (currentPanel === "pool" && <Pool account={props.account}/>)
+          }
         </Stack>
       </Stack>
   );

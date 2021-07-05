@@ -3,7 +3,6 @@ import * as react from "react";
 import { Modal } from "@fluentui/react";
 import { Label } from "@fluentui/react";
 import { TextField } from "@fluentui/react/lib/TextField";
-import { PrimaryButton } from "@fluentui/react/lib/Button";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { supply } from "../libs/utils";
 import "./withdraw.css";
@@ -23,14 +22,15 @@ export default function SupplyBox(props: IProps) {
   const [amount2, setAmount2] = react.useState<string>("0");
 
   return (
-    <Modal isOpen={true} onDismiss={props.close} isBlocking={true}>
+    <Modal isOpen={true} onDismiss={props.close} isBlocking={true} className="withdraw">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a className="navbar-brand" href="#">Supply Liquidity</a>
+      </nav>
       <Stack
         verticalAlign={"start"}
         tokens={verticalGapStackTokens}
-        className="withdraw"
       >
-        <Label styles={titleStyles}>Supply Token into Pool</Label>
-        <Label styles={boxLabelStyles}>Amount for {props.chainId1} / 0x{props.tokenAddress1}</Label>
+        <Label>Amount for {props.chainId1} / 0x{props.tokenAddress1}</Label>
         <TextField
           className="account"
           defaultValue={amount1}
@@ -39,7 +39,7 @@ export default function SupplyBox(props: IProps) {
             setAmount1(e.target.value);
           }}
         />
-        <Label styles={boxLabelStyles}>Amount for {props.chainId2} / 0x{props.tokenAddress2}</Label>
+        <Label>Amount for {props.chainId2} / 0x{props.tokenAddress2}</Label>
         <TextField
           className="account"
           defaultValue={amount2}
@@ -47,8 +47,8 @@ export default function SupplyBox(props: IProps) {
             setAmount2(e.target.value);
           }}
         />
-        <PrimaryButton
-          styles={buttonStyles}
+        <div>
+        <button type="button" className="btn btn-sm btn-primary"
           onClick={() => {
               (amount1 || amount2) &&
               supply(props.account, props.chainId1, props.tokenAddress1, props.chainId2, props.tokenAddress2, amount1 || "0", amount2 || "0");
@@ -57,10 +57,12 @@ export default function SupplyBox(props: IProps) {
           }
         >
           Ok
-        </PrimaryButton>
-        <PrimaryButton styles={buttonStyles} onClick={props.close}>
+        </button>
+        <button type="button" className="btn btn-sm btn-secondary"
+          onClick={props.close}>
           Cancel
-        </PrimaryButton>
+        </button>
+        </div>
       </Stack>
     </Modal>
   );
