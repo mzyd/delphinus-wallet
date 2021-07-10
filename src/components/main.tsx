@@ -11,6 +11,9 @@ import "./main.css";
 import { getAddressOfAccoutAsync } from "../libs/utils";
 import Token from "./token";
 import Pool from "./pool";
+import Swap from "./swap";
+import Supply from "./supply";
+import Retrieve from "./retrieve";
 import { buttonStyles, normalLabelStyles, separatorStyles, titleStyles, verticalGapStackTokens } from "./common-styles";
 
 const navigationStyles = {
@@ -65,7 +68,37 @@ export default function Main(props: IProps) {
           }
         },
         {
-          name: 'Liquid Pool',
+          name: 'Add Liqidity',
+          key: 'supply',
+          url: '',
+          onClick: () => setCurrentPanel("supply"),
+          iconProps: {
+            iconName: 'PlayerSettings',
+            styles: {
+              root: {
+                fontSize: 20,
+                color: '#106ebe',
+              },
+            }
+          }
+        },
+        {
+          name: 'Retrieve Liqidity',
+          key: 'retrieve',
+          url: '',
+          onClick: () => setCurrentPanel("retrieve"),
+          iconProps: {
+            iconName: 'PlayerSettings',
+            styles: {
+              root: {
+                fontSize: 20,
+                color: '#106ebe',
+              },
+            }
+          }
+        },
+        {
+          name: 'All Pools',
           key: 'pool',
           url: '',
           onClick: () => setCurrentPanel("pool"),
@@ -129,7 +162,9 @@ export default function Main(props: IProps) {
           </div>
           {
             (currentPanel === "wallet" && <Token account={props.account}/>)
-            || (currentPanel === "swap" && <Pool account={props.account}/>)
+            || (currentPanel === "swap" && <Swap account={props.account}/>)
+            || (currentPanel === "supply" && <Supply account={props.account}/>)
+            || (currentPanel === "retrieve" && <Retrieve account={props.account}/>)
             || (currentPanel === "pool" && <Pool account={props.account}/>)
           }
         </Stack>

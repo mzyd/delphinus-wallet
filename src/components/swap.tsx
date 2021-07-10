@@ -1,122 +1,212 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as react from "react";
-import { Modal } from "@fluentui/react";
+import React, * as react from "react";
+
 import { Label } from "@fluentui/react";
+import { DefaultButton } from "@fluentui/react/lib/Button";
+import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
+import { Separator } from "@fluentui/react/lib/Separator";
+import { separatorStyles} from "./common-styles";
 import { TextField } from "@fluentui/react/lib/TextField";
-import { PrimaryButton } from "@fluentui/react/lib/Button";
-import { Stack } from "@fluentui/react/lib/Stack";
-import { swap } from "../libs/utils";
+
 import {
-  verticalGapStackTokens,
-  boxLabelStyles,
-  buttonStyles,
-  titleStyles,
-} from "./common-styles";
-import "./withdraw.css";
-import { Dropdown, IDropdownStyles } from "@fluentui/react/lib/Dropdown";
+  getAddressOfAccoutAsync,
+  queryPoolAmountAsync,
+  queryPoolShareAsync,
+} from "../libs/utils";
+
+import SupplyBox from "./supply";
+import RetrieveBox from "./retrieve";
+import SwapModal from "./swapmodal";
+import { registerTask, unregisterTask } from "../libs/query-fresher";
+import "./token.css";
+import chainList from "../config/tokenlist";
 
 interface IProps {
   account: string;
+}
+
+const verticalGapStackTokens: IStackTokens = {
+  childrenGap: "1rem",
+  padding: "0.5rem",
+};
+
+const titleStyles = {
+  root: [
+    {
+      fontFamily: "Girassol",
+      fontSize: "4rem",
+    },
+  ],
+};
+
+const buttonStyles = {
+  root: [
+    {
+      fontFamily: "KoHo",
+      fontSize: "1.2rem",
+    },
+  ],
+};
+
+interface PoolInfo {
+  id: string;
   chainId1: string;
   tokenAddress1: string;
   chainId2: string;
   tokenAddress2: string;
-  close: () => void;
+  share?: string;
+  amount?: string;
 }
 
-const dropdownStyles: Partial<IDropdownStyles> = {};
+enum PoolOps {
+  Supply,
+  Retrieve,
+  Swap,
+}
 
-export default function SwapBox(props: IProps) {
-  const [fromTokenKey, setFromTokenKey] = react.useState<number>(0);
-  const [amount, setAmount] = react.useState<string>("10");
+export default function Swap(props: IProps) {
+  const [addressPair, setAddressPair] = react.useState<[string, string]>();
+  const [selectedPoolOps, setSelectedPoolOps] = react.useState<PoolOps>();
+  const [poolInfoList, setPoolInfoList] = react.useState<PoolInfo[]>([
+    {
+      id: "1",
+      chainId1: chainList[0].chainId,
+      tokenAddress1: chainList[0].tokens[0].address.replace(
+        "0x",
+        ""
+      ),
+      chainId2: chainList[1].chainId,
+      tokenAddress2: chainList[1].tokens[0].address.replace(
+        "0x",
+        ""
+      ),
+    },
+  ]);
+  const [selectedPool, setSelectedPool] = react.useState<PoolInfo>(poolInfoList[0]);
 
-  const options = [
-    {
-      key: 0,
-      text: `${props.chainId1}/0x${props.tokenAddress1}`,
-    },
-    {
-      key: 1,
-      text: `${props.chainId2}/0x${props.tokenAddress2}`,
-    },
-  ];
+  react.useEffect(() => {
+    if (!addressPair || props.account !== addressPair[0]) {
+      getAddressOfAccoutAsync(
+        props.account,
+        (account: string, address: string) => {
+          setAddressPair([account, address]);
+        }
+      );
+    }
+  }, []);
+
+  react.useEffect(() => {
+    if (!addressPair) {
+      return;
+    }
+
+    const updator = (pool: any) => async () => {
+      await queryPoolAmountAsync(
+        pool.chainId1,
+        pool.tokenAddress1,
+        pool.chainId2,
+        pool.tokenAddress2,
+        (value: string) => {
+          setPoolInfoList((_list) =>
+            _list?.map((e) => (e.id === pool.id ? { ...e, liquid: value } : e))
+          );
+        }
+      );
+
+      if (addressPair) {
+        await queryPoolShareAsync(
+          addressPair[1],
+          pool.chainId1,
+          pool.tokenAddress1,
+          pool.chainId2,
+          pool.tokenAddress2,
+          (value: string) => {
+            setPoolInfoList((_list) =>
+              _list?.map((e) => (e.id === pool.id ? { ...e, share: value } : e))
+            );
+          }
+        );
+      }
+    };
+
+    for (let pool of poolInfoList) {
+      registerTask(pool, updator(pool), 30000);
+    }
+  }, [addressPair]);
+
+  react.useEffect(() => {
+    return () => {
+      for (let pool of poolInfoList) {
+        unregisterTask(pool);
+      }
+    };
+  }, []);
 
   return (
-    <Modal isOpen={true} onDismiss={props.close} isBlocking={true} className="withdraw">
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a className="navbar-brand" href="#">Swap in Delphinus</a>
-      </nav>
+    <>
       <Stack
-        verticalAlign={"start"}
+        horizontal
+        horizontalAlign={"center"}
         tokens={verticalGapStackTokens}
       >
-        <Label>From</Label>
-        <Dropdown
-          defaultSelectedKey={fromTokenKey}
-          options={options}
-          onChange={(e, item) => {
-            item && setFromTokenKey(item.key as number);
-          }}
-          styles={dropdownStyles}
-        />
-
-        <Label>To</Label>
-        <TextField
-          className="account"
-          value={options[1 - fromTokenKey].text}
-          disabled
-        />
-
-        <Label>
-          Will send amount of token {options[fromTokenKey].text}
-        </Label>
-        <TextField
-          className="account"
-          defaultValue={amount}
-          onChange={(e: any) => {
-            setAmount(e.target.value);
-          }}
-        />
-
-        <Label>
-          Will receive amount of token {options[1 - fromTokenKey].text}
-        </Label>
-        <TextField className="account" disabled value={amount} />
-
-        <div>
-        <button type="button" className="btn btn-sm btn-primary"
-          onClick={() => {
-            if (amount && fromTokenKey === 0) {
-              swap(
-                props.account,
-                props.chainId1,
-                props.tokenAddress1,
-                props.chainId2,
-                props.tokenAddress2,
-                amount
-              );
-            }
-            if (amount && fromTokenKey === 1) {
-              swap(
-                props.account,
-                props.chainId2,
-                props.tokenAddress2,
-                props.chainId1,
-                props.tokenAddress1,
-                amount
-              );
-            }
-            props.close();
-          }}
-        >
-          Ok
-        </button>
-        <button type="button" className="btn btn-sm btn-secondary"
-          onClick={props.close}>
-          Cancel
-        </button>
-        </div>
+        <Stack tokens={verticalGapStackTokens}>
+          <div className="swap-selector" key={selectedPool?.id}>
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+              <a className="navbar-brand" href="#">
+                Swap:
+              </a>
+            </nav>
+            <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
+              <ul className="list-group">
+              <li className="list-group-item">
+                From: Chain-id - {selectedPool?.chainId1}
+              </li>
+              <li className="list-group-item address">
+                0x{selectedPool?.tokenAddress1}
+              </li>
+              <li className="list-group-item">liquidity: {selectedPool?.liquid ?? "loading ..."}
+              </li>
+              <li className="list-group-item">
+                amount: <TextField onChange={(e:any) => {
+                    setSelectedPool({...selectedPool, amount: e.target.value});
+                  }}
+                />
+              </li>
+              </ul>
+              <ul className="list-group">
+              <li className="list-group-item">
+                To: Chain-id - {selectedPool?.chainId2}
+              </li>
+              <li className="list-group-item address">
+                0x{selectedPool?.tokenAddress2}
+              </li>
+              <li className="list-group-item">
+                liquidity: {selectedPool?.liquid ?? "loading ..."}
+              </li>
+              <li className="list-group-item">
+                amount: <TextField disabled defaultValue={selectedPool?.amount ?? 0}/>
+              </li>
+              </ul>
+              <button type="button" className="btn btn-sm btn-primary"
+                onClick={() => {
+                  setSelectedPoolOps(PoolOps.Swap);
+                }}
+              >
+                Swap
+              </button>
+            </Stack>
+          </div>
+        </Stack>
       </Stack>
-    </Modal>
+      {addressPair && selectedPool && selectedPoolOps === PoolOps.Swap && (
+        <SwapModal
+          account={addressPair[0]}
+          {...selectedPool}
+          close={() => {
+            setSelectedPoolOps(undefined);
+          }}
+        />
+      )}
+    </>
   );
 }

@@ -51,6 +51,8 @@ interface TokenInfo {
 
 interface ChainInfo{
   chainId: string;
+  chainName: string;
+  enable: bool;
   tokens: TokenInfo[];
 }
 
@@ -59,7 +61,7 @@ export default function Token(props: IProps) {
   const [currentTXProps, setCurrentTXProps] = react.useState<TXProps>();
   const [addressPair, setAddressPair] = react.useState<[string, string]>();
   const [chainInfoList, setTokenInfoList] =
-    react.useState<ChainInfo[]>(chainList);
+    react.useState<ChainInfo[]>(chainList.filter((x)=> x.enable));
 
   const setTXProps = (account:string, cid:string, addr:string) => {
      setCurrentTXProps ({
@@ -147,11 +149,11 @@ export default function Token(props: IProps) {
 
   const updateStates = async (chainId:string, tokenAddress: string) => {
     await updateL2Balance(chainId, tokenAddress);
+    return;
     for (let chain of chainInfoList) {
       console.log(chainId, chain.chainId);
       await updateL1State(chainId, tokenAddress, chain.chainId);
     }
-    return;
   };
 
   react.useEffect(() => {

@@ -4,6 +4,7 @@ import React, * as react from "react";
 import { Label } from "@fluentui/react";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
+import { DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IColumn } from '@fluentui/react/lib/DetailsList';
 
 import {
   getAddressOfAccoutAsync,
@@ -13,10 +14,10 @@ import {
 
 import SupplyBox from "./supply";
 import RetrieveBox from "./retrieve";
-import SwapBox from "./swap";
+import SwapModal from "./swapbox";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
-import "./token.css";
-import L1TokenInfo from "solidity/build/contracts/Token.json";
+import "./withdraw.css";
+import chainList from "../config/tokenlist";
 
 interface IProps {
   account: string;
@@ -68,15 +69,13 @@ export default function Pool(props: IProps) {
   const [poolInfoList, setPoolInfoList] = react.useState<PoolInfo[]>([
     {
       id: "1",
-      //chainId1: "3",
-      chainId1: "15",
-      tokenAddress1: L1TokenInfo.networks[15].address.replace(
+      chainId1: chainList[0].chainId,
+      tokenAddress1: chainList[0].tokens[0].address.replace(
         "0x",
         ""
       ),
-      //chainId2: "97",
-      chainId2: "16",
-      tokenAddress2: L1TokenInfo.networks[16].address.replace(
+      chainId2: chainList[1].chainId,
+      tokenAddress2: chainList[1].tokens[0].address.replace(
         "0x",
         ""
       ),
@@ -143,118 +142,39 @@ export default function Pool(props: IProps) {
 
   return (
     <>
-      <Stack
-        horizontal
-        horizontalAlign={"center"}
-        tokens={verticalGapStackTokens}
-        className="main w-100"
-      >
-        <Stack horizontal tokens={verticalGapStackTokens}>
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label>Chain1 / Token1</Label>
-            {poolInfoList.map((pi) => (
-              <>
-              <span key={pi.id}>{pi.chainId1} /
-              </span>
-              <span className="address"> 0x{pi.tokenAddress1}
-              </span>
-              </>
-            ))}
-          </Stack>
-
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label>Chain2 / Token2</Label>
-            {poolInfoList.map((pi) => (
-              <>
-              <span key={pi.id}>
-                {pi.chainId2} /
-              </span>
-              <span className="address"> 0x{pi.tokenAddress2}
-              </span>
-              </>
-            ))}
-          </Stack>
-
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label>PoolAmount</Label>
-            {poolInfoList.map((pi) => (
-              <span key={pi.id}>{pi.amount ?? "loading..."}</span>
-            ))}
-          </Stack>
-
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <Label>Share</Label>
-            {poolInfoList.map((pi) => (
-              <span key={pi.id}>{pi.share ?? "loading..."}</span>
-            ))}
-          </Stack>
-
-          <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-            <div className="button-placeholder"></div>
-            {poolInfoList.map((pi) => (
-              <>
-              <button type="button" className="btn btn-sm btn-primary"
-                key={pi.id}
-                onClick={() => {
-                  setSelectedPool(pi);
-                  setSelectedPoolOps(PoolOps.Supply);
-                }}
-              >
-                Supply
-              </button>
-              <button type="button" className="btn btn-sm btn-primary"
-                key={pi.id}
-                onClick={() => {
-                  setSelectedPool(pi);
-                  setSelectedPoolOps(PoolOps.Swap);
-                }}
-              >
-                Swap
-              </button>
-              <button type="button" className="btn btn-sm btn-primary"
-                key={pi.id}
-                onClick={() => {
-                  setSelectedPool(pi);
-                  setSelectedPoolOps(PoolOps.Retrieve);
-                }}
-              >
-                Retrieve
-              </button>
-              </>
-            ))}
-          </Stack>
-        </Stack>
+      <Stack>
+      <ul className="list-group pool-list">
+        {poolInfoList.map((pi) => (
+          <li className="list-group-item">
+          Pool - {pi.id} - {pi.chainId1} - {pi.tokenAddress1} - {pi.chainId2} - {pi.tokenAddress2} - {pi.amount} - {pi.share}
+          </li>
+        ))}
+      </ul>
+      <div className="button-container">
+        {poolInfoList.map((pi) => (
+          <>
+          <button type="button" className="btn btn-sm btn-primary"
+            key={pi.id}
+            onClick={() => {
+              setSelectedPool(pi);
+              setSelectedPoolOps(PoolOps.Supply);
+            }}
+          >
+            Add Liqidity
+          </button>
+          <button type="button" className="btn btn-sm btn-primary"
+            key={pi.id}
+            onClick={() => {
+              setSelectedPool(pi);
+              setSelectedPoolOps(PoolOps.Retrieve);
+            }}
+          >
+            Retrieve Liqidity
+          </button>
+          </>
+        ))}
+      </div>
       </Stack>
-      {addressPair && selectedPool && selectedPoolOps === PoolOps.Supply && (
-        <SupplyBox
-          account={addressPair[0]}
-          {...selectedPool}
-          close={() => {
-            setSelectedPool(undefined);
-            setSelectedPoolOps(undefined);
-          }}
-        />
-      )}
-      {addressPair && selectedPool && selectedPoolOps === PoolOps.Retrieve && (
-        <RetrieveBox
-          account={addressPair[0]}
-          {...selectedPool}
-          close={() => {
-            setSelectedPool(undefined);
-            setSelectedPoolOps(undefined);
-          }}
-        />
-      )}
-      {addressPair && selectedPool && selectedPoolOps === PoolOps.Swap && (
-        <SwapBox
-          account={addressPair[0]}
-          {...selectedPool}
-          close={() => {
-            setSelectedPool(undefined);
-            setSelectedPoolOps(undefined);
-          }}
-        />
-      )}
     </>
   );
 }

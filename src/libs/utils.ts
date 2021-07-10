@@ -61,7 +61,7 @@ export async function queryPoolAmountAsync(
 ) {
   const fn = async () => {
     const api = await getAPI();
-    if (compressToken(chainId1, tokenAddress1) < compressToken(chainId2, tokenAddress2)) {
+    if (compressToken(chainId1, tokenAddress1) > compressToken(chainId2, tokenAddress2)) {
       const result = await api.query.swapModule.poolMap(
         "0x" +
         compressToken(chainId1, tokenAddress1, true) +
