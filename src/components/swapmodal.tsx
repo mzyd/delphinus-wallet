@@ -21,7 +21,7 @@ interface IProps {
   tokenAddress1: string;
   chainId2: string;
   tokenAddress2: string;
-  amount:string;
+  amount?:string;
   close: () => void;
 }
 
@@ -43,11 +43,11 @@ export default function SwapModal(props: IProps) {
         <Label>From:
         <span className="address"> 0x{props.tokenAddress1} </span>
         </Label>
-        <TextField className="account" defaultValue={props.amount} disabled />
+        <TextField className="account" defaultValue={props.amount!} disabled />
         <Label>To:
         <span className="address"> 0x{props.tokenAddress2} </span>
         </Label>
-        <TextField className="account" disabled defaultValue={props.amount} />
+        <TextField className="account" disabled defaultValue={props.amount!} />
         <div>
         <button type="button" className="btn btn-sm btn-primary"
           onClick={() => {
@@ -57,7 +57,7 @@ export default function SwapModal(props: IProps) {
                 props.tokenAddress1,
                 props.chainId2,
                 props.tokenAddress2,
-                props.amount
+                props.amount!
               );
             }
           }

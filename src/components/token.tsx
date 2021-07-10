@@ -52,7 +52,7 @@ interface TokenInfo {
 interface ChainInfo{
   chainId: string;
   chainName: string;
-  enable: bool;
+  enable: boolean;
   tokens: TokenInfo[];
 }
 

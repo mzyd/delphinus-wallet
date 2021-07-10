@@ -184,7 +184,7 @@ export default function Supply(props: IProps) {
                 liquidity: {selectedPool?.liquid ?? "loading ..."}
               </li>
               <li className="list-group-item">
-                amount: <TextField disabled value={selectedPool?.amount ?? 0}/>
+                amount: <TextField disabled value={selectedPool?.amount ?? "0"}/>
               </li>
               </ul>
               <button type="button" className="btn btn-sm btn-primary"

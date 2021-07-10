@@ -53,6 +53,7 @@ interface PoolInfo {
   chainId2: string;
   tokenAddress2: string;
   share?: string;
+  liquid?: string;
   amount?: string;
 }
 

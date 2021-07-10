@@ -12,9 +12,7 @@ import {
   queryPoolShareAsync,
 } from "../libs/utils";
 
-import SupplyBox from "./supply";
-import RetrieveBox from "./retrieve";
-import SwapModal from "./swapbox";
+import SwapModal from "./swapmodal";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
 import "./withdraw.css";
 import chainList from "../config/tokenlist";

@@ -55,6 +55,7 @@ interface PoolInfo {
   chainId2: string;
   tokenAddress2: string;
   share?: string;
+  liquid?: string;
   amount?: string;
 }
 
@@ -184,7 +185,7 @@ export default function Swap(props: IProps) {
                 liquidity: {selectedPool?.liquid ?? "loading ..."}
               </li>
               <li className="list-group-item">
-                amount: <TextField disabled defaultValue={selectedPool?.amount ?? 0}/>
+                amount: <TextField disabled defaultValue={selectedPool?.amount ?? "0"}/>
               </li>
               </ul>
               <button type="button" className="btn btn-sm btn-primary"
@@ -198,7 +199,7 @@ export default function Swap(props: IProps) {
           </div>
         </Stack>
       </Stack>
-      {addressPair && selectedPool && selectedPoolOps === PoolOps.Swap && (
+      {addressPair && selectedPoolOps === PoolOps.Swap && (
         <SwapModal
           account={addressPair[0]}
           {...selectedPool}
