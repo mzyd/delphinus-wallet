@@ -108,9 +108,7 @@ export default function Swap(props: IProps) {
         pool.chainId2,
         pool.tokenAddress2,
         (value: string) => {
-          setPoolInfoList((_list) =>
-            _list?.map((e) => (e.id === pool.id ? { ...e, liquid: value } : e))
-          );
+          setSelectedPool({ ...selectedPool, liquid: value });
         }
       );
 
@@ -122,9 +120,6 @@ export default function Swap(props: IProps) {
           pool.chainId2,
           pool.tokenAddress2,
           (value: string) => {
-            setPoolInfoList((_list) =>
-              _list?.map((e) => (e.id === pool.id ? { ...e, share: value } : e))
-            );
           }
         );
       }
@@ -185,7 +180,7 @@ export default function Swap(props: IProps) {
                 liquidity: {selectedPool?.liquid ?? "loading ..."}
               </li>
               <li className="list-group-item">
-                amount: <TextField disabled defaultValue={selectedPool?.amount ?? "0"}/>
+                amount: <TextField disabled value={selectedPool?.amount ?? "0"}/>
               </li>
               </ul>
               <button type="button" className="btn btn-sm btn-primary"

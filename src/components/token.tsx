@@ -149,7 +149,7 @@ export default function Token(props: IProps) {
 
   const updateStates = async (chainId:string, tokenAddress: string) => {
     await updateL2Balance(chainId, tokenAddress);
-    return;
+    //return;
     for (let chain of chainInfoList) {
       console.log(chainId, chain.chainId);
       await updateL1State(chainId, tokenAddress, chain.chainId);

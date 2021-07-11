@@ -108,7 +108,6 @@ export default function Supply(props: IProps) {
         pool.chainId2,
         pool.tokenAddress2,
         (value: string) => {
-          console.log("liquid", value);
           setSelectedPool({ ...selectedPool, liquid: value });
         }
       );
@@ -121,10 +120,7 @@ export default function Supply(props: IProps) {
           pool.chainId2,
           pool.tokenAddress2,
           (value: string) => {
-            console.log("share", value);
-            setPoolInfoList((_list) =>
-              _list?.map((e) => (e.id === pool.id ? { ...e, share: value } : e))
-            );
+            //setSelectedPool({ ...selectedPool, share: value });
           }
         );
       }

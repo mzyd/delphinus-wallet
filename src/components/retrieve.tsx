@@ -106,9 +106,7 @@ export default function Retrieve(props: IProps) {
         pool.chainId2,
         pool.tokenAddress2,
         (value: string) => {
-          setPoolInfoList((_list) =>
-            _list?.map((e) => (e.id === pool.id ? { ...e, liquid: value } : e))
-          );
+          setSelectedPool({ ...selectedPool, liquid: value });
         }
       );
 
@@ -120,9 +118,7 @@ export default function Retrieve(props: IProps) {
           pool.chainId2,
           pool.tokenAddress2,
           (value: string) => {
-            setPoolInfoList((_list) =>
-              _list?.map((e) => (e.id === pool.id ? { ...e, share: value } : e))
-            );
+            //setSelectedPool({ ...selectedPool, share: value });
           }
         );
       }

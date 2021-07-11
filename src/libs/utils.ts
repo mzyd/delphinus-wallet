@@ -61,7 +61,7 @@ export async function queryPoolAmountAsync(
 ) {
   const fn = async () => {
     const api = await getAPI();
-    if (compressToken(chainId1, tokenAddress1) > compressToken(chainId2, tokenAddress2)) {
+    if (compressToken(chainId1, tokenAddress1) < compressToken(chainId2, tokenAddress2)) {
       const result = await api.query.swapModule.poolMap(
         "0x" +
         compressToken(chainId1, tokenAddress1, true) +
@@ -273,6 +273,7 @@ export async function supply(
   const api = await getAPI();
   await cryptoWaitReady();
   const keyring = new Keyring({ type: "sr25519" });
+  console.log("l2 account name:", account);
   const signer = keyring.addFromUri(`//${account}`);
   const nonce = new BN((await api.query.system.account(signer.address)).nonce);
   const accountId = ss58.addressToAddressId(signer.address);
@@ -298,7 +299,7 @@ export async function supply(
   );
   try {
     const ret = await tx.signAndSend(signer, { nonce });
-    console.log(ret);
+    console.log("transaction supply:", ret);
   } catch (e) {
     alert(e);
     return;
