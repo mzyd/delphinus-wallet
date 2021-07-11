@@ -79,8 +79,8 @@ export default function Swap(props: IProps) {
     const updator = async () => {
       await queryPoolAmountAsync(
         chainId0,
-        chainId1,
         token0,
+        chainId1,
         token1,
         (v0: string, v1: string) => {
           if (

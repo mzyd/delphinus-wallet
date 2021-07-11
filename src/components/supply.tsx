@@ -91,8 +91,8 @@ export default function Supply(props: IProps) {
     const updator = async () => {
       await queryPoolAmountAsync(
         chainId0,
-        chainId1,
         token0,
+        chainId1,
         token1,
         (v0: string, v1: string) => {
           if (
@@ -111,8 +111,8 @@ export default function Supply(props: IProps) {
         await queryPoolShareAsync(
           addressPair[1],
           chainId0,
-          chainId1,
           token0,
+          chainId1,
           token1,
           (value: string) => {
             if (
