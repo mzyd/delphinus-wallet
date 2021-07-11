@@ -1,10 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, * as react from "react";
+import * as react from "react";
 
-import { Label } from "@fluentui/react";
-import { DefaultButton } from "@fluentui/react/lib/Button";
-import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
-import { DetailsList, DetailsListLayoutMode, Selection, SelectionMode, IColumn } from '@fluentui/react/lib/DetailsList';
+import { Stack } from "@fluentui/react/lib/Stack";
 
 import {
   getAddressOfAccoutAsync,
@@ -12,7 +9,6 @@ import {
   queryPoolShareAsync,
 } from "../libs/utils";
 
-import SwapModal from "./swapmodal";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
 import "./withdraw.css";
 import chainList from "../config/tokenlist";
@@ -20,29 +16,6 @@ import chainList from "../config/tokenlist";
 interface IProps {
   account: string;
 }
-
-const verticalGapStackTokens: IStackTokens = {
-  childrenGap: "1rem",
-  padding: "0.5rem",
-};
-
-const titleStyles = {
-  root: [
-    {
-      fontFamily: "Girassol",
-      fontSize: "4rem",
-    },
-  ],
-};
-
-const buttonStyles = {
-  root: [
-    {
-      fontFamily: "KoHo",
-      fontSize: "1.2rem",
-    },
-  ],
-};
 
 interface PoolInfo {
   id: string;

@@ -1,12 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, * as react from "react";
+import * as react from "react";
 
 import { Label } from "@fluentui/react";
-import { TextField } from "@fluentui/react/lib/TextField";
-import { DefaultButton, IconButton} from "@fluentui/react/lib/Button";
+import { DefaultButton} from "@fluentui/react/lib/Button";
 import { Stack } from "@fluentui/react/lib/Stack";
-import { Separator } from "@fluentui/react/lib/Separator";
-import { Nav, initializeIcons } from '@fluentui/react';
+import { Nav } from '@fluentui/react';
 import "./main.css";
 import { getAddressOfAccoutAsync } from "../libs/utils";
 import Token from "./token";
@@ -14,7 +12,6 @@ import Pool from "./pool";
 import Swap from "./swap";
 import Supply from "./supply";
 import Retrieve from "./retrieve";
-import { buttonStyles, normalLabelStyles, separatorStyles, titleStyles, verticalGapStackTokens } from "./common-styles";
 
 const navigationStyles = {
   root: {

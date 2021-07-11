@@ -23,7 +23,9 @@ const tokenList = [
         address:L1TokenInfo.networks["16"].address.replace("0x", ""),
       }
     ],
-  },
+  }
+/*
+  ,
   {
     chainId: "3",
     chainName: "ropsten",
@@ -47,6 +49,7 @@ const tokenList = [
       }
     ],
   },
+*/
 ];
 
 export default tokenList;

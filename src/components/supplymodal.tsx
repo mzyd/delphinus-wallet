@@ -10,10 +10,10 @@ import { verticalGapStackTokens, boxLabelStyles, buttonStyles, titleStyles } fro
 
 interface IProps {
   account: string;
+  chainId0: string;
+  token0: string;
   chainId1: string;
-  tokenAddress1: string;
-  chainId2: string;
-  tokenAddress2: string;
+  token1: string;
   amount?: string;
   close: () => void;
 }
@@ -28,12 +28,12 @@ export default function SupplyModal(props: IProps) {
         verticalAlign={"start"}
         tokens={verticalGapStackTokens}
       >
-        <Label>Amount for {props.chainId1} / 0x{props.tokenAddress1}</Label>
+        <Label>Amount for {props.chainId0} / 0x{props.token0}</Label>
         <TextField
           className="account" disabled
           defaultValue={props.amount}
         />
-        <Label>Amount for {props.chainId2} / 0x{props.tokenAddress2}</Label>
+        <Label>Amount for {props.chainId1} / 0x{props.token1}</Label>
         <TextField
           className="account" disabled
           defaultValue={props.amount}
@@ -42,7 +42,7 @@ export default function SupplyModal(props: IProps) {
         <button type="button" className="btn btn-sm btn-primary"
           onClick={() => {
               (props.amount) &&
-              supply(props.account, props.chainId1, props.tokenAddress1, props.chainId2, props.tokenAddress2, props.amount, props.amount);
+              supply(props.account, props.chainId0, props.token0, props.chainId1, props.token1, props.amount, props.amount);
               props.close();
             }
           }

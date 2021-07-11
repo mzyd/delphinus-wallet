@@ -3,12 +3,11 @@ import * as react from "react";
 import { Modal } from "@fluentui/react";
 import { Label } from "@fluentui/react";
 import { TextField } from "@fluentui/react/lib/TextField";
-import { PrimaryButton } from "@fluentui/react/lib/Button";
 import { Stack } from "@fluentui/react/lib/Stack";
-import { deposit, queryBalanceOnL1 } from "../libs/utils-l1";
+import { deposit } from "../libs/utils-l1";
 import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
 import "./withdraw.css";
-import { verticalGapStackTokens, titleStyles, boxLabelStyles, buttonStyles } from "./common-styles";
+import { verticalGapStackTokens } from "./common-styles";
 
 interface TXProps {
   account: string;
@@ -53,7 +52,7 @@ export default function DepositBox(props: IProps) {
     } else if (state === "Finalize") {
       setFinalizeProgress(hint);
     }
-    if (receipt != "") {
+    if (receipt !== "") {
       //setProgressInfo(state + " " + " " + hint + ":" + receipt);
     }
     setProgressInfo(ratio);
@@ -116,7 +115,7 @@ export default function DepositBox(props: IProps) {
             <TextField
               className="account"
               autoFocus
-              disabled = {process!=""}
+              disabled = {process !== ""}
               onChange={(e: any) => {
                 setAmount(e.target.value);
               }}

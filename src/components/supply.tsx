@@ -1,11 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, * as react from "react";
 
-import { Label } from "@fluentui/react";
+import { Dropdown, Label } from "@fluentui/react";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
 import { Separator } from "@fluentui/react/lib/Separator";
-import { separatorStyles} from "./common-styles";
+import { separatorStyles } from "./common-styles";
 import { TextField } from "@fluentui/react/lib/TextField";
 
 import {
@@ -30,60 +30,42 @@ const verticalGapStackTokens: IStackTokens = {
   padding: "0.5rem",
 };
 
-const titleStyles = {
-  root: [
-    {
-      fontFamily: "Girassol",
-      fontSize: "4rem",
-    },
-  ],
-};
-
-const buttonStyles = {
-  root: [
-    {
-      fontFamily: "KoHo",
-      fontSize: "1.2rem",
-    },
-  ],
-};
-
-interface PoolInfo {
-  id: string;
-  chainId1: string;
-  tokenAddress1: string;
-  chainId2: string;
-  tokenAddress2: string;
-  liquid?: string;
-  share?: string;
-  amount?: string;
-}
-
 enum PoolOps {
   Supply,
   Retrieve,
   Swap,
 }
 
+interface ChainInfo {
+  chainId: string;
+  tokens: string[];
+}
+
+const chainInfoList: ChainInfo[] = chainList.map((c) => ({
+  chainId: c.chainId,
+  tokens: c.tokens.map((t) => t.address.replace("0x", "")),
+}));
+
 export default function Supply(props: IProps) {
   const [addressPair, setAddressPair] = react.useState<[string, string]>();
   const [selectedPoolOps, setSelectedPoolOps] = react.useState<PoolOps>();
-  const [poolInfoList, setPoolInfoList] = react.useState<PoolInfo[]>([
-    {
-      id: "1",
-      chainId1: chainList[0].chainId,
-      tokenAddress1: chainList[0].tokens[0].address.replace(
-        "0x",
-        ""
-      ),
-      chainId2: chainList[1].chainId,
-      tokenAddress2: chainList[1].tokens[0].address.replace(
-        "0x",
-        ""
-      ),
-    },
-  ]);
-  const [selectedPool, setSelectedPool] = react.useState<PoolInfo>(poolInfoList[0]);
+  const [chainId0, setChainId0] = react.useState<string>(
+    chainInfoList[0].chainId
+  );
+  const [chainId1, setChainId1] = react.useState<string>(
+    chainInfoList[1].chainId
+  );
+  const [token0, setToken0] = react.useState<string>(
+    chainInfoList[0].tokens[0]
+  );
+  const [token1, setToken1] = react.useState<string>(
+    chainInfoList[1].tokens[0]
+  );
+  const [amount0, setAmount0] = react.useState<string>("0");
+  const [amount1, setAmount1] = react.useState<string>(amount0);
+  const [liquid0, setLiquid0] = react.useState<string>();
+  const [liquid1, setLiquid1] = react.useState<string>();
+  const [share, setShare] = react.useState<string>();
 
   react.useEffect(() => {
     if (!addressPair || props.account !== addressPair[0]) {
@@ -101,42 +83,72 @@ export default function Supply(props: IProps) {
       return;
     }
 
-    const updator = (pool: any) => async () => {
+    const _token0 = token0;
+    const _token1 = token1;
+    const _chainId0 = chainId0;
+    const _chainId1 = chainId1;
+
+    const updator = async () => {
       await queryPoolAmountAsync(
-        pool.chainId1,
-        pool.tokenAddress1,
-        pool.chainId2,
-        pool.tokenAddress2,
-        (value: string) => {
-          setSelectedPool({ ...selectedPool, liquid: value });
+        chainId0,
+        chainId1,
+        amount0,
+        amount1,
+        (v0: string, v1: string) => {
+          if (
+            _token0 === token0 &&
+            _token1 === token1 &&
+            _chainId0 === chainId0 &&
+            _chainId1 === chainId1
+          ) {
+            setLiquid0(v0);
+            setLiquid1(v1);
+          }
         }
       );
 
       if (addressPair) {
         await queryPoolShareAsync(
           addressPair[1],
-          pool.chainId1,
-          pool.tokenAddress1,
-          pool.chainId2,
-          pool.tokenAddress2,
+          chainId0,
+          chainId1,
+          amount0,
+          amount1,
           (value: string) => {
-            //setSelectedPool({ ...selectedPool, share: value });
+            if (
+              _token0 === token0 &&
+              _token1 === token1 &&
+              _chainId0 === chainId0 &&
+              _chainId1 === chainId1
+            ) {
+              setShare(value);
+            }
           }
         );
       }
     };
-    for (let pool of poolInfoList) {
-      updator(pool)();
-    }
-  }, [addressPair]);
+    resetPool();
+    updator();
+  }, [addressPair, chainId0, chainId1, token0, token1]);
 
-  react.useEffect(() => {
-    return () => {
-      for (let pool of poolInfoList) {
-        unregisterTask(pool);
-      }
-    };
-  }, []);
+  const chainOptions = chainInfoList.map((c) => ({
+    key: c.chainId,
+    text: c.chainId,
+  }));
+
+  const tokenOptions = (chainId: string) =>
+    chainInfoList
+      .find((c) => c.chainId === chainId)
+      ?.tokens?.map((token) => ({
+        key: token,
+        text: token,
+      })) ?? [];
+
+  const resetPool = () => {
+    setLiquid0("loading...");
+    setLiquid1("loading...");
+    setShare("loading...");
+  };
 
   return (
     <>
@@ -146,44 +158,95 @@ export default function Supply(props: IProps) {
         tokens={verticalGapStackTokens}
       >
         <Stack tokens={verticalGapStackTokens}>
-          <div className="swap-selector" key={selectedPool?.id}>
+          <div className="swap-selector" key="retrieve">
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
               <a className="navbar-brand" href="#">
-                Supply Liquidity:
+                Add Liquidity:
               </a>
             </nav>
             <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
               <ul className="list-group">
-              <li className="list-group-item">
-                From: Chain-id - {selectedPool?.chainId1}
-              </li>
-              <li className="list-group-item address">
-                0x{selectedPool?.tokenAddress1}
-              </li>
-              <li className="list-group-item">liquidity: {selectedPool?.liquid ?? "loading ..."}
-              </li>
-              <li className="list-group-item">
-                amount: <TextField onChange={(e:any) => {
-                    setSelectedPool({...selectedPool, amount: e.target.value});
+                <Dropdown
+                  label="Chain ID"
+                  placeholder="Select Chain"
+                  options={chainOptions}
+                  onChange={(_, option) => {
+                    if (option) {
+                      if (option.key != chainId0) {
+                        setToken0(
+                          chainInfoList.find((c) => c.chainId === option.key)
+                            ?.tokens[0] ?? ""
+                        );
+                      }
+                      setChainId0(option.key as string);
+                    }
+                  }}
+                  defaultSelectedKey={chainId0}
+                />
+                <Dropdown
+                  label="Token"
+                  placeholder="Select Token"
+                  options={tokenOptions(chainId0)}
+                  onChange={(_, option) => {
+                    if (option) {
+                      setToken0(option.key as string);
+                    }
+                  }}
+                  defaultSelectedKey={token0}
+                />
+                <Label>Liquidity</Label>
+                <TextField readOnly disabled value={liquid0 ?? "loading ..."} />
+                <TextField
+                  label="Amount"
+                  value={amount0 ?? "loading ..."}
+                  onChange={(e: any) => {
+                    setAmount0(e.target.value);
+                    setAmount1(e.target.value);
                   }}
                 />
-              </li>
               </ul>
+              <Separator>Share: {share ?? "loading..."}</Separator>
               <ul className="list-group">
-              <li className="list-group-item">
-                To: Chain-id - {selectedPool?.chainId2}
-              </li>
-              <li className="list-group-item address">
-                0x{selectedPool?.tokenAddress2}
-              </li>
-              <li className="list-group-item">
-                liquidity: {selectedPool?.liquid ?? "loading ..."}
-              </li>
-              <li className="list-group-item">
-                amount: <TextField disabled value={selectedPool?.amount ?? "0"}/>
-              </li>
+                <Dropdown
+                  label="Chain ID"
+                  placeholder="Select Chain"
+                  options={chainOptions}
+                  onChange={(_, option) => {
+                    if (option) {
+                      if (option.key != chainId1) {
+                        setToken1(
+                          chainInfoList.find((c) => c.chainId === option.key)
+                            ?.tokens[0] ?? ""
+                        );
+                      }
+                      setChainId1(option.key as string);
+                    }
+                  }}
+                  selectedKey={chainId1}
+                />
+                <Dropdown
+                  label="Token"
+                  placeholder="Select Token"
+                  options={tokenOptions(chainId1)}
+                  onChange={(_, option) => {
+                    if (option) {
+                      setToken1(option.key as string);
+                    }
+                  }}
+                  selectedKey={token1}
+                />
+                <Label>Liquidity</Label>
+                <TextField readOnly disabled value={liquid1 ?? "loading ..."} />
+                <Label>Amount</Label>
+                <TextField
+                  readOnly disabled
+                  value={amount1 ?? "loading ..."}
+                />
               </ul>
-              <button type="button" className="btn btn-sm btn-primary"
+              <button
+                type="button"
+                className="btn btn-sm btn-primary"
+                disabled={token0 === token1 && chainId0 === chainId1}
                 onClick={() => {
                   setSelectedPoolOps(PoolOps.Supply);
                 }}
@@ -194,10 +257,14 @@ export default function Supply(props: IProps) {
           </div>
         </Stack>
       </Stack>
-      {addressPair && selectedPool && selectedPoolOps === PoolOps.Supply && (
+      {addressPair && selectedPoolOps === PoolOps.Supply && (
         <SupplyModal
           account={addressPair[0]}
-          {...selectedPool}
+          chainId0={chainId0}
+          chainId1={chainId1}
+          token0={token0}
+          token1={token1}
+          amount={amount0}
           close={() => {
             setSelectedPoolOps(undefined);
           }}

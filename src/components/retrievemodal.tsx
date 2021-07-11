@@ -1,19 +1,18 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as react from "react";
 import { Modal } from "@fluentui/react";
 import { Label } from "@fluentui/react";
 import { TextField } from "@fluentui/react/lib/TextField";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { retrieve } from "../libs/utils";
 import "./withdraw.css";
-import { verticalGapStackTokens, boxLabelStyles, buttonStyles, titleStyles } from "./common-styles";
+import { verticalGapStackTokens } from "./common-styles";
 
 interface IProps {
   account: string;
+  chainId0: string;
+  token0: string;
   chainId1: string;
-  tokenAddress1: string;
-  chainId2: string;
-  tokenAddress2: string;
+  token1: string;
   amount?: string;
   close: () => void;
 }
@@ -28,13 +27,13 @@ export default function RetrieveModal(props: IProps) {
         verticalAlign={"start"}
         tokens={verticalGapStackTokens}
       >
-        <Label>Amount for {props.chainId1} / 0x{props.tokenAddress1}</Label>
+        <Label>Amount for {props.chainId0} / 0x{props.token0}</Label>
         <TextField
           className="account"
           defaultValue={props.amount}
           disabled
         />
-        <Label>Amount for {props.chainId2} / 0x{props.tokenAddress2}</Label>
+        <Label>Amount for {props.chainId1} / 0x{props.token1}</Label>
         <TextField
           className="account"
           defaultValue={props.amount}
@@ -44,7 +43,7 @@ export default function RetrieveModal(props: IProps) {
         <button type="button" className="btn btn-sm btn-primary"
           onClick={() => {
               (props.amount) &&
-              retrieve(props.account, props.chainId1, props.tokenAddress1, props.chainId2, props.tokenAddress2, props.amount ?? "0", props.amount ?? "0");
+              retrieve(props.account, props.chainId0, props.token0, props.chainId1, props.token1, props.amount ?? "0", props.amount ?? "0");
               props.close();
             }
           }

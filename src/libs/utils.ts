@@ -57,7 +57,7 @@ export async function queryPoolAmountAsync(
   tokenAddress1: string,
   chainId2: string,
   tokenAddress2: string,
-  callback: (number: string) => void
+  callback: (v1: string, v2: string) => void
 ) {
   const fn = async () => {
     const api = await getAPI();
@@ -67,20 +67,28 @@ export async function queryPoolAmountAsync(
         compressToken(chainId1, tokenAddress1, true) +
         compressToken(chainId2, tokenAddress2, true)
       );
-      callback(result.toString());
+      const values = result.toString().replace(/[\[ \]]/g, "").split(',');
+      if (values.length !== 2) {
+        throw new Error(`Got unexpected pool liquids: ${result.toString()}`)
+      }
+      callback(values[0], values[1]);
     } else {
       const result = await api.query.swapModule.poolMap(
         "0x" +
         compressToken(chainId2, tokenAddress2, true) +
         compressToken(chainId1, tokenAddress1, true)
       );
-      callback(result.toString());
+      const values = result.toString().replace(/[\[ \]]/g, "").split(',');
+      if (values.length !== 2) {
+        throw new Error(`Got unexpected pool liquids: ${result.toString()}`)
+      }
+      callback(values[1], values[0]);
     }
   };
   try {
     await fn();
   } catch (e) {
-    callback("failed");
+    callback("failed", "failed");
   }
 }
 
