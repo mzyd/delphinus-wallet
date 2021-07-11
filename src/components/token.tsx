@@ -188,7 +188,7 @@ export default function Token(props: IProps) {
                   />
                   <DefaultButton text="Withdraw" className="btn-pl2"
                     onClick={() => {
-                      setTXProps(addressPair![1], item.chainId, token.address);
+                      setTXProps(addressPair![0], item.chainId, token.address);
                       setCurrentModal("Withdraw")
                     }}
                   />

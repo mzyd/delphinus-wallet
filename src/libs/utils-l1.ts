@@ -69,6 +69,5 @@ export async function queryCurrentL1Account(
   chainId: string
 ) {
   let bridge = await getBridge(chainId);
-
   return bridge.encode_l1address(bridge.account);
 }

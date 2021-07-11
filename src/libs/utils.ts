@@ -67,6 +67,7 @@ export async function queryPoolAmountAsync(
         compressToken(chainId1, tokenAddress1, true) +
         compressToken(chainId2, tokenAddress2, true)
       );
+      console.log("pool liquidity:", result.toString());
       const values = result.toString().replace(/[\[ \]]/g, "").split(',');
       if (values.length !== 2) {
         throw new Error(`Got unexpected pool liquids: ${result.toString()}`)
@@ -78,6 +79,7 @@ export async function queryPoolAmountAsync(
         compressToken(chainId2, tokenAddress2, true) +
         compressToken(chainId1, tokenAddress1, true)
       );
+      console.log("pool liquidity:", result.toString());
       const values = result.toString().replace(/[\[ \]]/g, "").split(',');
       if (values.length !== 2) {
         throw new Error(`Got unexpected pool liquids: ${result.toString()}`)

@@ -21,9 +21,10 @@ interface IProps {
   close: () => void;
 }
 
-export default function DepositBox(props: IProps) {
+export default function WithdrawBox(props: IProps) {
   const [amount, setAmount] = react.useState<string>();
   const [progress, setProgress] = react.useState<string>();
+  const [process, setProcess] = react.useState<string>("");
   const [error, setError] = react.useState<string>();
   //const [l1account, setL1Account] = react.useState<string>();
 
@@ -34,26 +35,32 @@ export default function DepositBox(props: IProps) {
   console.log(txprops);
 
   const okclick = () => {
-    amount &&
-    withdraw (
-      txprops.account,
-      txprops.chainId,
-      txprops.tokenAddress,
-      amount,
-      (x => setProgress(x)),
-      (x => setError(x)),
-    );
+    console.log("withdraw account:", txprops.account);
+    console.log("tokenAddress:", txprops.tokenAddress);
+    if (amount) {
+      setProcess("processing");
+      withdraw (
+        txprops.account,
+        txprops.chainId,
+        txprops.tokenAddress,
+        amount,
+        (x => setProgress(x)),
+        (x => setError(x)),
+      );
+      setProcess("done");
+    }
   }
 
 
   return (
-    <Modal isOpen={props.show} onDismiss={props.close} isBlocking={true}>
+    <Modal isOpen={props.show} onDismiss={props.close} isBlocking={true} className="withdraw">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a className="navbar-brand" href="#">Deposit</a>
+      </nav>
       <Stack
         verticalAlign={"start"}
         tokens={verticalGapStackTokens}
-        className="withdraw"
       >
-        <Label>Withdraw</Label>
         {
           progress &&
           <div className="alert alert-primary" role="alert">{progress}</div>
@@ -64,25 +71,25 @@ export default function DepositBox(props: IProps) {
         }
         <Stack horizontal>
           <Stack verticalAlign={"start"}>
+            <Label>L2Account:</Label>
             <Label>Chain-Id:</Label>
             <Label>Token:</Label>
             <Label>Amount:</Label>
-            <Label>L2Account:</Label>
           </Stack>
           <Stack verticalAlign={"start"}>
+            <Label>{txprops.account}</Label>
             <Label>{txprops.chainId}</Label>
             <Label>{txprops.tokenAddress}</Label>
             <TextField
               className="account"
               autoFocus
-              disabled = { true}
               onChange={(e: any) => {
                 setAmount(e.target.value);
               }}
             />
-            <Label>{txprops.account}</Label>
           </Stack>
         </Stack>
+        {!process &&
         <div>
             <PrimaryButton onClick={okclick} >
              Ok
@@ -91,6 +98,15 @@ export default function DepositBox(props: IProps) {
               Cancel
             </PrimaryButton>
         </div>
+        }
+        {process && process == "done" &&
+        <div>
+            <button type="button" className="btn btn-sm btn-primary"
+             onClick={props.close} >
+             Done
+            </button>
+        </div>
+        }
       </Stack>
     </Modal>
   );
