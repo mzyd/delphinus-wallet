@@ -86,8 +86,8 @@ export default function Retrieve(props: IProps) {
       await queryPoolAmountAsync(
         chainId0,
         chainId1,
-        amount0,
-        amount1,
+        token0,
+        token1,
         (v0: string, v1: string) => {
           if (
             _token0 === token0 &&
@@ -106,8 +106,8 @@ export default function Retrieve(props: IProps) {
           addressPair[1],
           chainId0,
           chainId1,
-          amount0,
-          amount1,
+          token0,
+          token1,
           (value: string) => {
             if (
               _token0 === token0 &&
