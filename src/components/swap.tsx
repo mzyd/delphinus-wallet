@@ -101,7 +101,7 @@ export default function Swap(props: IProps) {
 
   const chainOptions = chainInfoList.map((c) => ({
     key: c.chainId,
-    text: c.chainId,
+    text: "Chain ID: " + c.chainId,
   }));
 
   const tokenOptions = (chainId: string) =>
@@ -109,7 +109,7 @@ export default function Swap(props: IProps) {
       .find((c) => c.chainId === chainId)
       ?.tokens?.map((token) => ({
         key: token,
-        text: token,
+        text: "Token: " + token,
       })) ?? [];
 
   const resetPool = () => {
@@ -134,7 +134,6 @@ export default function Swap(props: IProps) {
             <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
               <ul className="list-group">
                 <Dropdown
-                  label="Chain ID"
                   placeholder="Select Chain"
                   options={chainOptions}
                   onChange={(_, option) => {
@@ -150,8 +149,8 @@ export default function Swap(props: IProps) {
                   }}
                   defaultSelectedKey={chainId0}
                 />
+                <div className="p-1" />
                 <Dropdown
-                  label="Token"
                   placeholder="Select Token"
                   options={tokenOptions(chainId0)}
                   onChange={(_, option) => {
@@ -161,10 +160,18 @@ export default function Swap(props: IProps) {
                   }}
                   defaultSelectedKey={token0}
                 />
-                <Label>Liquidity</Label>
-                <TextField readOnly disabled value={liquid0 ?? "loading ..."} />
+                <div className="p-1" />
+                <TextField
+                  label="Liquidity"
+                  readOnly
+                  underlined
+                  disabled
+                  value={liquid0 ?? "loading ..."}
+                />
+                <div className="p-1" />
                 <TextField
                   label="Amount"
+                  underlined
                   value={amount0 ?? "loading ..."}
                   onChange={(e: any) => {
                     setAmount0(e.target.value);
@@ -175,7 +182,6 @@ export default function Swap(props: IProps) {
               <Separator> To </Separator>
               <ul className="list-group">
                 <Dropdown
-                  label="Chain ID"
                   placeholder="Select Chain"
                   options={chainOptions}
                   onChange={(_, option) => {
@@ -191,8 +197,8 @@ export default function Swap(props: IProps) {
                   }}
                   selectedKey={chainId1}
                 />
+                <div className="p-1" />
                 <Dropdown
-                  label="Token"
                   placeholder="Select Token"
                   options={tokenOptions(chainId1)}
                   onChange={(_, option) => {
@@ -202,10 +208,22 @@ export default function Swap(props: IProps) {
                   }}
                   selectedKey={token1}
                 />
-                <Label>Liquidity</Label>
-                <TextField readOnly disabled value={liquid1 ?? "loading ..."} />
-                <Label>Amount</Label>
-                <TextField readOnly disabled value={amount1 ?? "loading ..."} />
+                <div className="p-1" />
+                <TextField
+                  label="Liquidity"
+                  readOnly
+                  underlined
+                  disabled
+                  value={liquid1 ?? "loading ..."}
+                />
+                <div className="p-1" />
+                <TextField
+                  label="Amount"
+                  readOnly
+                  underlined
+                  disabled
+                  value={amount1 ?? "loading ..."}
+                />
               </ul>
               <button
                 type="button"
