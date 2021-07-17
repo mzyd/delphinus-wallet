@@ -6,8 +6,8 @@ import { TextField } from "@fluentui/react/lib/TextField";
 import { PrimaryButton } from "@fluentui/react/lib/Button";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { withdraw } from "../libs/utils";
-import "./withdraw.css";
-import { verticalGapStackTokens, titleStyles, boxLabelStyles, buttonStyles } from "./common-styles";
+import { verticalGapStackTokens } from "../styles/common-styles";
+import "../styles/modal.css";
 
 interface TXProps {
   account: string;

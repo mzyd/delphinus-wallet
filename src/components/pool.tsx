@@ -4,17 +4,18 @@ import * as react from "react";
 import { Stack } from "@fluentui/react/lib/Stack";
 
 import {
-  getAddressOfAccoutAsync,
   queryPoolAmountAsync,
   queryPoolShareAsync,
 } from "../libs/utils";
-
 import { registerTask, unregisterTask } from "../libs/query-fresher";
-import "./withdraw.css";
+import { SubstrateAccountInfo } from "../libs/type";
+
 import chainList from "../config/tokenlist";
 
+import "../styles/theme.css";
+
 interface IProps {
-  account: string;
+  l2Account: SubstrateAccountInfo;
 }
 
 interface PoolInfo {
@@ -54,20 +55,6 @@ export default function Pool(props: IProps) {
   ]);
 
   react.useEffect(() => {
-    if (!addressPair || props.account !== addressPair[0]) {
-      getAddressOfAccoutAsync(
-        props.account,
-        (account: string, address: string) => {
-          setAddressPair([account, address]);
-        }
-      );
-    }
-  }, []);
-
-  react.useEffect(() => {
-    if (!addressPair) {
-      return;
-    }
 
     const updator = (pool: any) => async () => {
       await queryPoolAmountAsync(

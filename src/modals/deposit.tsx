@@ -6,8 +6,8 @@ import { TextField } from "@fluentui/react/lib/TextField";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { deposit } from "../libs/utils-l1";
 import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
-import "./withdraw.css";
-import { verticalGapStackTokens } from "./common-styles";
+import { verticalGapStackTokens } from "../styles/common-styles";
+import "../styles/modal.css";
 
 interface TXProps {
   account: string;

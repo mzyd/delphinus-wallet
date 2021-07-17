@@ -3,16 +3,18 @@ import * as react from "react";
 
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
 import { TextField } from "@fluentui/react/lib/TextField";
-
-import { getAddressOfAccoutAsync, queryPoolAmountAsync } from "../libs/utils";
-
-import SwapModal from "./swapmodal";
-import "./token.css";
-import chainList from "../config/tokenlist";
+import { queryPoolAmountAsync } from "../libs/utils";
+import SwapModal from "../modals/swapmodal";
 import { Dropdown, Label, Separator } from "@fluentui/react";
+import { TXProps, SubstrateAccountInfo } from "../libs/type";
+
+
+import "../styles/panel.css";
+import chainList from "../config/tokenlist";
+
 
 interface IProps {
-  account: string;
+  l2Account: SubstrateAccountInfo;
 }
 
 const verticalGapStackTokens: IStackTokens = {
@@ -36,7 +38,6 @@ const chainInfoList: ChainInfo[] = chainList.map((c) => ({
 }));
 
 export default function Swap(props: IProps) {
-  const [addressPair, setAddressPair] = react.useState<[string, string]>();
   const [selectedPoolOps, setSelectedPoolOps] = react.useState<PoolOps>();
   const [chainId0, setChainId0] = react.useState<string>(
     chainInfoList[0].chainId
@@ -56,20 +57,6 @@ export default function Swap(props: IProps) {
   const [liquid1, setLiquid1] = react.useState<string>();
 
   react.useEffect(() => {
-    if (!addressPair || props.account !== addressPair[0]) {
-      getAddressOfAccoutAsync(
-        props.account,
-        (account: string, address: string) => {
-          setAddressPair([account, address]);
-        }
-      );
-    }
-  }, []);
-
-  react.useEffect(() => {
-    if (!addressPair) {
-      return;
-    }
 
     const _token0 = token0;
     const _token1 = token1;
@@ -97,7 +84,7 @@ export default function Swap(props: IProps) {
     };
     resetPool();
     updator();
-  }, [addressPair, chainId0, chainId1, token0, token1]);
+  }, [chainId0, chainId1, token0, token1]);
 
   const chainOptions = chainInfoList.map((c) => ({
     key: c.chainId,
@@ -239,7 +226,7 @@ export default function Swap(props: IProps) {
           </div>
         </Stack>
       </Stack>
-      {addressPair && selectedPoolOps === PoolOps.Swap && (
+      {selectedPoolOps === PoolOps.Swap && (
         <SwapModal
           account={addressPair[0]}
           chainId0={chainId0}

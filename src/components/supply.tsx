@@ -9,20 +9,17 @@ import { separatorStyles } from "./common-styles";
 import { TextField } from "@fluentui/react/lib/TextField";
 
 import {
-  getAddressOfAccoutAsync,
   queryPoolAmountAsync,
   queryPoolShareAsync,
 } from "../libs/utils";
 
-import SupplyBox from "./supply";
-import RetrieveBox from "./retrieve";
-import SupplyModal from "./supplymodal";
+import SupplyModal from "../modals/supplymodal";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
-import "./token.css";
+import "../styles/panel.css";
 import chainList from "../config/tokenlist";
 
 interface IProps {
-  account: string;
+  l2Account: SubstrateAccountInfo;
 }
 
 const verticalGapStackTokens: IStackTokens = {
@@ -47,7 +44,6 @@ const chainInfoList: ChainInfo[] = chainList.map((c) => ({
 }));
 
 export default function Supply(props: IProps) {
-  const [addressPair, setAddressPair] = react.useState<[string, string]>();
   const [selectedPoolOps, setSelectedPoolOps] = react.useState<PoolOps>();
   const [chainId0, setChainId0] = react.useState<string>(
     chainInfoList[0].chainId
@@ -68,20 +64,6 @@ export default function Supply(props: IProps) {
   const [share, setShare] = react.useState<string>();
 
   react.useEffect(() => {
-    if (!addressPair || props.account !== addressPair[0]) {
-      getAddressOfAccoutAsync(
-        props.account,
-        (account: string, address: string) => {
-          setAddressPair([account, address]);
-        }
-      );
-    }
-  }, []);
-
-  react.useEffect(() => {
-    if (!addressPair) {
-      return;
-    }
 
     const _token0 = token0;
     const _token1 = token1;
@@ -107,29 +89,27 @@ export default function Supply(props: IProps) {
         }
       );
 
-      if (addressPair) {
-        await queryPoolShareAsync(
-          addressPair[1],
-          chainId0,
-          token0,
-          chainId1,
-          token1,
-          (value: string) => {
-            if (
-              _token0 === token0 &&
-              _token1 === token1 &&
-              _chainId0 === chainId0 &&
-              _chainId1 === chainId1
-            ) {
-              setShare(value);
-            }
+      await queryPoolShareAsync(
+        props.l2Account,
+        chainId0,
+        token0,
+        chainId1,
+        token1,
+        (value: string) => {
+          if (
+            _token0 === token0 &&
+            _token1 === token1 &&
+            _chainId0 === chainId0 &&
+            _chainId1 === chainId1
+          ) {
+            setShare(value);
           }
-        );
-      }
+        }
+      );
     };
     resetPool();
     updator();
-  }, [addressPair, chainId0, chainId1, token0, token1]);
+  }, [chainId0, chainId1, token0, token1]);
 
   const chainOptions = chainInfoList.map((c) => ({
     key: c.chainId,
@@ -274,7 +254,7 @@ export default function Supply(props: IProps) {
           </div>
         </Stack>
       </Stack>
-      {addressPair && selectedPoolOps === PoolOps.Supply && (
+      {selectedPoolOps === PoolOps.Supply && (
         <SupplyModal
           account={addressPair[0]}
           chainId0={chainId0}

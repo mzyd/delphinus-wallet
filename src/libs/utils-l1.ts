@@ -1,8 +1,10 @@
-const BN = require("bn.js");
+import SubstrateAccountInfo from "./type";
 
+const BN = require("bn.js");
 const abi: any = require("solidity/clients/bridge/abi");
 const ss58 = require("substrate-ss58");
 const configSelector: any = require("../config/config-selector");
+
 
 async function getBridge(chainId: string, mode = true) {
     console.log("getBridge", configSelector.configMap[chainId]);
@@ -18,13 +20,14 @@ async function getBridge(chainId: string, mode = true) {
 }
 
 export async function deposit(
-  accountAddress: string,
+  l2Account: SubstrateAccountInfo,
   chainId: string,
   tokenAddress: string, // hex without 0x prefix
   amount: string,
   progress: (s:string, h:string, r:string, ratio:number) => void,
   error: (m:string) => void
 ) {
+  const accountAddress = l2Account.address;
   console.log('call deposit');
   try {
     let bridge = await getBridge(chainId);
@@ -51,12 +54,12 @@ export async function deposit(
 }
 
 export async function queryBalanceOnL1(
-  accountAddress: string,
+  l2Account: SubstrateAccountInfo,
   tokenChainId: string,
   tokenAddress: string,
   fromChainId: string,
 ) {
-  //console.log(tokenChainId, tokenAddress, fromChainId);
+  const accountAddress = l2Account.address;
   let bridge = await getBridge(fromChainId, false);
   let fullTokenAddress = new BN(tokenChainId).shln(160).add(new BN(tokenAddress, 16));
   console.log(fullTokenAddress.toString(16), ss58.addressToAddressId(accountAddress));
