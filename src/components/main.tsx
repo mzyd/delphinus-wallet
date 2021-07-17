@@ -65,7 +65,7 @@ export default function Main(props: IProps) {
           }
         },
         {
-          name: 'Add Liqidity',
+          name: 'Add Liquidity',
           key: 'supply',
           url: '',
           onClick: () => setCurrentPanel("supply"),
@@ -80,7 +80,7 @@ export default function Main(props: IProps) {
           }
         },
         {
-          name: 'Retrieve Liqidity',
+          name: 'Retrieve Liquidity',
           key: 'retrieve',
           url: '',
           onClick: () => setCurrentPanel("retrieve"),
