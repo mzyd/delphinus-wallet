@@ -5,8 +5,9 @@ import { Label } from "@fluentui/react";
 import { DefaultButton} from "@fluentui/react/lib/Button";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { Nav } from '@fluentui/react';
-import "./main.css";
-import { getAddressOfAccoutAsync } from "../libs/utils";
+import "../styles/main.css";
+import { loginL2Account } from "../libs/utils";
+import { SubstrateAccountInfo } from "../libs/type";
 import Token from "./token";
 import Pool from "./pool";
 import Swap from "./swap";
@@ -23,12 +24,12 @@ const navigationStyles = {
 };
 
 interface IProps {
-  account: string;
-  setAccount: (account: string) => void;
+  l2Account: SubstrateAccountInfo;
+  setAccount: () => void;
 }
 
 export default function Main(props: IProps) {
-  const [addressPair, setAddressPair] = react.useState<[string, string]>();
+  const [l2Account, setL2Account] = react.useState<SubstrateAccountInfo>(props.l2Account);
   const [currentPanel, setCurrentPanel] = react.useState<string>("wallet");
 
   const links = [
@@ -113,21 +114,6 @@ export default function Main(props: IProps) {
     },
   ];
 
-  if (!addressPair || props.account !== addressPair[0]) {
-    getAddressOfAccoutAsync(
-      props.account,
-      (account: string, address: string) => {
-        setAddressPair([account, address]);
-      }
-    );
-  }
-
-  const basicInfo = {
-      account: addressPair?.[0] || "",
-      onClickButton: () => props.setAccount(""),
-      address: addressPair?.[1] || "",
-  };
-
   const navHead = {
     backgroundColor: "#cccccc",
     color: "white",
@@ -147,22 +133,22 @@ export default function Main(props: IProps) {
         </Stack>
         <Stack disableShrink={true} grow={1}>
           <div style={navHead}>
-            <Label key={basicInfo.account}>
-              {basicInfo.account}
-              <span className="navaddr"> {basicInfo.address} </span>
+            <Label key={l2Account.account}>
+              {l2Account.account}
+              <span className="navaddr"> {l2Account.address} </span>
               <DefaultButton className="navfr"
-                onClick={() => basicInfo.onClickButton?.()}
-                key={basicInfo.address} >
+                onClick={() => props.setAccount()}
+                key={l2Account.address} >
               switch
               </DefaultButton>
             </Label>
           </div>
           {
-            (currentPanel === "wallet" && <Token account={props.account}/>)
-            || (currentPanel === "swap" && <Swap account={props.account}/>)
-            || (currentPanel === "supply" && <Supply account={props.account}/>)
-            || (currentPanel === "retrieve" && <Retrieve account={props.account}/>)
-            || (currentPanel === "pool" && <Pool account={props.account}/>)
+            (currentPanel === "wallet" && <Token l2Account={props.l2Account}/>)
+            || (currentPanel === "swap" && <Swap l2Account={props.l2Account}/>)
+            || (currentPanel === "supply" && <Supply l2Account={props.l2Account}/>)
+            || (currentPanel === "retrieve" && <Retrieve l2Account={props.l2Account}/>)
+            || (currentPanel === "pool" && <Pool l2Account={props.l2Account}/>)
           }
         </Stack>
       </Stack>

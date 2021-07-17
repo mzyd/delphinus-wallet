@@ -4,18 +4,38 @@ import { cryptoWaitReady } from "@polkadot/util-crypto";
 import l2ServerConfig from "./substrate-node.json";
 import l2types from "./types.json";
 import { queryCurrentL1Account } from "./utils-l1";
+import {
+  web3Accounts,
+  web3Enable,
+  web3FromAddress,
+  web3ListRpcProviders,
+  web3UseRpcProvider
+} from '@polkadot/extension-dapp';
+
+import SubstrateAccountInfo from "./type";
 
 const BN = require("bn.js");
 const ss58 = require("substrate-ss58");
 const keyring = new Keyring({ type: "sr25519" });
 
-export function getAddressOfAccoutAsync(
+async function tryLoginL2Account(callback: (u:SubstrateAccountInfo)=>void) {
+  const injectedSubstrate = await web3Enable('Delphinus');
+  const substrateAccounts = await web3Accounts();
+  const sender = substrateAccounts[0];
+  const injector = await web3FromAddress(sender.address);
+  callback({
+    account: sender.meta.name,
+    address: sender.address,
+    injector: injector
+  });
+  console.log(sender);
+}
+
+export function loginL2Account(
   account: string,
-  callback: (uri: string, address: string) => void
+  callback: (u: SubstrateAccountInfo) => void
 ) {
-  cryptoWaitReady().then(() =>
-    callback(account, keyring.addFromUri(`//${account}`).address)
-  );
+    tryLoginL2Account(callback);
 }
 
 let api: ApiPromise;
@@ -31,16 +51,17 @@ export async function getAPI() {
 }
 
 export async function queryTokenAmountAsync(
-  accountAddress: string,
+  l2Account: SubstrateAccountInfo,
   chainId: string,
   tokenAddress: string,
   callback: (number: string) => void
 ) {
+  const accountAddress = l2Account.address;
   const fn = async () => {
     const api = await getAPI();
     const accountId = ss58.addressToAddressId(accountAddress);
     /* This should get wrapped into apis */
-    const result = await api.query.swapModule.balanceMap(
+    const result = await api.query.swapModule.balanceMap (
       accountId + compressToken(chainId, tokenAddress, true)
     );
     callback(result.toString());
@@ -95,13 +116,14 @@ export async function queryPoolAmountAsync(
 }
 
 export async function queryPoolShareAsync(
-  accountAddress: string,
+  l2Account: SubstrateAccountInfo,
   chainId1: string,
   tokenAddress1: string,
   chainId2: string,
   tokenAddress2: string,
   callback: (number: string) => void
 ) {
+  const accountAddress = l2Account.address;
   const fn = async () => {
     const api = await getAPI();
     const accountId = ss58.addressToAddressId(accountAddress);
@@ -133,28 +155,6 @@ async function getSudo() {
   await cryptoWaitReady();
   const keyring = new Keyring({ type: "sr25519" });
   return keyring.addFromUri("//Alice", { name: "Alice default" });
-}
-
-export async function deposit(
-  accountAddress: string,
-  chainId: string,
-  token: string
-) {
-  const api = await getAPI();
-  const sudo = await getSudo();
-  const sudoAddress = (sudo as any).address;
-  const nonce = new BN(
-    (await api.query.system.account(sudoAddress)).nonce
-  );
-  const accountId = ss58.addressToAddressId(sudoAddress);
-  const l2nonce = await api.query.swapModule.nonceMap(accountId);
-  const tx = api.tx.swapModule.deposit(
-    accountAddress,
-    compressToken(chainId, token),
-    100,
-    l2nonce
-  );
-  tx.signAndSend(sudo, { nonce });
 }
 */
 

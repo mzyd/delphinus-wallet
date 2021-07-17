@@ -1,0 +1,42 @@
+.withdraw input {
+  font-size: 1.5rem;
+  font-family: 'KoHo';
+  font-weight: bold;
+}
+
+.withdraw nav {
+  padding-left:1em;
+}
+
+.withdraw button {
+  float: right;
+  margin-left: 5px;
+}
+
+.withdraw span {
+  font-family: 'KoHo';
+  font-weight: bold;
+}
+
+.address {
+  font-size:8px;
+}
+
+.button-container button {
+  margin:5px;
+}
+
+.pool-list {
+  margin:5px;
+}
+
+.swap-selector {
+  border:1px solid #222;
+  border-radius: 15px;
+  padding-bottom:5px;
+  overflow:hidden;
+}
+
+.swap-selector nav a.navbar-brand{
+  margin-left:10px;
+}

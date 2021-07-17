@@ -5,88 +5,44 @@ import { Label } from "@fluentui/react";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 import { PivotItem, Pivot } from '@fluentui/react/lib/Pivot';
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
-import {  ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
+import { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { Separator } from "@fluentui/react/lib/Separator";
-import { normalLabelStyles, separatorStyles, verticalGapStackTokens } from "./common-styles";
+
 import {
   getAddressOfAccoutAsync,
   queryTokenAmountAsync,
-  withdraw,
+  withdraw
 } from "../libs/utils";
 import { queryBalanceOnL1 } from "../libs/utils-l1";
-import "./token.css";
-import WithdrawBox from "./withdraw";
-import DepositBox from "./deposit";
+import { TXProps, SubstrateAccountInfo } from "../libs/type";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
+import WithdrawBox from "../modals/withdraw";
+import DepositBox from "../modals/deposit";
+
+import { separatorStyles, verticalGapStackTokens } from "../styles/common-styles";
+import "../styles/panel.css";
+
 import chainList from "../config/tokenlist";
 
 interface IProps {
-  account: string;
-}
-
-interface TXProps {
-  account: string;
-  chainId: string;
-  tokenAddress: string;
-}
-
-const normalStyles = {
-  root: [
-    {
-      fontFamily: "KoHo",
-      fontSize: "1rem",
-    },
-  ],
-};
-
-interface BalanceInfo {
-  [key:string]: string;
-}
-
-interface TokenInfo {
-  address: string;
-  l2Balance?: string;
-  l1Balance?: BalanceInfo;
-}
-
-interface ChainInfo{
-  chainId: string;
-  chainName: string;
-  enable: boolean;
-  tokens: TokenInfo[];
+  l2Account: SubstrateAccountInfo;
 }
 
 export default function Token(props: IProps) {
   const [currentModal, setCurrentModal] = react.useState<string>();
   const [currentTXProps, setCurrentTXProps] = react.useState<TXProps>();
-  const [addressPair, setAddressPair] = react.useState<[string, string]>();
   const [chainInfoList, setTokenInfoList] =
     react.useState<ChainInfo[]>(chainList.filter((x)=> x.enable));
 
-  const setTXProps = (account:string, cid:string, addr:string) => {
+  const setTXProps = (cid:string, addr:string) => {
      setCurrentTXProps ({
-       account: account,
-       chainId: cid,
-       tokenAddress: addr,
+       substrateAccount: props.l2Account,
+       selectedToken: {
+         chainId: cid,
+         tokenAddress: addr,
+       }
      });
   }
-
-  react.useEffect(() => {
-    if (!addressPair || props.account !== addressPair[0]) {
-      getAddressOfAccoutAsync(
-        props.account,
-        (account: string, address: string) => {
-          setAddressPair([account, address]);
-        }
-      );
-    }
-  }, []);
-
-  react.useEffect(() => {
-    if (!addressPair) {
-      return;
-    }
-  }, [addressPair]);
 
   const updateTokenL2Balance = (chainId:string, tokenAddress:string,
       tokenInfos:TokenInfo[], balance:string) => {
@@ -99,23 +55,21 @@ export default function Token(props: IProps) {
   }
 
   const updateL2Balance = async (chainId:string, tokenAddress:string) => {
-    if (addressPair) {
-      console.log("updateL2Balance");
-      await queryTokenAmountAsync(
-        addressPair[1],
-        chainId,
-        tokenAddress,
-        (value: string) => {
-          setTokenInfoList((_list) =>
-            _list?.map((e) =>
-              e.chainId === chainId
-                ? { ...e, tokens: updateTokenL2Balance(chainId, tokenAddress, e.tokens, value)}
-                : e
-            )
-          );
-        }
-      );
-    }
+    console.log("updateL2Balance");
+    await queryTokenAmountAsync(
+      props.l2Account.address,
+      chainId,
+      tokenAddress,
+      (value: string) => {
+        setTokenInfoList((_list) =>
+          _list?.map((e) =>
+            e.chainId === chainId
+              ? { ...e, tokens: updateTokenL2Balance(chainId, tokenAddress, e.tokens, value)}
+              : e
+          )
+        );
+      }
+    );
   };
 
   const updateTokenL1Balance = (chainId:string, tokenAddress:string,
@@ -129,27 +83,24 @@ export default function Token(props: IProps) {
   }
 
   const updateL1State = async (chainId:string, tokenAddress: string, queryId:string) => {
-    if (addressPair) {
-      await queryBalanceOnL1(
-        addressPair[1],
-        chainId,
-        tokenAddress,
-        queryId,
-      ).then((value: string) => {
-        setTokenInfoList((_list) =>
-          _list?.map((e) =>
-            e.chainId === chainId
-              ? { ...e, tokens: updateTokenL1Balance(queryId, tokenAddress, e.tokens, value)}
-              : e
-          )
-        );
-      });
-    }
+    await queryBalanceOnL1(
+      props.l2Account,
+      chainId,
+      tokenAddress,
+      queryId,
+    ).then((value: string) => {
+      setTokenInfoList((_list) =>
+        _list?.map((e) =>
+          e.chainId === chainId
+            ? { ...e, tokens: updateTokenL1Balance(queryId, tokenAddress, e.tokens, value)}
+            : e
+        )
+      );
+    });
   };
 
   const updateStates = async (chainId:string, tokenAddress: string) => {
     await updateL2Balance(chainId, tokenAddress);
-    //return;
     for (let chain of chainInfoList) {
       console.log(chainId, chain.chainId);
       await updateL1State(chainId, tokenAddress, chain.chainId);
@@ -165,7 +116,7 @@ export default function Token(props: IProps) {
     };
     p.then(()=>console.log("done"));
     //await p; // This is dangerous since ui might trigger switch bridge
-  }, [addressPair]);
+  }, []);
 
   return (
     <>

@@ -4,12 +4,9 @@ import { Modal } from "@fluentui/react";
 import { Label } from "@fluentui/react";
 import { TextField } from "@fluentui/react/lib/TextField";
 import { Stack } from "@fluentui/react/lib/Stack";
-import { swap } from "../libs/utils";
-import {
-  verticalGapStackTokens,
-} from "./common-styles";
-import "./withdraw.css";
-import { IDropdownStyles } from "@fluentui/react/lib/Dropdown";
+import { supply } from "../libs/utils";
+import "../styles/modal.css";
+import { verticalGapStackTokens} from "../styles/common-styles";
 
 interface IProps {
   account: string;
@@ -17,20 +14,15 @@ interface IProps {
   token0: string;
   chainId1: string;
   token1: string;
-  amount?:string;
+  amount?: string;
   close: () => void;
 }
 
-const dropdownStyles: Partial<IDropdownStyles> = {};
-
-export default function SwapModal(props: IProps) {
-  const [fromTokenKey, setFromTokenKey] = react.useState<number>(0);
-  const [defaultValue, setDefaultValue] = react.useState<number>(10);
-
+export default function SupplyModal(props: IProps) {
   return (
     <Modal isOpen={true} onDismiss={props.close} isBlocking={true} className="withdraw">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a className="navbar-brand" href="#">Confirm Swap</a>
+        <a className="navbar-brand" href="#">Confirm Supply Liquidity</a>
       </nav>
       <Stack
         verticalAlign={"start"}
@@ -49,15 +41,9 @@ export default function SwapModal(props: IProps) {
         <div>
         <button type="button" className="btn btn-sm btn-primary"
           onClick={() => {
-              swap(
-                props.account,
-                props.chainId0,
-                props.token0,
-                props.chainId1,
-                props.token1,
-                props.amount!
-              );
-              props.close()
+              (props.amount) &&
+              supply(props.account, props.chainId0, props.token0, props.chainId1, props.token1, props.amount, props.amount);
+              props.close();
             }
           }
         >
