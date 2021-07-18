@@ -25,7 +25,7 @@ const navigationStyles = {
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
-  setAccount: () => void;
+  setL2Account: () => void;
 }
 
 export default function Main(props: IProps) {
@@ -136,8 +136,9 @@ export default function Main(props: IProps) {
             <Label key={l2Account.account}>
               {l2Account.account}
               <span className="navaddr"> {l2Account.address} </span>
+              <span> ${l2Account.balance} </span>
               <DefaultButton className="navfr"
-                onClick={() => props.setAccount()}
+                onClick={() => props.setL2Account()}
                 key={l2Account.address} >
               switch
               </DefaultButton>

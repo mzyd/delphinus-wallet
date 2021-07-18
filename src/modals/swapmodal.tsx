@@ -4,15 +4,18 @@ import { Modal } from "@fluentui/react";
 import { Label } from "@fluentui/react";
 import { TextField } from "@fluentui/react/lib/TextField";
 import { Stack } from "@fluentui/react/lib/Stack";
+import { IDropdownStyles } from "@fluentui/react/lib/Dropdown";
+
 import { swap } from "../libs/utils";
+import { SubstrateAccountInfo } from "../libs/type";
+
 import {
   verticalGapStackTokens,
 } from "../styles/common-styles";
 import "../styles/modal.css";
-import { IDropdownStyles } from "@fluentui/react/lib/Dropdown";
 
 interface IProps {
-  account: string;
+  l2Account: SubstrateAccountInfo;
   chainId0: string;
   token0: string;
   chainId1: string;
@@ -50,7 +53,7 @@ export default function SwapModal(props: IProps) {
         <button type="button" className="btn btn-sm btn-primary"
           onClick={() => {
               swap(
-                props.account,
+                props.l2Account,
                 props.chainId0,
                 props.token0,
                 props.chainId1,

@@ -71,7 +71,7 @@ export default function Pool(props: IProps) {
 
       if (addressPair) {
         await queryPoolShareAsync(
-          addressPair[1],
+          props.l2Account,
           pool.chainId1,
           pool.tokenAddress1,
           pool.chainId2,

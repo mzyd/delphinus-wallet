@@ -16,15 +16,21 @@ interface PageState {
 
 function App() {
   const [pageState, setPageState] = react.useState<PageState>({selectingAccount:true});
-  const setL2Account = (account) => {
+  const updateL2Account = (account:SubstrateAccountInfo) => {
     console.log("l2Account", account);
     setPageState({...pageState, l2Account:account, selectingAccount:false});
   };
 
+  const setL2Account = () => {
+    setPageState({...pageState, selectingAccount:true});
+  };
+
+
+
   react.useEffect(() => {
     loginL2Account(
       "Bob",
-      setL2Account
+      updateL2Account
     );
   }, []);
 
@@ -33,7 +39,7 @@ function App() {
       { (pageState.selectingAccount === true) && <div>Please login</div> }
       { (pageState.selectingAccount === false) &&
         (pageState.l2Account != undefined)
-        && <Main l2Account={pageState.l2Account!} setAccount={setL2Account}/> }
+        && <Main l2Account={pageState.l2Account!} setL2Account={setL2Account}/> }
     </div>
   );
 }

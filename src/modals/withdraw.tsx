@@ -6,14 +6,9 @@ import { TextField } from "@fluentui/react/lib/TextField";
 import { PrimaryButton } from "@fluentui/react/lib/Button";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { withdraw } from "../libs/utils";
+import { TXProps, SubstrateAccountInfo, ChainInfo, TokenInfo } from "../libs/type";
 import { verticalGapStackTokens } from "../styles/common-styles";
 import "../styles/modal.css";
-
-interface TXProps {
-  account: string;
-  chainId: string;
-  tokenAddress: string;
-}
 
 interface IProps {
   show: boolean;
@@ -32,17 +27,17 @@ export default function WithdrawBox(props: IProps) {
     return (<></>);
   }
   const txprops = props.txprops;
+  const l2Account = txprops.substrateAccount;
+  const selectedToken = txprops.selectedToken;
   console.log(txprops);
 
   const okclick = () => {
-    console.log("withdraw account:", txprops.account);
-    console.log("tokenAddress:", txprops.tokenAddress);
     if (amount) {
       setProcess("processing");
       withdraw (
-        txprops.account,
-        txprops.chainId,
-        txprops.tokenAddress,
+        l2Account,
+        selectedToken.chainId,
+        selectedToken.tokenAddress,
         amount,
         (x => setProgress(x)),
         (x => setError(x)),
@@ -77,9 +72,9 @@ export default function WithdrawBox(props: IProps) {
             <Label>Amount:</Label>
           </Stack>
           <Stack verticalAlign={"start"}>
-            <Label>{txprops.account}</Label>
-            <Label>{txprops.chainId}</Label>
-            <Label>{txprops.tokenAddress}</Label>
+            <Label>{l2Account.account}</Label>
+            <Label>{selectedToken.chainId}</Label>
+            <Label>{selectedToken.tokenAddress}</Label>
             <TextField
               className="account"
               autoFocus

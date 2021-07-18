@@ -9,11 +9,8 @@ import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
 import { verticalGapStackTokens } from "../styles/common-styles";
 import "../styles/modal.css";
 
-interface TXProps {
-  account: string;
-  chainId: string;
-  tokenAddress: string;
-}
+
+import { TXProps, SubstrateAccountInfo } from "../libs/type";
 
 interface IProps {
   show: boolean;
@@ -29,13 +26,11 @@ export default function DepositBox(props: IProps) {
   const [finalizeProgress, setFinalizeProgress] = react.useState<string>();
   const [progressInfo, setProgressInfo] = react.useState<number>(0);
   const [error, setError] = react.useState<string>();
-  //const [l1account, setL1Account] = react.useState<string>();
 
-  if (props.txprops === undefined) {
-    return (<></>);
-  }
   const txprops = props.txprops;
-  console.log(txprops);
+
+  const l2Account = txprops.substrateAccount;
+  const selectedToken = txprops.selectedToken;
 
   const initProgress = () => {
     setProgressInfo(0);
@@ -69,9 +64,9 @@ export default function DepositBox(props: IProps) {
     if (amount) {
       setProcess("processing");
       deposit(
-        txprops.account,
-        txprops.chainId,
-        txprops.tokenAddress,
+        l2Account,
+        selectedToken.chainId,
+        selectedToken.tokenAddress,
         amount,
         setStateProgress,
         setStateError,
@@ -110,8 +105,8 @@ export default function DepositBox(props: IProps) {
             <Label>L2Account:</Label>
           </Stack>
           <Stack verticalAlign={"start"}>
-            <Label>{txprops.chainId}</Label>
-            <Label>{txprops.tokenAddress}</Label>
+            <Label>{selectedToken.chainId}</Label>
+            <Label>{selectedToken.tokenAddress}</Label>
             <TextField
               className="account"
               autoFocus
@@ -120,7 +115,7 @@ export default function DepositBox(props: IProps) {
                 setAmount(e.target.value);
               }}
             />
-            <Label>{txprops.account}</Label>
+            <Label>{l2Account.account}</Label>
           </Stack>
         </Stack>
         {!process &&

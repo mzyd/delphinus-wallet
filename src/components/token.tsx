@@ -8,13 +8,9 @@ import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
 import { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { Separator } from "@fluentui/react/lib/Separator";
 
-import {
-  getAddressOfAccoutAsync,
-  queryTokenAmountAsync,
-  withdraw
-} from "../libs/utils";
+import { queryTokenAmountAsync } from "../libs/utils";
 import { queryBalanceOnL1 } from "../libs/utils-l1";
-import { TXProps, SubstrateAccountInfo } from "../libs/type";
+import { TXProps, SubstrateAccountInfo, ChainInfo, TokenInfo } from "../libs/type";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
 import WithdrawBox from "../modals/withdraw";
 import DepositBox from "../modals/deposit";
@@ -57,7 +53,7 @@ export default function Token(props: IProps) {
   const updateL2Balance = async (chainId:string, tokenAddress:string) => {
     console.log("updateL2Balance");
     await queryTokenAmountAsync(
-      props.l2Account.address,
+      props.l2Account,
       chainId,
       tokenAddress,
       (value: string) => {
@@ -133,13 +129,13 @@ export default function Token(props: IProps) {
                   <span> L2 Balance: {token.l2Balance ?? "loading..."}</span>
                   <DefaultButton text="Deposit" className="btn-pl2"
                     onClick={() => {
-                      setTXProps(addressPair![1], item.chainId, token.address);
+                      setTXProps(item.chainId, token.address);
                       setCurrentModal("Deposit")
                     }}
                   />
                   <DefaultButton text="Withdraw" className="btn-pl2"
                     onClick={() => {
-                      setTXProps(addressPair![0], item.chainId, token.address);
+                      setTXProps(item.chainId, token.address);
                       setCurrentModal("Withdraw")
                     }}
                   />
@@ -160,14 +156,18 @@ export default function Token(props: IProps) {
             ))}
           </Pivot>
       </Stack>
+      {currentTXProps &&
       <DepositBox show={currentModal==="Deposit"}
           txprops = {currentTXProps!}
           close = {() => {setCurrentModal("")}}
       />
+      }
+      {currentTXProps &&
       <WithdrawBox show={currentModal==="Withdraw"}
           txprops = {currentTXProps!}
           close = {() => {setCurrentModal("")}}
       />
+      }
     </>
   );
 }
