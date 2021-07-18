@@ -44,7 +44,7 @@ export default function RetrieveModal(props: IProps) {
         <button type="button" className="btn btn-sm btn-primary"
           onClick={() => {
               (props.amount) &&
-              retrieve(props.l2Account.address, props.chainId0, props.token0, props.chainId1, props.token1, props.amount ?? "0", props.amount ?? "0");
+              retrieve(props.l2Account, props.chainId0, props.token0, props.chainId1, props.token1, props.amount ?? "0", props.amount ?? "0");
               props.close();
             }
           }

@@ -2,6 +2,7 @@ export interface SubstrateAccountInfo {
    account: string;
    address: string;
    injector: any;
+   balance: string;
 }
 
 interface SelectedToken {
@@ -9,9 +10,9 @@ interface SelectedToken {
   tokenAddress: string;
 }
 
-interface TXProps {
+export interface TXProps {
   substrateAccount: SubstrateAccountInfo;
-  seletedToken: SelectedToken;
+  selectedToken: SelectedToken;
 }
 
 /*
@@ -22,13 +23,13 @@ interface BalanceInfo {
   [key:string]: string;
 }
 
-interface TokenInfo {
+export interface TokenInfo {
   address: string;
   l2Balance?: string;
   l1Balance?: BalanceInfo;
 }
 
-interface ChainInfo{
+export interface ChainInfo{
   chainId: string;
   chainName: string;
   enable: boolean;

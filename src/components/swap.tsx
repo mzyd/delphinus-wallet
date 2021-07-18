@@ -228,7 +228,7 @@ export default function Swap(props: IProps) {
       </Stack>
       {selectedPoolOps === PoolOps.Swap && (
         <SwapModal
-          account={addressPair[0]}
+          l2Account={props.l2Account}
           chainId0={chainId0}
           chainId1={chainId1}
           token0={token0}

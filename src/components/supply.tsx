@@ -5,13 +5,14 @@ import { Dropdown, Label } from "@fluentui/react";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
 import { Separator } from "@fluentui/react/lib/Separator";
-import { separatorStyles } from "./common-styles";
+import { separatorStyles } from "../styles/common-styles";
 import { TextField } from "@fluentui/react/lib/TextField";
 
 import {
   queryPoolAmountAsync,
   queryPoolShareAsync,
 } from "../libs/utils";
+import { SubstrateAccountInfo } from "../libs/type";
 
 import SupplyModal from "../modals/supplymodal";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
@@ -256,7 +257,7 @@ export default function Supply(props: IProps) {
       </Stack>
       {selectedPoolOps === PoolOps.Supply && (
         <SupplyModal
-          account={addressPair[0]}
+          l2Account={props.l2Account}
           chainId0={chainId0}
           chainId1={chainId1}
           token0={token0}

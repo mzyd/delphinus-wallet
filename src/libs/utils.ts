@@ -12,31 +12,11 @@ import {
   web3UseRpcProvider
 } from '@polkadot/extension-dapp';
 
-import SubstrateAccountInfo from "./type";
+import {SubstrateAccountInfo} from "./type";
 
 const BN = require("bn.js");
 const ss58 = require("substrate-ss58");
 const keyring = new Keyring({ type: "sr25519" });
-
-async function tryLoginL2Account(callback: (u:SubstrateAccountInfo)=>void) {
-  const injectedSubstrate = await web3Enable('Delphinus');
-  const substrateAccounts = await web3Accounts();
-  const sender = substrateAccounts[0];
-  const injector = await web3FromAddress(sender.address);
-  callback({
-    account: sender.meta.name,
-    address: sender.address,
-    injector: injector
-  });
-  console.log(sender);
-}
-
-export function loginL2Account(
-  account: string,
-  callback: (u: SubstrateAccountInfo) => void
-) {
-    tryLoginL2Account(callback);
-}
 
 let api: ApiPromise;
 
@@ -48,6 +28,35 @@ export async function getAPI() {
     api = await ApiPromise.create({ provider, types: l2types });
   }
   return api;
+}
+
+export async function getSubstrateBalance (account: string) {
+  const api = await getAPI();
+  const account_info = await api.query.system.account(account);
+  const balance = account_info.data.free.toHuman();
+  return balance;
+}
+
+async function tryLoginL2Account(callback: (u:SubstrateAccountInfo)=>void) {
+  const injectedSubstrate = await web3Enable('Delphinus');
+  const substrateAccounts = await web3Accounts();
+  const sender = substrateAccounts[0];
+  const injector = await web3FromAddress(sender.address);
+  const balance = await getSubstrateBalance(sender.address);
+  callback({
+    account: sender.meta.name!,
+    address: sender.address,
+    injector: injector,
+    balance: balance
+  });
+  console.log(sender);
+}
+
+export function loginL2Account(
+  account: string,
+  callback: (u: SubstrateAccountInfo) => void
+) {
+    tryLoginL2Account(callback);
 }
 
 export async function queryTokenAmountAsync(
@@ -159,13 +168,14 @@ async function getSudo() {
 */
 
 export async function withdraw(
-  account: string,
+  l2Account: SubstrateAccountInfo,
   chainId: string,
   token: string,
   amount: string,
   progress: (m:string)=>void,
   error: (m:string)=>void,
 ) {
+  const account = l2Account.account;
   try {
     const api = await getAPI();
     await cryptoWaitReady();
@@ -231,13 +241,14 @@ function compressToken(chainId: string, token: string, query = false) {
 }
 
 export async function swap(
-  account: string,
+  l2Account: SubstrateAccountInfo,
   chain_from: string,
   token_from: string,
   chain_to: string,
   token_to: string,
   amount: string
 ) {
+  const account = l2Account.account;
   const api = await getAPI();
   await cryptoWaitReady();
   const keyring = new Keyring({ type: "sr25519" });
@@ -272,7 +283,7 @@ export async function swap(
 }
 
 export async function supply(
-  account: string,
+  l2Account: SubstrateAccountInfo,
   chain_from: string,
   token_from: string,
   chain_to: string,
@@ -280,6 +291,7 @@ export async function supply(
   amount_from: string,
   amount_to: string
 ) {
+  const account = l2Account.account;
   const api = await getAPI();
   await cryptoWaitReady();
   const keyring = new Keyring({ type: "sr25519" });
@@ -317,7 +329,7 @@ export async function supply(
 }
 
 export async function retrieve(
-  account: string,
+  l2Account: SubstrateAccountInfo,
   chain_from: string,
   token_from: string,
   chain_to: string,
@@ -325,6 +337,7 @@ export async function retrieve(
   amount_from: string,
   amount_to: string
 ) {
+  const account = l2Account.account;
   const api = await getAPI();
   await cryptoWaitReady();
   const keyring = new Keyring({ type: "sr25519" });

@@ -1,4 +1,4 @@
-import SubstrateAccountInfo from "./type";
+import {SubstrateAccountInfo} from "./type";
 
 const BN = require("bn.js");
 const abi: any = require("solidity/clients/bridge/abi");

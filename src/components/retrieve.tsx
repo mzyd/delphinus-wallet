@@ -87,7 +87,7 @@ export default function Retrieve(props: IProps) {
       );
 
       await queryPoolShareAsync(
-        l2Account.address,
+        l2Account,
         chainId0,
         token0,
         chainId1,

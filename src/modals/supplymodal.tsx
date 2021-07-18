@@ -5,11 +5,12 @@ import { Label } from "@fluentui/react";
 import { TextField } from "@fluentui/react/lib/TextField";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { supply } from "../libs/utils";
-import "../styles/modal.css";
+import { SubstrateAccountInfo } from "../libs/type";
 import { verticalGapStackTokens} from "../styles/common-styles";
+import "../styles/modal.css";
 
 interface IProps {
-  account: string;
+  l2Account: SubstrateAccountInfo;
   chainId0: string;
   token0: string;
   chainId1: string;
@@ -42,7 +43,7 @@ export default function SupplyModal(props: IProps) {
         <button type="button" className="btn btn-sm btn-primary"
           onClick={() => {
               (props.amount) &&
-              supply(props.account, props.chainId0, props.token0, props.chainId1, props.token1, props.amount, props.amount);
+              supply(props.l2Account, props.chainId0, props.token0, props.chainId1, props.token1, props.amount, props.amount);
               props.close();
             }
           }
