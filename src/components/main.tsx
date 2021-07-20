@@ -7,7 +7,7 @@ import { Stack } from "@fluentui/react/lib/Stack";
 import { Nav } from '@fluentui/react';
 import "../styles/main.css";
 import { loginL2Account } from "../libs/utils";
-import { SubstrateAccountInfo } from "../libs/type";
+import { L1AccountInfo, SubstrateAccountInfo } from "../libs/type";
 import Token from "./token";
 import Pool from "./pool";
 import Swap from "./swap";
@@ -25,11 +25,11 @@ const navigationStyles = {
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
+  l1Account: L1AccountInfo;
   setL2Account: () => void;
 }
 
 export default function Main(props: IProps) {
-  const [l2Account, setL2Account] = react.useState<SubstrateAccountInfo>(props.l2Account);
   const [currentPanel, setCurrentPanel] = react.useState<string>("wallet");
 
   const links = [
@@ -133,13 +133,14 @@ export default function Main(props: IProps) {
         </Stack>
         <Stack disableShrink={true} grow={1}>
           <div style={navHead}>
-            <Label key={l2Account.account}>
-              {l2Account.account}
-              <span className="navaddr"> {l2Account.address} </span>
-              <span> ${l2Account.balance} </span>
+            <Label key={props.l2Account.account}>
+              {props.l2Account.account}
+              <span className="navaddr"> {props.l2Account.address} </span>
+              <span> ${props.l2Account.balance} </span>
+              <span className="navaddr"> {props.l1Account.address} </span>
               <DefaultButton className="navfr"
                 onClick={() => props.setL2Account()}
-                key={l2Account.address} >
+                key={props.l2Account.address} >
               switch
               </DefaultButton>
             </Label>

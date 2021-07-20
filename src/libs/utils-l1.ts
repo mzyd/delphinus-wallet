@@ -1,4 +1,6 @@
-import {SubstrateAccountInfo} from "./type";
+import {L1AccountInfo, SubstrateAccountInfo} from "./type";
+const Client = require("web3subscriber/client")
+
 
 const BN = require("bn.js");
 const abi: any = require("solidity/clients/bridge/abi");
@@ -73,4 +75,8 @@ export async function queryCurrentL1Account(
 ) {
   let bridge = await getBridge(chainId);
   return bridge.encode_l1address(bridge.account);
+}
+
+export function loginL1Account(cb:(u: L1AccountInfo) => void) {
+  Client.getAccountInfo(null, true).then((account:L1AccountInfo) => cb(account));
 }

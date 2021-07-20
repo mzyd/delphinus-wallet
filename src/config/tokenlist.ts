@@ -8,9 +8,11 @@ const tokenList = [
     tokens: [
       {
         address:L1TokenInfo.networks["15"].address.replace("0x", ""),
+        name:"tToken"
       },
       {
         address:RioTokenInfo.networks["15"].address.replace("0x", ""),
+        name:"rio"
       }
     ],
   },
@@ -21,6 +23,7 @@ const tokenList = [
     tokens: [
       {
         address:L1TokenInfo.networks["16"].address.replace("0x", ""),
+        name:"sToken"
       }
     ],
   }

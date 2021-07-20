@@ -21,7 +21,7 @@ interface IProps {
 
 export default function SupplyModal(props: IProps) {
   return (
-    <Modal isOpen={true} onDismiss={props.close} isBlocking={true} className="withdraw">
+    <Modal isOpen={true} onDismiss={props.close} isBlocking={true} className="delphinus-modal">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <a className="navbar-brand" href="#">Confirm Supply Liquidity</a>
       </nav>

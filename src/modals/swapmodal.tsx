@@ -31,7 +31,7 @@ export default function SwapModal(props: IProps) {
   const [defaultValue, setDefaultValue] = react.useState<number>(10);
 
   return (
-    <Modal isOpen={true} onDismiss={props.close} isBlocking={true} className="withdraw">
+    <Modal isOpen={true} onDismiss={props.close} isBlocking={true} className="delphinus-modal">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <a className="navbar-brand" href="#">Confirm Swap</a>
       </nav>

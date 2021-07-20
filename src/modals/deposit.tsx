@@ -75,7 +75,7 @@ export default function DepositBox(props: IProps) {
   }
 
   return (
-    <Modal isOpen={props.show} onDismiss={props.close} isBlocking={true} className="withdraw">
+    <Modal isOpen={props.show} onDismiss={props.close} isBlocking={true} className="delphinus-modal">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <a className="navbar-brand" href="#">Deposit</a>
       </nav>

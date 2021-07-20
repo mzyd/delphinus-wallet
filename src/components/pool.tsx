@@ -21,9 +21,13 @@ interface IProps {
 interface PoolInfo {
   id: string;
   chainId1: string;
+  chainName1: string;
   tokenAddress1: string;
+  tokenName1: string;
   chainId2: string;
+  chainName2: string;
   tokenAddress2: string;
+  tokenName2: string;
   share?: string;
   amount?: string;
 }
@@ -42,15 +46,19 @@ export default function Pool(props: IProps) {
     {
       id: "1",
       chainId1: chainList[0].chainId,
+      chainName1: chainList[0].chainName,
       tokenAddress1: chainList[0].tokens[0].address.replace(
         "0x",
         ""
       ),
+      tokenName1: chainList[0].tokens[0].name,
       chainId2: chainList[1].chainId,
+      chainName2: chainList[1].chainName,
       tokenAddress2: chainList[1].tokens[0].address.replace(
         "0x",
         ""
       ),
+      tokenName2: chainList[1].tokens[0].name,
     },
   ]);
 
@@ -101,13 +109,32 @@ export default function Pool(props: IProps) {
   return (
     <>
       <Stack>
-      <ul className="list-group pool-list">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Token Name</th>
+              <th scope="col">Chain Name</th>
+              <th scope="col">Token Name</th>
+              <th scope="col">Chain Name</th>
+              <th scope="col">Vol</th>
+              <th scope="col">Share</th>
+            </tr>
+          </thead>
+          <tbody>
         {poolInfoList.map((pi) => (
-          <li className="list-group-item">
-          Pool - {pi.id} - {pi.chainId1} - {pi.tokenAddress1} - {pi.chainId2} - {pi.tokenAddress2} - {pi.amount} - {pi.share}
-          </li>
+            <tr key="pool-{pi.id}">
+              <th>{pi.id}</th>
+              <th>{pi.tokenName1}</th>
+              <th>{pi.chainName1}[{pi.chainId1}]</th>
+              <th>{pi.tokenName2}</th>
+              <th>{pi.chainName2}[{pi.chainId2}]</th>
+              <th>{pi.amount}</th>
+              <th>{pi.share}</th>
+            </tr>
         ))}
-      </ul>
+          </tbody>
+        </table>
       <div className="button-container">
         {poolInfoList.map((pi) => (
           <>

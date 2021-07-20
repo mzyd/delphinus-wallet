@@ -37,26 +37,41 @@ export async function getSubstrateBalance (account: string) {
   return balance;
 }
 
-async function tryLoginL2Account(callback: (u:SubstrateAccountInfo)=>void) {
+async function getL2Accounts(callback: (u:string[])=>void) {
   const injectedSubstrate = await web3Enable('Delphinus');
   const substrateAccounts = await web3Accounts();
-  const sender = substrateAccounts[0];
-  const injector = await web3FromAddress(sender.address);
-  const balance = await getSubstrateBalance(sender.address);
-  callback({
-    account: sender.meta.name!,
-    address: sender.address,
-    injector: injector,
-    balance: balance
-  });
-  console.log(sender);
+  callback(substrateAccounts);
+}
+
+async function tryLoginL2Account(
+    account:string,
+    callback: (u:SubstrateAccountInfo)=>void
+) {
+  const injectedSubstrate = await web3Enable('Delphinus');
+  const substrateAccounts = await web3Accounts();
+  for (var u of substrateAccounts) {
+    if (u.address == account) {
+      const injector = await web3FromAddress(u.address);
+      const balance = await getSubstrateBalance(u.address);
+      callback({
+        account: u.meta.name!,
+        address: u.address,
+        injector: injector,
+        balance: balance
+      });
+    }
+  }
+}
+
+export function fetchL2Accounts(callback: (u:string[]) => void) {
+  getL2Accounts(callback);
 }
 
 export function loginL2Account(
   account: string,
   callback: (u: SubstrateAccountInfo) => void
 ) {
-    tryLoginL2Account(callback);
+    tryLoginL2Account(account, callback);
 }
 
 export async function queryTokenAmountAsync(
