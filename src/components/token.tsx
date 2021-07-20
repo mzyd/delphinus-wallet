@@ -97,6 +97,7 @@ export default function Token(props: IProps) {
 
   const updateStates = async (chainId:string, tokenAddress: string) => {
     await updateL2Balance(chainId, tokenAddress);
+    return;
     for (let chain of chainInfoList) {
       console.log(chainId, chain.chainId);
       await updateL1State(chainId, tokenAddress, chain.chainId);
@@ -119,21 +120,21 @@ export default function Token(props: IProps) {
         <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
           <Pivot>
             {chainInfoList?.map((item, i) => (
-            <PivotItem key={item.chainId} linkText={"Chain-" + item.chainId} className="p-2" >
+            <PivotItem key={item.chainId} linkText={item.chainName + "[" + item.chainId + "]"} className="p-2" >
               {item.tokens.map((token, i) => (
               <div key={item.chainId + token.address}>
                 <Label >
-                  {item.chainId} - 0x{token.address}
+                  {token.name} - 0x{token.address}
                 </Label>
                 <Label>
                   <span> L2 Balance: {token.l2Balance ?? "loading..."}</span>
-                  <DefaultButton text="Deposit" className="btn-pl2"
+                  <DefaultButton text="Deposit" className="fr btn-pl2"
                     onClick={() => {
                       setTXProps(item.chainId, token.address);
                       setCurrentModal("Deposit")
                     }}
                   />
-                  <DefaultButton text="Withdraw" className="btn-pl2"
+                  <DefaultButton text="Withdraw" className="fr btn-pl2"
                     onClick={() => {
                       setTXProps(item.chainId, token.address);
                       setCurrentModal("Withdraw")
@@ -142,12 +143,6 @@ export default function Token(props: IProps) {
                 </Label>
                 <Label>
                 Synchronizing status
-                {chainInfoList?.map((chain) => (
-                  <span key={chain.chainId + "-" + token.address + "-balance"}>
-                  [Chain-{chain.chainId}: {
-                    token.l1Balance?.[chain.chainId] ?? "loading..."}]
-                  </span>
-                ))}
                 </Label>
                 <Separator styles={separatorStyles} className="w-100" />
               </div>

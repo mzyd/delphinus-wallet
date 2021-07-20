@@ -5,6 +5,13 @@ export interface SubstrateAccountInfo {
    balance: string;
 }
 
+export interface L1AccountInfo {
+   address: string;
+   chainId: string;
+   //chainName: string;
+   web3: any;
+}
+
 interface SelectedToken {
   chainId: string;
   tokenAddress: string;
@@ -25,6 +32,7 @@ interface BalanceInfo {
 
 export interface TokenInfo {
   address: string;
+  name: string;
   l2Balance?: string;
   l1Balance?: BalanceInfo;
 }

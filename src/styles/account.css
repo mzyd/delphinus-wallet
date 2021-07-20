@@ -1,16 +1,6 @@
-.account input {
-  font-size: 1.5rem;
-  font-family: 'KoHo';
-  font-weight: bold;
-}
-
-.account input::placeholder {
-  font-size: 1.5rem;
-  font-family: 'KoHo';
-  font-weight: bold;
-}
-
-.account span {
-  font-size: 1.5rem;
-  font-weight: bold;
+img.chain-icon {
+  float:left;
+  width:25px;
+  height:25px;
+  margin-right:10px;
 }

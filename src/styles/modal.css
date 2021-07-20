@@ -1,19 +1,19 @@
-.withdraw input {
+.delphinus-modal input {
   font-size: 1.5rem;
   font-family: 'KoHo';
   font-weight: bold;
 }
 
-.withdraw nav {
+.dephinus-modal nav {
   padding-left:1em;
 }
 
-.withdraw button {
+.delphinus-modal button {
   float: right;
   margin-left: 5px;
 }
 
-.withdraw span {
+.delphinus-modal span {
   font-family: 'KoHo';
   font-weight: bold;
 }
@@ -28,6 +28,20 @@
 
 .pool-list {
   margin:5px;
+  padding-right:20px;
+  padding-left:5px;
+}
+
+span.chain-info {
+}
+
+span.token-name {
+  font-size:16px;
+  border:1px solid gray;
+  padding:5px;
+  border-radius: 15px;
+  background-color:#222;
+  color:#eee;
 }
 
 .swap-selector {
