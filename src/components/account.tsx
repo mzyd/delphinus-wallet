@@ -2,18 +2,16 @@
 import * as react from 'react';
 
 import { Dropdown, Label, Separator } from "@fluentui/react";
-import { TextField } from '@fluentui/react/lib/TextField';
-import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { Stack, IStackTokens } from '@fluentui/react/lib/Stack';
-import { loginL1Account } from "./libs/utils-l1";
+import { L1AccountInfo } from "../libs/type";
 import "../styles/account.css"
 import MetaMaskLogo from "../icons/metamask.svg";
 import PolkaLogo from "../icons/polka.svg";
 
 interface IProps {
   accounts?: string[],
-  l1Account?: loginL1Account,
-  done: () => void
+  l1Account?: L1AccountInfo,
+  done: (u:string) => void
 }
 
 const verticalGapStackTokens: IStackTokens = {
@@ -50,9 +48,9 @@ export default function SetAccount(props: IProps) {
 
   const accounts = () => {
     console.log(props.accounts);
-    let select_options = props.accounts.map((c) => ({
-      key: c.address,
-      text: c.address,
+    let select_options = props!.accounts!.map((c) => ({
+      key: c,
+      text: c,
     }));
     return select_options;
   };

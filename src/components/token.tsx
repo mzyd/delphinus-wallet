@@ -1,22 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as react from "react";
 
-import { Label } from "@fluentui/react";
-import { DefaultButton } from "@fluentui/react/lib/Button";
-import { PivotItem, Pivot } from '@fluentui/react/lib/Pivot';
-import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
-import { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
-import { Separator } from "@fluentui/react/lib/Separator";
-
 import { queryTokenAmountAsync } from "../libs/utils";
 import { queryBalanceOnL1 } from "../libs/utils-l1";
 import { TXProps, SubstrateAccountInfo, ChainInfo, TokenInfo } from "../libs/type";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
 import WithdrawBox from "../modals/withdraw";
 import DepositBox from "../modals/deposit";
+import TokenView from "../views/tokenview";
 
-import { separatorStyles, verticalGapStackTokens } from "../styles/common-styles";
-import "../styles/panel.css";
 
 import chainList from "../config/tokenlist";
 
@@ -38,6 +30,11 @@ export default function Token(props: IProps) {
          tokenAddress: addr,
        }
      });
+  }
+
+  const tokenTXModal = (cid:string, tokenaddr:string, method:string) => {
+     setTXProps(cid, tokenaddr);
+     setCurrentModal(method)
   }
 
   const updateTokenL2Balance = (chainId:string, tokenAddress:string,
@@ -117,40 +114,7 @@ export default function Token(props: IProps) {
 
   return (
     <>
-        <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-          <Pivot>
-            {chainInfoList?.map((item, i) => (
-            <PivotItem key={item.chainId} linkText={item.chainName + "[" + item.chainId + "]"} className="p-2" >
-              {item.tokens.map((token, i) => (
-              <div key={item.chainId + token.address}>
-                <Label >
-                  {token.name} - 0x{token.address}
-                </Label>
-                <Label>
-                  <span> L2 Balance: {token.l2Balance ?? "loading..."}</span>
-                  <DefaultButton text="Deposit" className="fr btn-pl2"
-                    onClick={() => {
-                      setTXProps(item.chainId, token.address);
-                      setCurrentModal("Deposit")
-                    }}
-                  />
-                  <DefaultButton text="Withdraw" className="fr btn-pl2"
-                    onClick={() => {
-                      setTXProps(item.chainId, token.address);
-                      setCurrentModal("Withdraw")
-                    }}
-                  />
-                </Label>
-                <Label>
-                Synchronizing status
-                </Label>
-                <Separator styles={separatorStyles} className="w-100" />
-              </div>
-              ))}
-            </PivotItem>
-            ))}
-          </Pivot>
-      </Stack>
+      <TokenView chainInfoList={chainInfoList} tokenTXModal={tokenTXModal}></TokenView>
       {currentTXProps &&
       <DepositBox show={currentModal==="Deposit"}
           txprops = {currentTXProps!}

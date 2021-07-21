@@ -44,6 +44,20 @@ export interface ChainInfo{
   tokens: TokenInfo[];
 }
 
+export interface PoolInfo {
+  id: string;
+  chainId1: string;
+  chainName1: string;
+  tokenAddress1: string;
+  tokenName1: string;
+  chainId2: string;
+  chainName2: string;
+  tokenAddress2: string;
+  tokenName2: string;
+  share?: string;
+  amount?: string;
+}
+
 
 
 
