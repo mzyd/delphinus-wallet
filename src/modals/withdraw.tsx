@@ -50,7 +50,7 @@ export default function WithdrawBox(props: IProps) {
   return (
     <Modal isOpen={props.show} onDismiss={props.close} isBlocking={true} className="delphinus-modal">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a className="navbar-brand" href="#">Deposit</a>
+        <a className="navbar-brand" href="#">Withdraw</a>
       </nav>
       <Stack
         verticalAlign={"start"}
