@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, * as react from "react";
 
-import { Dropdown, Label } from "@fluentui/react";
+import { Label } from "@fluentui/react";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
 import { Separator } from "@fluentui/react/lib/Separator";
@@ -12,10 +12,12 @@ import {
   queryPoolAmountAsync,
   queryPoolShareAsync,
 } from "../libs/utils";
+
+import ChainSelector from "./chainselector";
+import TokenSelector from "./tokenselector";
+import SupplyModal from "../modals/supplymodal";
 import { SubstrateAccountInfo } from "../libs/type";
 
-import SupplyModal from "../modals/supplymodal";
-import { registerTask, unregisterTask } from "../libs/query-fresher";
 import "../styles/panel.css";
 import chainList from "../config/tokenlist";
 
@@ -147,32 +149,16 @@ export default function Supply(props: IProps) {
             </nav>
             <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
               <ul className="list-group">
-                <Dropdown
-                  placeholder="Select Chain"
-                  options={chainOptions}
-                  onChange={(_, option) => {
-                    if (option) {
-                      if (option.key != chainId0) {
-                        setToken0(
-                          chainInfoList.find((c) => c.chainId === option.key)
-                            ?.tokens[0] ?? ""
-                        );
-                      }
-                      setChainId0(option.key as string);
-                    }
-                  }}
-                  defaultSelectedKey={chainId0}
+                <ChainSelector
+                    default={chainId0}
+                    setToken={setToken0}
+                    setChain={setChainId0}
                 />
                 <div className="p-1" />
-                <Dropdown
-                  placeholder="Select Token"
-                  options={tokenOptions(chainId0)}
-                  onChange={(_, option) => {
-                    if (option) {
-                      setToken0(option.key as string);
-                    }
-                  }}
-                  defaultSelectedKey={token0}
+                <TokenSelector
+                    default={token0}
+                    chainId={chainId0}
+                    setToken={setToken0}
                 />
                 <div className="p-1" />
                 <TextField
@@ -195,34 +181,17 @@ export default function Supply(props: IProps) {
               </ul>
               <Separator>Share: {share ?? "loading..."}</Separator>
               <ul className="list-group">
-                <Dropdown
-                  placeholder="Select Chain"
-                  options={chainOptions}
-                  onChange={(_, option) => {
-                    if (option) {
-                      if (option.key != chainId1) {
-                        setToken1(
-                          chainInfoList.find((c) => c.chainId === option.key)
-                            ?.tokens[0] ?? ""
-                        );
-                      }
-                      setChainId1(option.key as string);
-                    }
-                  }}
-                  selectedKey={chainId1}
+                <ChainSelector
+                    default={chainId1}
+                    setToken={setToken1}
+                    setChain={setChainId1}
                 />
                 <div className="p-1" />
-                <Dropdown
-                  placeholder="Select Token"
-                  options={tokenOptions(chainId1)}
-                  onChange={(_, option) => {
-                    if (option) {
-                      setToken1(option.key as string);
-                    }
-                  }}
-                  selectedKey={token1}
+                <TokenSelector
+                    default={token1}
+                    chainId={chainId1}
+                    setToken={setToken1}
                 />
-
                 <div className="p-1" />
                 <TextField
                   label="Liquidity"

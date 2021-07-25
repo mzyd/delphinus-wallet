@@ -75,7 +75,7 @@ export default function SetAccount(props: IProps) {
                   props.done(option.key as string);
                 }
               }}
-              defaultSelectedKey={props.accounts[0]}
+              //defaultSelectedKey={props.accounts[0]}
           />
           </div>
           }

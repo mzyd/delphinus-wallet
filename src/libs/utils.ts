@@ -40,6 +40,7 @@ export async function getSubstrateBalance (account: string) {
 async function getL2Accounts(callback: (u:string[])=>void) {
   const injectedSubstrate = await web3Enable('Delphinus');
   const substrateAccounts = await web3Accounts();
+  console.log("number of accounts", substrateAccounts.length);
   callback(substrateAccounts.map((c) => (
     c.address
   )));

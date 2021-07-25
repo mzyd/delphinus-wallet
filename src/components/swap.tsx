@@ -5,6 +5,8 @@ import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
 import { TextField } from "@fluentui/react/lib/TextField";
 import { queryPoolAmountAsync } from "../libs/utils";
 import SwapModal from "../modals/swapmodal";
+import ChainSelector from "./chainselector";
+import TokenSelector from "./tokenselector";
 import { Dropdown, Label, Separator } from "@fluentui/react";
 import { TXProps, SubstrateAccountInfo } from "../libs/type";
 
@@ -27,6 +29,7 @@ enum PoolOps {
   Retrieve,
   Swap,
 }
+
 interface ChainInfo {
   chainId: string;
   tokens: string[];
@@ -86,19 +89,6 @@ export default function Swap(props: IProps) {
     updator();
   }, [chainId0, chainId1, token0, token1]);
 
-  const chainOptions = chainInfoList.map((c) => ({
-    key: c.chainId,
-    text: "Chain ID: " + c.chainId,
-  }));
-
-  const tokenOptions = (chainId: string) =>
-    chainInfoList
-      .find((c) => c.chainId === chainId)
-      ?.tokens?.map((token) => ({
-        key: token,
-        text: "Token: " + token,
-      })) ?? [];
-
   const resetPool = () => {
     setLiquid0("loading...");
     setLiquid1("loading...");
@@ -120,32 +110,16 @@ export default function Swap(props: IProps) {
             </nav>
             <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
               <ul className="list-group">
-                <Dropdown
-                  placeholder="Select Chain"
-                  options={chainOptions}
-                  onChange={(_, option) => {
-                    if (option) {
-                      if (option.key != chainId0) {
-                        setToken0(
-                          chainInfoList.find((c) => c.chainId === option.key)
-                            ?.tokens[0] ?? ""
-                        );
-                      }
-                      setChainId0(option.key as string);
-                    }
-                  }}
-                  defaultSelectedKey={chainId0}
+                <ChainSelector
+                    default={chainId0}
+                    setToken={setToken0}
+                    setChain={setChainId0}
                 />
                 <div className="p-1" />
-                <Dropdown
-                  placeholder="Select Token"
-                  options={tokenOptions(chainId0)}
-                  onChange={(_, option) => {
-                    if (option) {
-                      setToken0(option.key as string);
-                    }
-                  }}
-                  defaultSelectedKey={token0}
+                <TokenSelector
+                    default={token0}
+                    chainId={chainId0}
+                    setToken={setToken0}
                 />
                 <div className="p-1" />
                 <TextField
@@ -168,32 +142,16 @@ export default function Swap(props: IProps) {
               </ul>
               <Separator> To </Separator>
               <ul className="list-group">
-                <Dropdown
-                  placeholder="Select Chain"
-                  options={chainOptions}
-                  onChange={(_, option) => {
-                    if (option) {
-                      if (option.key != chainId1) {
-                        setToken1(
-                          chainInfoList.find((c) => c.chainId === option.key)
-                            ?.tokens[0] ?? ""
-                        );
-                      }
-                      setChainId1(option.key as string);
-                    }
-                  }}
-                  selectedKey={chainId1}
+                <ChainSelector
+                    default={chainId1}
+                    setToken={setToken1}
+                    setChain={setChainId1}
                 />
                 <div className="p-1" />
-                <Dropdown
-                  placeholder="Select Token"
-                  options={tokenOptions(chainId1)}
-                  onChange={(_, option) => {
-                    if (option) {
-                      setToken1(option.key as string);
-                    }
-                  }}
-                  selectedKey={token1}
+                <TokenSelector
+                    default={token1}
+                    chainId={chainId1}
+                    setToken={setToken1}
                 />
                 <div className="p-1" />
                 <TextField
