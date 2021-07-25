@@ -2,6 +2,7 @@
 import * as react from "react";
 
 import PoolView from "../views/poolview";
+import { Stack } from "@fluentui/react/lib/Stack";
 
 import {
   queryPoolAmountAsync,
@@ -45,36 +46,41 @@ export default function Pool(props: IProps) {
     },
   ]);
 
+  const updator = async (pool: any) => {
+    await queryPoolAmountAsync(
+      pool.chainId1,
+      pool.tokenAddress1,
+      pool.chainId2,
+      pool.tokenAddress2,
+      (value: string) => {
+        setPoolInfoList((_list) =>
+          _list?.map((e) => (e.id === pool.id ? { ...e, amount: value } : e))
+        );
+        console.log("poolinfolist", poolInfoList);
+        console.log("pool-id", pool.id);
+      }
+    );
+
+    await queryPoolShareAsync(
+      props.l2Account,
+      pool.chainId1,
+      pool.tokenAddress1,
+      pool.chainId2,
+      pool.tokenAddress2,
+      (value: string) => {
+        setPoolInfoList((_list) =>
+          _list?.map((e) => (e.id === pool.id ? { ...e, share: value } : e))
+        );
+      }
+    );
+  };
+
+
   react.useEffect(() => {
-
-    const updator = (pool: any) => async () => {
-      await queryPoolAmountAsync(
-        pool.chainId1,
-        pool.tokenAddress1,
-        pool.chainId2,
-        pool.tokenAddress2,
-        (value: string) => {
-          setPoolInfoList((_list) =>
-            _list?.map((e) => (e.id === pool.id ? { ...e, amount: value } : e))
-          );
-        }
-      );
-
-      await queryPoolShareAsync(
-        props.l2Account,
-        pool.chainId1,
-        pool.tokenAddress1,
-        pool.chainId2,
-        pool.tokenAddress2,
-        (value: string) => {
-          setPoolInfoList((_list) =>
-            _list?.map((e) => (e.id === pool.id ? { ...e, share: value } : e))
-          );
-        }
-      );
-    };
+    for (var pool of poolInfoList) {
+      updator(pool);
+    }
   }, []);
 
-  return (<PoolView poolInfoList={poolInfoList}></PoolView>
-  );
+  return (<PoolView poolInfoList={poolInfoList}></PoolView>);
 }

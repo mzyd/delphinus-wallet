@@ -1,0 +1,31 @@
+.nav-head {
+  background-color: #cccccc;
+  /*height: 60px; */
+  min-height: 60px;
+}
+
+.nav-head .nav-content {
+  font-size:12px;
+  height:30px;
+  margin:15px;
+}
+
+.nav-head .icon {
+  width:25px;
+  height:25px;
+  margin-right:5px;
+  margin-left:5px;
+}
+
+div.sep-v {
+  display:inline;
+  height:20px;
+  margin-left:5px;
+  margin-right:5px;
+  border-right:1px solid gray;
+}
+
+.navfr {
+  float:right;
+}
+

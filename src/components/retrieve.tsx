@@ -9,11 +9,13 @@ import {
   queryPoolShareAsync,
 } from "../libs/utils";
 import RetrieveModal from "../modals/retrievemodal";
-import chainList from "../config/tokenlist";
-import { Dropdown, Label, Separator } from "@fluentui/react";
+import ChainSelector from "./chainselector";
+import TokenSelector from "./tokenselector";
+import { Label, Separator } from "@fluentui/react";
 import { SubstrateAccountInfo } from "../libs/type";
 
 import "../styles/panel.css";
+import chainList from "../config/tokenlist";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
@@ -41,7 +43,6 @@ const chainInfoList: ChainInfo[] = chainList.map((c) => ({
 }));
 
 export default function Retrieve(props: IProps) {
-  const l2Account = props.l2Account;
   const [selectedPoolOps, setSelectedPoolOps] = react.useState<PoolOps>();
   const [chainId0, setChainId0] = react.useState<string>(
     chainInfoList[0].chainId
@@ -87,7 +88,7 @@ export default function Retrieve(props: IProps) {
       );
 
       await queryPoolShareAsync(
-        l2Account,
+        props.l2Account,
         chainId0,
         token0,
         chainId1,
@@ -143,32 +144,16 @@ export default function Retrieve(props: IProps) {
             </nav>
             <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
               <ul className="list-group">
-                <Dropdown
-                  placeholder="Select Chain"
-                  options={chainOptions}
-                  onChange={(_, option) => {
-                    if (option) {
-                      if (option.key !== chainId0) {
-                        setToken0(
-                          chainInfoList.find((c) => c.chainId === option.key)
-                            ?.tokens[0] ?? ""
-                        );
-                      }
-                      setChainId0(option.key as string);
-                    }
-                  }}
-                  defaultSelectedKey={chainId0}
+                <ChainSelector
+                    default={chainId0}
+                    setToken={setToken0}
+                    setChain={setChainId0}
                 />
                 <div className="p-1" />
-                <Dropdown
-                  placeholder="Select Token"
-                  options={tokenOptions(chainId0)}
-                  onChange={(_, option) => {
-                    if (option) {
-                      setToken0(option.key as string);
-                    }
-                  }}
-                  defaultSelectedKey={token0}
+                <TokenSelector
+                    default={token0}
+                    chainId={chainId0}
+                    setToken={setToken0}
                 />
                 <div className="p-1" />
                 <TextField
@@ -191,34 +176,17 @@ export default function Retrieve(props: IProps) {
               </ul>
               <Separator>Share: {share ?? "loading..."}</Separator>
               <ul className="list-group">
-                <Dropdown
-                  placeholder="Select Chain"
-                  options={chainOptions}
-                  onChange={(_, option) => {
-                    if (option) {
-                      if (option.key !== chainId1) {
-                        setToken1(
-                          chainInfoList.find((c) => c.chainId === option.key)
-                            ?.tokens[0] ?? ""
-                        );
-                      }
-                      setChainId1(option.key as string);
-                    }
-                  }}
-                  selectedKey={chainId1}
+                <ChainSelector
+                    default={chainId1}
+                    setToken={setToken1}
+                    setChain={setChainId1}
                 />
                 <div className="p-1" />
-                <Dropdown
-                  placeholder="Select Token"
-                  options={tokenOptions(chainId1)}
-                  onChange={(_, option) => {
-                    if (option) {
-                      setToken1(option.key as string);
-                    }
-                  }}
-                  selectedKey={token1}
+                <TokenSelector
+                    default={token1}
+                    chainId={chainId1}
+                    setToken={setToken1}
                 />
-
                 <div className="p-1" />
                 <TextField
                   label="Liquidity"
@@ -227,7 +195,6 @@ export default function Retrieve(props: IProps) {
                   disabled
                   value={liquid1 ?? "loading ..."}
                 />
-
                 <div className="p-1" />
                 <TextField
                   label="Amount"
@@ -253,7 +220,7 @@ export default function Retrieve(props: IProps) {
       </Stack>
       {selectedPoolOps === PoolOps.Retrieve && (
         <RetrieveModal
-          l2Account={l2Account}
+          l2Account={props.l2Account}
           chainId0={chainId0}
           chainId1={chainId1}
           token0={token0}
