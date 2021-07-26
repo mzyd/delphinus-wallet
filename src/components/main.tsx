@@ -185,7 +185,7 @@ export default function Main(props: IProps) {
             setL2Account={props.setL2Account}
           />
           {
-            (currentPanel === "wallet" && <Token l2Account={props.l2Account}/>)
+            (currentPanel === "wallet" && <Token l1Account={props.l1Account} l2Account={props.l2Account}/>)
             || (currentPanel === "aggregator" && <Swap l2Account={props.l2Account}/>)
             || (currentPanel === "cross" && <Swap l2Account={props.l2Account}/>)
             || (currentPanel === "supply" && <Supply l2Account={props.l2Account}/>)

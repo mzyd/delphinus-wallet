@@ -30,6 +30,9 @@ export default function TokenView(props: IProps) {
                   {token.name} - 0x{token.address}
                 </Label>
                 <Label>
+                  <span> L1 Balance: {token.l1Balance ?? "loading..."}</span>
+                </Label>
+                <Label>
                   <span> L2 Balance: {token.l2Balance ?? "loading..."}</span>
                   <DefaultButton text="Deposit" className="fr btn-pl2"
                     onClick={() => {

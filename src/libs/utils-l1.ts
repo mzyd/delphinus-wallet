@@ -1,4 +1,5 @@
 import {L1AccountInfo, SubstrateAccountInfo} from "./type";
+const TokenInfo = require("solidity/build/contracts/ERC20.json")
 const Client = require("web3subscriber/client")
 
 
@@ -9,7 +10,6 @@ const configSelector: any = require("../config/config-selector");
 
 
 async function getBridge(chainId: string, mode = true) {
-    console.log("getBridge", configSelector.configMap[chainId]);
     try {
       let bridge = await abi.getBridge(configSelector.configMap[chainId], mode);
       return bridge;
@@ -55,7 +55,19 @@ export async function deposit(
   }
 }
 
-export async function queryBalanceOnL1(
+export async function queryTokenL1Balance(
+  chainId: string,
+  tokenAddress: string,
+  l1Account:L1AccountInfo
+) {
+  let config = configSelector.configMap[chainId];
+  let web3 = await Client.initWeb3(config, false);
+  let token= Client.getContractByAddress(web3, tokenAddress, TokenInfo, l1Account.address);
+  let balance = await Client.getBalance(token, l1Account.address);
+  return balance;
+}
+
+export async function queryBridgeStatus(
   l2Account: SubstrateAccountInfo,
   tokenChainId: string,
   tokenAddress: string,

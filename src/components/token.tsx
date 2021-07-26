@@ -2,8 +2,9 @@
 import * as react from "react";
 
 import { queryTokenAmountAsync } from "../libs/utils";
-import { queryBalanceOnL1 } from "../libs/utils-l1";
-import { TXProps, SubstrateAccountInfo, ChainInfo, TokenInfo } from "../libs/type";
+import { queryTokenL1Balance } from "../libs/utils-l1";
+import { TXProps, SubstrateAccountInfo, ChainInfo,
+    L1AccountInfo, TokenInfo } from "../libs/type";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
 import WithdrawBox from "../modals/withdraw";
 import DepositBox from "../modals/deposit";
@@ -14,6 +15,7 @@ import chainList from "../config/tokenlist";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
+  l1Account: L1AccountInfo;
 }
 
 export default function Token(props: IProps) {
@@ -69,23 +71,22 @@ export default function Token(props: IProps) {
       tokenInfos:TokenInfo[], balance:string) => {
     let tis = tokenInfos.map((e) =>
       e.address === tokenAddress
-        ? { ...e, l1Balance: {...e.l1Balance, [chainId]:balance}}
+        ? { ...e, l1Balance: balance}
         : e
     );
     return tis;
   }
 
-  const updateL1State = async (chainId:string, tokenAddress: string, queryId:string) => {
-    await queryBalanceOnL1(
-      props.l2Account,
+  const updateL1State = async (chainId:string, tokenAddress: string) => {
+    await queryTokenL1Balance(
       chainId,
       tokenAddress,
-      queryId,
+      props.l1Account
     ).then((value: string) => {
       setTokenInfoList((_list) =>
         _list?.map((e) =>
           e.chainId === chainId
-            ? { ...e, tokens: updateTokenL1Balance(queryId, tokenAddress, e.tokens, value)}
+            ? { ...e, tokens: updateTokenL1Balance(chainId, tokenAddress, e.tokens, value)}
             : e
         )
       );
@@ -94,11 +95,7 @@ export default function Token(props: IProps) {
 
   const updateStates = async (chainId:string, tokenAddress: string) => {
     await updateL2Balance(chainId, tokenAddress);
-    return;
-    for (let chain of chainInfoList) {
-      console.log(chainId, chain.chainId);
-      await updateL1State(chainId, tokenAddress, chain.chainId);
-    }
+    await updateL1State(chainId, tokenAddress);
   };
 
   react.useEffect(() => {
@@ -110,7 +107,7 @@ export default function Token(props: IProps) {
     };
     p.then(()=>console.log("done"));
     //await p; // This is dangerous since ui might trigger switch bridge
-  }, []);
+  }, [props.l1Account]);
 
   return (
     <>

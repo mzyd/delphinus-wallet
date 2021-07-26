@@ -26,15 +26,11 @@ export interface TXProps {
  * Informations that should get via monitor account.
  */
 
-interface BalanceInfo {
-  [key:string]: string;
-}
-
 export interface TokenInfo {
   address: string;
   name: string;
   l2Balance?: string;
-  l1Balance?: BalanceInfo;
+  l1Balance?: string;
 }
 
 export interface ChainInfo{
