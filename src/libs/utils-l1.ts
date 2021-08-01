@@ -30,7 +30,7 @@ export async function deposit(
   error: (m:string) => void
 ) {
   const accountAddress = l2Account.address;
-  console.log('call deposit');
+  console.log('call deposit', accountAddress, chainId, tokenAddress, amount);
   try {
     let bridge = await getBridge(chainId);
     let token_address = "0x" + tokenAddress;

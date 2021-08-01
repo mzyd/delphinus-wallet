@@ -15,6 +15,7 @@ interface IProps {
   l2Account: SubstrateAccountInfo;
   l1Account: L1AccountInfo;
   setL2Account: () => void;
+  charge: () => void;
 }
 
 export default function NavHead(props: IProps) {
@@ -28,9 +29,11 @@ export default function NavHead(props: IProps) {
         <span className="navaddr"> {props.l1Account.address} </span>
         <div className="navfr">
           <span> ${props.l2Account.balance} </span>
-          <button className="btn btn-sm" onClick={() => props.setL2Account()}
-            key={props.l2Account.address} >
+          <button className="btn btn-sm" onClick={() => props.setL2Account()}>
             switch
+           </button>
+          <button className="btn btn-sm" onClick={() => props.charge()}>
+            charge
            </button>
         </div>
       </div>

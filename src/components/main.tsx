@@ -7,13 +7,15 @@ import { Stack } from "@fluentui/react/lib/Stack";
 import { Nav, INavStyles, INavLinkGroup } from '@fluentui/react';
 import "../styles/main.css";
 import { loginL2Account } from "../libs/utils";
-import { L1AccountInfo, SubstrateAccountInfo } from "../libs/type";
+import { TXProps, L1AccountInfo, SubstrateAccountInfo } from "../libs/type";
+import ChargeModal from "../modals/chargemodal";
 import NavHead from "./navhead";
 import Token from "./token";
 import Pool from "./pool";
 import Swap from "./swap";
 import Supply from "./supply";
 import Retrieve from "./retrieve";
+import ChargeToken from "../config/charge";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
@@ -23,6 +25,16 @@ interface IProps {
 
 export default function Main(props: IProps) {
   const [currentPanel, setCurrentPanel] = react.useState<string>("wallet");
+  const [currentModal, setCurrentModal] = react.useState<string>("");
+  const [currentTXProps, setCurrentTXProps] = react.useState<TXProps>(
+    {
+      substrateAccount: props.l2Account,
+      selectedToken: {
+        chainId: "3",
+        tokenAddress: ChargeToken.networks["3"].address.replace("0x",""),
+      }
+    }
+  );
   const navStyles: Partial<INavStyles> = {
     root: {
       width: 208,
@@ -182,7 +194,7 @@ export default function Main(props: IProps) {
         </Stack>
         <Stack disableShrink={true} grow={1}>
           <NavHead l2Account={props.l2Account} l1Account={props.l1Account}
-            setL2Account={props.setL2Account}
+            setL2Account={props.setL2Account} charge={()=>{setCurrentModal("Charge");}}
           />
           {
             (currentPanel === "wallet" && <Token l1Account={props.l1Account} l2Account={props.l2Account}/>)
@@ -191,6 +203,15 @@ export default function Main(props: IProps) {
             || (currentPanel === "supply" && <Supply l2Account={props.l2Account}/>)
             || (currentPanel === "retrieve" && <Retrieve l2Account={props.l2Account}/>)
             || (currentPanel === "overview" && <Pool l2Account={props.l2Account}/>)
+          }
+          {
+            currentModal === "Charge" && (
+            <ChargeModal
+              txprops = {currentTXProps}
+              close={() => {
+                setCurrentModal("");
+              }}
+            />)
           }
         </Stack>
       </Stack>

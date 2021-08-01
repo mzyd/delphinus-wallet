@@ -390,3 +390,38 @@ export async function retrieve(
     return;
   }
 }
+
+export async function charge(
+  l2Account: SubstrateAccountInfo,
+  amount: string,
+  progress: (a:string) => void,
+  error: (a:string) => void,
+) {
+  const account = l2Account.account;
+  try {
+    progress("Waiting for process.");
+    const api = await getAPI();
+    await cryptoWaitReady();
+    const signer = l2Account.injector.signer;
+    const nonce = new BN((await api.query.system.account(l2Account.address)).nonce);
+    try {
+      new BN(amount);
+    } catch (e) {
+      error("Bad amount: " + amount);
+      return;
+    }
+    const tx = api.tx.swapModule.charge(
+      (new BN(amount))
+    );
+    try {
+      const ret = await tx.signAndSend(l2Account.address, {signer:signer});
+      console.log(ret);
+    } catch (e) {
+      error(e.toString());
+      return;
+    }
+  } catch(e) {
+    error(e.toString());
+    return;
+  }
+}
