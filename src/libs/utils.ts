@@ -198,9 +198,9 @@ export async function withdraw(
     const api = await getAPI();
     await cryptoWaitReady();
     const keyring = new Keyring({ type: "sr25519" });
-    const signer = keyring.addFromUri(`//${account}`);
-    const nonce = new BN((await api.query.system.account(signer.address)).nonce);
-    const accountId = ss58.addressToAddressId(signer.address);
+    const signer = l2Account.injector.signer;
+    const nonce = new BN((await api.query.system.account(l2Account.address)).nonce);
+    const accountId = ss58.addressToAddressId(l2Account.address);
     const l2nonce = await api.query.swapModule.nonceMap(accountId);
     const l1account = await queryCurrentL1Account(chainId);
     try {
@@ -210,14 +210,14 @@ export async function withdraw(
       return;
     }
     const tx = api.tx.swapModule.withdraw(
-      signer.address,
+      l2Account.address,
       l1account,
       compressToken(chainId, token),
       new BN(amount),
       l2nonce
     );
     try {
-      const ret = await tx.signAndSend(signer, { nonce });
+      const ret = await tx.signAndSend(l2Account.address, {signer:signer});
       console.log(ret);
     } catch (e) {
       alert(e);
@@ -270,8 +270,7 @@ export async function swap(
   const api = await getAPI();
   await cryptoWaitReady();
   const keyring = new Keyring({ type: "sr25519" });
-  const signer = keyring.addFromUri(`//${account}`);
-  const nonce = new BN((await api.query.system.account(signer.address)).nonce);
+  const signer = l2Account.injector.signer;
   const accountId = ss58.addressToAddressId(signer.address);
   const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
@@ -285,14 +284,14 @@ export async function swap(
     return;
   }
   const tx = api.tx.swapModule.swap(
-    signer.address,
+    l2Account.address,
     compressToken(chain_from, token_from),
     compressToken(chain_to, token_to),
     new BN(amount),
     l2nonce
   );
   try {
-    const ret = await tx.signAndSend(signer, { nonce });
+    const ret = await tx.signAndSend(l2Account.address, {signer:signer});
     console.log(ret);
   } catch (e) {
     alert(e);
@@ -314,8 +313,7 @@ export async function supply(
   await cryptoWaitReady();
   const keyring = new Keyring({ type: "sr25519" });
   console.log("l2 account name:", account);
-  const signer = keyring.addFromUri(`//${account}`);
-  const nonce = new BN((await api.query.system.account(signer.address)).nonce);
+  const signer = l2Account.injector.signer;
   const accountId = ss58.addressToAddressId(signer.address);
   const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
@@ -330,7 +328,7 @@ export async function supply(
     return;
   }
   const tx = api.tx.swapModule.poolSupply(
-    signer.address,
+    l2Account.address,
     compressToken(chain_from, token_from),
     compressToken(chain_to, token_to),
     amount_from,
@@ -338,7 +336,7 @@ export async function supply(
     l2nonce
   );
   try {
-    const ret = await tx.signAndSend(signer, { nonce });
+    const ret = await tx.signAndSend(l2Account.address, {signer:signer});
     console.log("transaction supply:", ret);
   } catch (e) {
     alert(e);
@@ -359,9 +357,8 @@ export async function retrieve(
   const api = await getAPI();
   await cryptoWaitReady();
   const keyring = new Keyring({ type: "sr25519" });
-  const signer = keyring.addFromUri(`//${account}`);
-  const nonce = new BN((await api.query.system.account(signer.address)).nonce);
-  const accountId = ss58.addressToAddressId(signer.address);
+  const signer = l2Account.injector.signer;
+  const accountId = ss58.addressToAddressId(l2Account.address);
   const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
     checkNumberString(token_from, "token", true);
@@ -375,7 +372,7 @@ export async function retrieve(
     return;
   }
   const tx = api.tx.swapModule.poolRetrieve(
-    signer.address,
+    l2Account.address,
     compressToken(chain_from, token_from),
     compressToken(chain_to, token_to),
     amount_from,
@@ -383,7 +380,7 @@ export async function retrieve(
     l2nonce
   );
   try {
-    const ret = await tx.signAndSend(signer, { nonce });
+    const ret = await tx.signAndSend(l2Account.address, {signer:signer});
     console.log(ret);
   } catch (e) {
     alert(e);
@@ -403,7 +400,6 @@ export async function charge(
     const api = await getAPI();
     await cryptoWaitReady();
     const signer = l2Account.injector.signer;
-    const nonce = new BN((await api.query.system.account(l2Account.address)).nonce);
     try {
       new BN(amount);
     } catch (e) {
