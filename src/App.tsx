@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as react from "react";
-import './App.css';
+import './App.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'office-ui-fabric-core/dist/css/fabric.min.css'
 import SetAccount from './components/account';

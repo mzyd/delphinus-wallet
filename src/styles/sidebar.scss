@@ -1,0 +1,63 @@
+.sidebar {
+    height: 100vh;
+    padding-top: 60px;
+    width: 250px;
+    background: #1b1e39;
+    box-shadow: inset -1px 4px 9px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+    position: relative;
+    &:after {
+        content: "";
+        background: rgba(64, 99, 221, 0.25);
+        filter: blur(281px);
+        width: 287px;
+        height: 287px;
+        border-radius: 100%;
+        left: -124px;
+        bottom: -124px;
+        position: absolute;
+    }
+    .sidebar-item {
+        color: #a7abc9;
+        font-size: 20px;
+        line-height: 24px;
+        height: 60px;
+        line-height: 60px;
+        padding-left: 24px;
+        position: relative;
+        transition: all 0.3s;
+        &:hover {
+            cursor: pointer;
+            color: #7896ff;
+        }
+        &.active {
+            color: #7896ff;
+            background: #161930;
+            box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+            &::before {
+                content: "";
+                box-shadow: 50px 0 50px #4063dd;
+                position: absolute;
+                left: 0;
+                width: 6px;
+                height: 60px;
+                background: #6486ff;
+            }
+            &::after {
+                content: "";
+                background: #4063dd;
+                filter: blur(50px);
+                position: absolute;
+                left: 0;
+                top: 8px;
+                width: 74px;
+                height: 32px;
+            }
+        }
+        .icon {
+            width: 20px;
+            margin-right: 16px;
+        }
+    }
+}

@@ -6,14 +6,13 @@ import { TextField } from "@fluentui/react/lib/TextField";
 import { queryPoolAmountAsync } from "../libs/utils";
 import SwapModal from "../modals/swapmodal";
 import ChainSelector from "./chainselector";
+import InputField from "./inputfield";
 import TokenSelector from "./tokenselector";
 import { Dropdown, Label, Separator } from "@fluentui/react";
 import { TXProps, SubstrateAccountInfo } from "../libs/type";
 
-
 import "../styles/panel.css";
 import chainList from "../config/tokenlist";
-
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
@@ -60,7 +59,6 @@ export default function Swap(props: IProps) {
   const [liquid1, setLiquid1] = react.useState<string>();
 
   react.useEffect(() => {
-
     const _token0 = token0;
     const _token1 = token1;
     const _chainId0 = chainId0;
@@ -96,7 +94,66 @@ export default function Swap(props: IProps) {
 
   return (
     <>
-      <Stack
+      <div className="action-box">
+        <div className="header">Swap</div>
+        <div className="content">
+          <div className="tag">FROM</div>
+          <div>
+            <ChainSelector
+              default={chainId0}
+              setToken={setToken0}
+              setChain={setChainId0}
+            />
+            <TokenSelector
+              default={token0}
+              chainId={chainId0}
+              setToken={setToken0}
+            />
+            <InputField
+              label="Amount"
+              value={amount0}
+              onChange={(e: any) => {
+                setAmount0(e.target.value);
+                setAmount1(e.target.value);
+              }}
+            />
+
+            {liquid0 && <div className="liquidity">Liquidity: {liquid0}</div>}
+            <div className="available">Available: 1024 USDT</div>
+          </div>
+
+          <div className="tag">TO</div>
+          <div>
+            <ChainSelector
+              default={chainId0}
+              setToken={setToken0}
+              setChain={setChainId0}
+            />
+            <TokenSelector
+              default={token1}
+              chainId={chainId1}
+              setToken={setToken1}
+            />
+          </div>
+          {liquid1 && (
+            <div className="liquidity">
+              Liquidity: {liquid1}
+            </div>
+          )}
+          <div className="will-get">You will get: {amount1}</div>
+          <button
+            type="button"
+            className="btn-confirm"
+            disabled={token0 === token1 && chainId0 === chainId1}
+            onClick={() => {
+              setSelectedPoolOps(PoolOps.Swap);
+            }}
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+      {/* <Stack
         horizontal
         horizontalAlign={"center"}
         tokens={verticalGapStackTokens}
@@ -111,15 +168,15 @@ export default function Swap(props: IProps) {
             <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
               <ul className="list-group">
                 <ChainSelector
-                    default={chainId0}
-                    setToken={setToken0}
-                    setChain={setChainId0}
+                  default={chainId0}
+                  setToken={setToken0}
+                  setChain={setChainId0}
                 />
                 <div className="p-1" />
                 <TokenSelector
-                    default={token0}
-                    chainId={chainId0}
-                    setToken={setToken0}
+                  default={token0}
+                  chainId={chainId0}
+                  setToken={setToken0}
                 />
                 <div className="p-1" />
                 <TextField
@@ -143,15 +200,15 @@ export default function Swap(props: IProps) {
               <Separator> To </Separator>
               <ul className="list-group">
                 <ChainSelector
-                    default={chainId1}
-                    setToken={setToken1}
-                    setChain={setChainId1}
+                  default={chainId1}
+                  setToken={setToken1}
+                  setChain={setChainId1}
                 />
                 <div className="p-1" />
                 <TokenSelector
-                    default={token1}
-                    chainId={chainId1}
-                    setToken={setToken1}
+                  default={token1}
+                  chainId={chainId1}
+                  setToken={setToken1}
                 />
                 <div className="p-1" />
                 <TextField
@@ -183,7 +240,7 @@ export default function Swap(props: IProps) {
             </Stack>
           </div>
         </Stack>
-      </Stack>
+      </Stack> */}
       {selectedPoolOps === PoolOps.Swap && (
         <SwapModal
           l2Account={props.l2Account}
