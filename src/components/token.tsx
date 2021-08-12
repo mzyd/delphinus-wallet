@@ -111,7 +111,7 @@ export default function Token(props: IProps) {
 
   return (
     <>
-      <TokenView chainInfoList={chainInfoList} tokenTXModal={tokenTXModal}></TokenView>
+      <TokenView chainInfoList={chainInfoList} tokenTXModal={tokenTXModal} l2Account={props.l2Account}></TokenView>
       {currentTXProps &&
       <DepositBox show={currentModal==="Deposit"}
           txprops = {currentTXProps!}

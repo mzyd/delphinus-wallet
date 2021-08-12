@@ -147,6 +147,18 @@
   }
 }
 
+.board {
+  background: #2d325a;
+  box-shadow: 0px 4px 43px rgba(0, 0, 0, 0.24);
+  border-radius: 10px;
+  padding: 30px 25px;
+
+}
+
+.root-111 {
+  color: #fff;
+}
+
 .btn-switch {
   background: #4d5387;
   border: 1px solid #7d95ec;
@@ -158,6 +170,34 @@
   transition: all 0.3s;
   &:hover {
     background: #7d95ec;
+  }
+}
+
+.btn-deposit {
+  font-size: 18px;
+  color: #ffffff;
+  background: #4063dd;
+  border: 1px solid #7d95ec;
+  box-sizing: border-box;
+  box-shadow: -1px 0px 16px rgba(64, 99, 221, 0.71);
+  transition: all 0.3s;
+  border-radius: 35px;
+  padding: 4px 32px;
+  &:hover {
+    background: #3755be;
+  }
+}
+
+.btn-withdraw {
+  font-size: 18px;
+  color: #ffffff;
+  background: #4d5387;
+  border-radius: 35px;
+  border: none;
+  transition: all 0.3s;
+  padding: 4px 20px;
+  &:hover {
+    background: #414672;
   }
 }
 

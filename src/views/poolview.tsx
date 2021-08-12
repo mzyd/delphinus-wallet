@@ -3,6 +3,7 @@ import * as react from "react";
 
 import { Stack } from "@fluentui/react/lib/Stack";
 import { PoolInfo } from "../libs/type";
+import './poolview.scss'
 
 interface IProps {
   poolInfoList: PoolInfo[];
