@@ -39,75 +39,77 @@ export default function TokenView(props: IProps) {
   };
   return (
     <div className="wallet-page">
-      <div className="balance-tag">L2 Balance: ${l2Account.balance}</div>
-      <div className="board token-view">
-        <div className="chain-list">
-          {chainInfoList.map((item) => (
-            <div
-              onClick={() => setCurrentChainId(item.chainId)}
-              className={`chain-item ${
-                currentChainId === item.chainId ? "active" : ""
-              }`}
-            >
-              <div className="title">
-                {item.chainName}[{item.chainId}]
-              </div>
-              {/* <div calssName="address"></div> */}
-            </div>
-          ))}
-        </div>
-        <div className="token-list">
-          {chainInfoList
-            .filter((item) => item.chainId === currentChainId)[0]
-            .tokens.map((token) => (
-              <div className="token-item">
-                <img src={UsdtIcon} className="icon" />
-                <div className="top">
-                  <div className="balance">
-                    L1 {token.name}: {token.l1Balance ?? "loading..."}
-                  </div>
+      <div className="box">
+        <div className="balance-tag">L2 Balance: ${l2Account.balance}</div>
+        <div className="board token-view">
+          <div className="chain-list">
+            {chainInfoList.map((item) => (
+              <div
+                onClick={() => setCurrentChainId(item.chainId)}
+                className={`chain-item ${
+                  currentChainId === item.chainId ? "active" : ""
+                }`}
+              >
+                <div className="title">
+                  {item.chainName}[{item.chainId}]
                 </div>
-                <div className="bottom">
-                  <div className="balance">
-                    L2 {token.name}: {token.l2Balance ?? "loading..."}
-                  </div>
-                  <div className="address">
-                    {token.address.slice(0, 6)}...{token.address.slice(-6)}
-                    <img
-                      src={CopyIcon}
-                      className="copy-icon"
-                      onClick={() => doCopy(token.address)}
-                    />
-                  </div>
-                  <div className="actions">
-                    <button
-                      className="btn-deposit"
-                      onClick={() => {
-                        props.tokenTXModal(
-                          currentChainId,
-                          token.address,
-                          "Deposit"
-                        );
-                      }}
-                    >
-                      Deposit
-                    </button>
-                    <button
-                      className="btn-withdraw"
-                      onClick={() => {
-                        props.tokenTXModal(
-                          currentChainId,
-                          token.address,
-                          "Withdraw"
-                        );
-                      }}
-                    >
-                      Withdraw
-                    </button>
-                  </div>
-                </div>
+                {/* <div calssName="address"></div> */}
               </div>
             ))}
+          </div>
+          <div className="token-list">
+            {chainInfoList
+              .filter((item) => item.chainId === currentChainId)[0]
+              .tokens.map((token) => (
+                <div className="token-item">
+                  <img src={UsdtIcon} className="icon" />
+                  <div className="top">
+                    <div className="balance">
+                      L1 {token.name}: {token.l1Balance ?? "loading..."}
+                    </div>
+                  </div>
+                  <div className="bottom">
+                    <div className="balance">
+                      L2 {token.name}: {token.l2Balance ?? "loading..."}
+                    </div>
+                    <div className="address">
+                      {token.address.slice(0, 6)}...{token.address.slice(-6)}
+                      <img
+                        src={CopyIcon}
+                        className="copy-icon"
+                        onClick={() => doCopy(token.address)}
+                      />
+                    </div>
+                    <div className="actions">
+                      <button
+                        className="btn-deposit"
+                        onClick={() => {
+                          props.tokenTXModal(
+                            currentChainId,
+                            token.address,
+                            "Deposit"
+                          );
+                        }}
+                      >
+                        Deposit
+                      </button>
+                      <button
+                        className="btn-withdraw"
+                        onClick={() => {
+                          props.tokenTXModal(
+                            currentChainId,
+                            token.address,
+                            "Withdraw"
+                          );
+                        }}
+                      >
+                        Withdraw
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
       {/* <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>

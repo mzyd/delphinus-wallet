@@ -2,9 +2,9 @@
 import * as react from "react";
 
 import { Label } from "@fluentui/react";
-import { DefaultButton} from "@fluentui/react/lib/Button";
+import { DefaultButton } from "@fluentui/react/lib/Button";
 import { Stack } from "@fluentui/react/lib/Stack";
-import { Nav, INavStyles, INavLinkGroup } from '@fluentui/react';
+import { Nav, INavStyles, INavLinkGroup } from "@fluentui/react";
 import "../styles/main.css";
 import { loginL2Account } from "../libs/utils";
 import { L1AccountInfo, SubstrateAccountInfo } from "../libs/type";
@@ -27,14 +27,14 @@ export default function Main(props: IProps) {
   const navStyles: Partial<INavStyles> = {
     root: {
       width: 208,
-      boxSizing: 'border-box',
-      border: '1px solid #eee',
-      overflowY: 'auto',
+      boxSizing: "border-box",
+      border: "1px solid #eee",
+      overflowY: "auto",
     },
     // these link styles override the default truncation behavior
     link: {
-      whiteSpace: 'normal',
-      lineHeight: 'inherit',
+      whiteSpace: "normal",
+      lineHeight: "inherit",
     },
   };
 
@@ -172,30 +172,75 @@ export default function Main(props: IProps) {
   // ];
 
   return (
-      <Stack horizontal className="vw-100">
-        <Stack>
-          <div className="brand">LAYER 2</div>
-          <Sidebar setPanel={(val)=>setCurrentPanel(val)} currentPanel={currentPanel} />
-          {/* <Nav
+    <>
+      <NavHead
+        l2Account={props.l2Account}
+        l1Account={props.l1Account}
+        setL2Account={props.setL2Account}
+      />
+      <div className="main-area">
+        <Sidebar
+          setPanel={(val) => setCurrentPanel(val)}
+          currentPanel={currentPanel}
+        />
+        <div className="route-area">
+          {(currentPanel === "wallet" && (
+            <Token l1Account={props.l1Account} l2Account={props.l2Account} />
+          )) ||
+            (currentPanel === "aggregator" && (
+              <Swap l2Account={props.l2Account} />
+            )) ||
+            (currentPanel === "cross" && (
+              <Swap l2Account={props.l2Account} />
+            )) ||
+            (currentPanel === "supply" && (
+              <Supply l2Account={props.l2Account} />
+            )) ||
+            (currentPanel === "retrieve" && (
+              <Retrieve l2Account={props.l2Account} />
+            )) ||
+            (currentPanel === "overview" && (
+              <Pool l2Account={props.l2Account} />
+            ))}
+        </div>
+      </div>
+      {false && (
+        <Stack horizontal className="vw-100">
+          <Stack>
+            <div className="brand">LAYER 2</div>
+            <Sidebar
+              setPanel={(val) => setCurrentPanel(val)}
+              currentPanel={currentPanel}
+            />
+            {/* <Nav
             className="sidebar"
             groups={links}
             selectedKey={currentPanel}
             styles={navStyles}
           /> */}
+          </Stack>
+          <Stack disableShrink={true} grow={1} className="main-area">
+            {(currentPanel === "wallet" && (
+              <Token l1Account={props.l1Account} l2Account={props.l2Account} />
+            )) ||
+              (currentPanel === "aggregator" && (
+                <Swap l2Account={props.l2Account} />
+              )) ||
+              (currentPanel === "cross" && (
+                <Swap l2Account={props.l2Account} />
+              )) ||
+              (currentPanel === "supply" && (
+                <Supply l2Account={props.l2Account} />
+              )) ||
+              (currentPanel === "retrieve" && (
+                <Retrieve l2Account={props.l2Account} />
+              )) ||
+              (currentPanel === "overview" && (
+                <Pool l2Account={props.l2Account} />
+              ))}
+          </Stack>
         </Stack>
-        <Stack disableShrink={true} grow={1} className="main-area">
-          <NavHead l2Account={props.l2Account} l1Account={props.l1Account}
-            setL2Account={props.setL2Account}
-          />
-          {
-            (currentPanel === "wallet" && <Token l1Account={props.l1Account} l2Account={props.l2Account}/>)
-            || (currentPanel === "aggregator" && <Swap l2Account={props.l2Account}/>)
-            || (currentPanel === "cross" && <Swap l2Account={props.l2Account}/>)
-            || (currentPanel === "supply" && <Supply l2Account={props.l2Account}/>)
-            || (currentPanel === "retrieve" && <Retrieve l2Account={props.l2Account}/>)
-            || (currentPanel === "overview" && <Pool l2Account={props.l2Account}/>)
-          }
-        </Stack>
-      </Stack>
+      )}
+    </>
   );
 }
