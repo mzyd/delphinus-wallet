@@ -24,7 +24,7 @@ interface IProps {
 }
 
 export default function WithdrawBox(props: IProps) {
-  const [amount, setAmount] = react.useState<string>();
+  const [amount, setAmount] = react.useState<string>('0');
   const [progress, setProgress] = react.useState<string>();
   const [process, setProcess] = react.useState<string>("");
   const [error, setError] = react.useState<string>();
