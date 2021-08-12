@@ -1,19 +1,21 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as react from "react";
+import './style.scss'
 
 interface IProps {
-  value: string;
-  label: string;
+  value: any;
+  disabled?: boolean;
+  label?: string;
   onChange: (e: any) => void;
 }
 
 export default function ChainSelect(props: IProps) {
-  const { value, label, onChange } = props;
+  const { value, label, disabled, onChange } = props;
 
   return (
     <div className="hole">
-      <div>{label}:</div>
-      <input value={value} onChange={onChange} />
+      {label && <div>{label}:</div>}
+      <input value={value} disabled={disabled} onChange={onChange} />
     </div>
   );
 }
