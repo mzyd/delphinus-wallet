@@ -37,13 +37,23 @@ export async function getSubstrateBalance (account: string) {
   return balance;
 }
 
+export async function getDepositTxStatus(tx: string) {
+  const api = await getAPI();
+  const tx_status = await api.query.swapModule.depositMap (tx);
+  return tx_status.toHex();
+}
+
 async function getL2Accounts(callback: (u:string[])=>void) {
   const injectedSubstrate = await web3Enable('Delphinus');
   const substrateAccounts = await web3Accounts();
   console.log("number of accounts", substrateAccounts.length);
-  callback(substrateAccounts.map((c) => (
-    c.address
-  )));
+  if (substrateAccounts.length == 0) {
+    await setTimeout(() => getL2Accounts(callback), 1000);
+  } else {
+    callback(substrateAccounts.map((c) => (
+      c.address
+    )));
+  }
 }
 
 async function tryLoginL2Account(
