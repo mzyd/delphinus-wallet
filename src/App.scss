@@ -113,19 +113,7 @@
       color: #9fb5c9;
       text-align: right;
     }
-    .ms-Dropdown {
-      border: none;
-      color: #fff;
-      &::after {
-        display: none !important;
-      }
-      .ms-Dropdown-title {
-        color: #fff !important;
-        font-size: 18px;
-        background: none;
-        border: none;
-      }
-    }
+
   }
 }
 
@@ -136,6 +124,7 @@
   display: flex;
   align-items: center;
   padding: 8px 14px;
+  overflow: hidden;
   margin-bottom: 15px;
   input {
     margin: 0 8px;
@@ -173,6 +162,69 @@
   box-shadow: 0px 4px 43px rgba(0, 0, 0, 0.24);
   border-radius: 10px;
   padding: 30px 25px;
+}
+
+// override default ui component
+
+.ms-Dropdown {
+  border: none;
+  color: #fff;
+  &::after {
+    display: none !important;
+  }
+  .ms-Dropdown-title {
+    color: #fff !important;
+    font-size: 18px;
+    background: none;
+    border: none;
+  }
+}
+
+.account-dropdown{
+  .ms-Dropdown-title{
+    font-size: 16px;
+  }
+}
+
+.ant-modal-root {
+  .ant-modal-mask {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+  }
+}
+
+.ant-modal {
+  color: #fff;
+  .ant-modal-close {
+    color: #fff;
+    .anticon-close {
+      vertical-align: 0;
+    }
+  }
+  .ant-modal-content {
+    border-radius: 24px;
+    overflow: hidden;
+  }
+  .ant-modal-header {
+    background: #373e74;
+    border: none;
+    .ant-modal-title {
+      text-align: center;
+      color: #fff;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 24px;
+    }
+  }
+  .ant-modal-body {
+    background: #20254b;
+  }
+  .modal-label {
+    color: #fff;
+    font-size: 19px;
+    margin-bottom: 20px;
+    line-height: 23px;
+  }
 }
 
 .ant-drawer {

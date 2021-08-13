@@ -43,7 +43,7 @@ function App() {
   }, []);
 
   return (
-    <div className="vh-100 vw-100">
+    <div>
       { (l2Account === undefined || l1Account === undefined)
         && <SetAccount done={confirmAccount} accounts={l2Addresses} l1Account={l1Account} ></SetAccount> }
       { (l2Account !== undefined && l1Account !== undefined)
