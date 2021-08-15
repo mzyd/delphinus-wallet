@@ -195,6 +195,24 @@ async function getSudo() {
 }
 */
 
+const handle_tx_reply = (on_failure:any) => (data: any) => {
+  let status = data.status;
+  let events = data.events;
+  console.log("handle tx reply");
+  console.log(events);
+  if (status.isInBlock || status.isFinalized) {
+    let err_evts = events
+      // find/filter for failed events
+      .filter((e:any) => {
+        let event = e.event;
+        api.events.system.ExtrinsicFailed.is(event)
+      });
+    if (err_evts.length > 0) {
+      on_failure(err_evts[0].toString());
+    }
+  }
+}
+
 export async function withdraw(
   l2Account: SubstrateAccountInfo,
   chainId: string,
@@ -227,7 +245,7 @@ export async function withdraw(
       l2nonce
     );
     try {
-      const ret = await tx.signAndSend(l2Account.address, {signer:signer});
+      const ret = await tx.signAndSend(l2Account.address, {signer:signer}, handle_tx_reply(console.log));
       console.log(ret);
     } catch (e) {
       alert(e);
@@ -301,7 +319,7 @@ export async function swap(
     l2nonce
   );
   try {
-    const ret = await tx.signAndSend(l2Account.address, {signer:signer});
+    const ret = await tx.signAndSend(l2Account.address, {signer:signer}, handle_tx_reply(console.log));
     console.log(ret);
   } catch (e) {
     alert(e);
@@ -346,7 +364,7 @@ export async function supply(
     l2nonce
   );
   try {
-    const ret = await tx.signAndSend(l2Account.address, {signer:signer});
+    const ret = await tx.signAndSend(l2Account.address, {signer:signer}, handle_tx_reply(console.log));
     console.log("transaction supply:", ret);
   } catch (e) {
     alert(e);
@@ -390,7 +408,7 @@ export async function retrieve(
     l2nonce
   );
   try {
-    const ret = await tx.signAndSend(l2Account.address, {signer:signer});
+    const ret = await tx.signAndSend(l2Account.address, {signer:signer}, handle_tx_reply(console.log));
     console.log(ret);
   } catch (e) {
     alert(e);
@@ -420,7 +438,7 @@ export async function charge(
       (new BN(amount))
     );
     try {
-      const ret = await tx.signAndSend(l2Account.address, {signer:signer});
+      const ret = await tx.signAndSend(l2Account.address, {signer:signer}, handle_tx_reply(console.log));
       console.log(ret);
     } catch (e) {
       error(e.toString());
