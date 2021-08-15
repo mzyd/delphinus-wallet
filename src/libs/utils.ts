@@ -119,7 +119,7 @@ export async function queryPoolAmountAsync(
 ) {
   const fn = async () => {
     const api = await getAPI();
-    if (compressToken(chainId1, tokenAddress1) < compressToken(chainId2, tokenAddress2)) {
+    if (compressToken(chainId1, tokenAddress1) > compressToken(chainId2, tokenAddress2)) {
       const result = await api.query.swapModule.poolMap(
         "0x" +
         compressToken(chainId1, tokenAddress1, true) +
@@ -164,7 +164,7 @@ export async function queryPoolShareAsync(
   const fn = async () => {
     const api = await getAPI();
     const accountId = ss58.addressToAddressId(accountAddress);
-    if (compressToken(chainId1, tokenAddress1) < compressToken(chainId2, tokenAddress2)) {
+    if (compressToken(chainId1, tokenAddress1) > compressToken(chainId2, tokenAddress2)) {
       const result = await api.query.swapModule.shareMap(
         accountId +
         compressToken(chainId1, tokenAddress1, true) +
@@ -299,7 +299,7 @@ export async function swap(
   await cryptoWaitReady();
   const keyring = new Keyring({ type: "sr25519" });
   const signer = l2Account.injector.signer;
-  const accountId = ss58.addressToAddressId(signer.address);
+  const accountId = ss58.addressToAddressId(l2Account.address);
   const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
     checkNumberString(token_from, "token_from", true);
@@ -342,7 +342,7 @@ export async function supply(
   const keyring = new Keyring({ type: "sr25519" });
   console.log("l2 account name:", account);
   const signer = l2Account.injector.signer;
-  const accountId = ss58.addressToAddressId(signer.address);
+  const accountId = ss58.addressToAddressId(l2Account.address);
   const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
     checkNumberString(token_from, "token", true);
