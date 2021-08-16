@@ -1,6 +1,6 @@
 import L1TokenInfo from "solidity/build/contracts/Token.json";
 import RioTokenInfo from "solidity/build/contracts/Rio.json";
-const tokenList = [
+const _tokenList = [
   {
     chainId: "15",
     chainName: "local-test-net1",
@@ -55,6 +55,7 @@ const tokenList = [
   },
 ];
 
+let tokenList = _tokenList.filter((c) => c.enable === true);
 export default tokenList;
 
 

@@ -23,11 +23,11 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
-    "solidity": "file:../solidity",
+    "solidity": "*",
     "substrate-ss58": "^1.0.3",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
-    "web3subscriber": "file:../web3subscriber"
+    "web3subscriber": "*"
   },
   "scripts": {
     "start": "react-scripts start",

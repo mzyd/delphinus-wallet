@@ -27,10 +27,11 @@ export async function deposit(
   tokenAddress: string, // hex without 0x prefix
   amount: string,
   progress: (s:string, h:string, r:string, ratio:number) => void,
-  error: (m:string) => void
+  error: (m:string) => void,
+  querying: (m:string) => Promise<string>,
 ) {
   const accountAddress = l2Account.address;
-  console.log('call deposit');
+  console.log('call deposit', accountAddress, chainId, tokenAddress, amount);
   try {
     let bridge = await getBridge(chainId);
     let token_address = "0x" + tokenAddress;
@@ -48,8 +49,29 @@ export async function deposit(
         (tx:string) => progress("Desposit", "Transaction Sent", tx, 50))
      .when("Deposit", "receipt",
         (tx:any) => progress("Deposit", "Done", tx.blockHash, 70));
-    await r;
-   progress("Finalize", "Done", "", 100);
+    let tx = await r;
+    console.log(tx);
+    const p = async () => {
+      let tx_status = await querying(tx.transactionHash);
+      //FIXME: tx_status:Codec should be parsed to number
+      console.log("tx_status", tx_status);
+      if (tx_status === "0x00") {
+        progress("Waiting for L2 confirm", "Waiting L2", "", 80);
+        await setTimeout(() => {}, 1000);
+        await p();
+      }
+      else if (tx_status === "0x01") {
+        //FIXME: we need to put the receipt status into a list for further querying
+        progress("Waiting for L2 processing", "Waiting L2", "", 100);
+        return;
+      }
+      else if (tx_status === "0x02") {
+        progress("Finalize", "Done", "", 100);
+        return;
+      }
+      else throw("Unexpected TxStatus");
+    };
+    await p();
   } catch (e){
     error(e.message);
   }

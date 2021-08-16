@@ -5,7 +5,8 @@ import { Label } from "@fluentui/react";
 import { TextField } from "@fluentui/react/lib/TextField";
 import { Stack } from "@fluentui/react/lib/Stack";
 import { deposit } from "../libs/utils-l1";
-import { ProgressIndicator } from "@fluentui/react/lib/ProgressIndicator";
+import { getDepositTxStatus } from "../libs/utils";
+import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
 import { verticalGapStackTokens } from "../styles/common-styles";
 import { Drawer, Tooltip } from "antd";
 import InputField from "../components/inputfield";
@@ -78,7 +79,8 @@ export default function DepositBox(props: IProps) {
         selectedToken.tokenAddress,
         amount,
         setStateProgress,
-        setStateError
+        setStateError,
+        getDepositTxStatus,
       );
     }
   };

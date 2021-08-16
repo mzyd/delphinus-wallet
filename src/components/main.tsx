@@ -7,7 +7,8 @@ import { Stack } from "@fluentui/react/lib/Stack";
 import { Nav, INavStyles, INavLinkGroup } from "@fluentui/react";
 import "../styles/main.css";
 import { loginL2Account } from "../libs/utils";
-import { L1AccountInfo, SubstrateAccountInfo } from "../libs/type";
+import { TXProps, L1AccountInfo, SubstrateAccountInfo } from "../libs/type";
+import ChargeModal from "../modals/chargemodal";
 import NavHead from "./navhead";
 import Sidebar from "./sidebar";
 import Token from "./token";
@@ -15,6 +16,7 @@ import Pool from "./pool";
 import Swap from "./swap";
 import Supply from "./supply";
 import Retrieve from "./retrieve";
+import ChargeToken from "../config/charge";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
@@ -24,6 +26,16 @@ interface IProps {
 
 export default function Main(props: IProps) {
   const [currentPanel, setCurrentPanel] = react.useState<string>("wallet");
+  const [currentModal, setCurrentModal] = react.useState<string>("");
+  const [currentTXProps, setCurrentTXProps] = react.useState<TXProps>(
+    {
+      substrateAccount: props.l2Account,
+      selectedToken: {
+        chainId: "3",
+        tokenAddress: ChargeToken.networks["3"].address.replace("0x",""),
+      }
+    }
+  );
   const navStyles: Partial<INavStyles> = {
     root: {
       width: 208,
@@ -177,6 +189,7 @@ export default function Main(props: IProps) {
         l2Account={props.l2Account}
         l1Account={props.l1Account}
         setL2Account={props.setL2Account}
+        charge={()=>{setCurrentModal("Charge")}}
       />
       <div className="main-area">
         <Sidebar
@@ -202,45 +215,17 @@ export default function Main(props: IProps) {
             (currentPanel === "overview" && (
               <Pool l2Account={props.l2Account} />
             ))}
+                {
+            currentModal === "Charge" && (
+            <ChargeModal
+              txprops = {currentTXProps}
+              close={() => {
+                setCurrentModal("");
+              }}
+            />)
+          }
         </div>
       </div>
-      {false && (
-        <Stack horizontal className="vw-100">
-          <Stack>
-            <div className="brand">LAYER 2</div>
-            <Sidebar
-              setPanel={(val) => setCurrentPanel(val)}
-              currentPanel={currentPanel}
-            />
-            {/* <Nav
-            className="sidebar"
-            groups={links}
-            selectedKey={currentPanel}
-            styles={navStyles}
-          /> */}
-          </Stack>
-          <Stack disableShrink={true} grow={1} className="main-area">
-            {(currentPanel === "wallet" && (
-              <Token l1Account={props.l1Account} l2Account={props.l2Account} />
-            )) ||
-              (currentPanel === "aggregator" && (
-                <Swap l2Account={props.l2Account} />
-              )) ||
-              (currentPanel === "cross" && (
-                <Swap l2Account={props.l2Account} />
-              )) ||
-              (currentPanel === "supply" && (
-                <Supply l2Account={props.l2Account} />
-              )) ||
-              (currentPanel === "retrieve" && (
-                <Retrieve l2Account={props.l2Account} />
-              )) ||
-              (currentPanel === "overview" && (
-                <Pool l2Account={props.l2Account} />
-              ))}
-          </Stack>
-        </Stack>
-      )}
     </>
   );
 }
