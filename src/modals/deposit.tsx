@@ -1,13 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as react from "react";
-import { Modal } from "@fluentui/react";
-import { Label } from "@fluentui/react";
-import { TextField } from "@fluentui/react/lib/TextField";
-import { Stack } from "@fluentui/react/lib/Stack";
+// import { Modal } from "@fluentui/react";
+// import { Label } from "@fluentui/react";
+// import { TextField } from "@fluentui/react/lib/TextField";
+// import { Stack } from "@fluentui/react/lib/Stack";
 import { deposit } from "../libs/utils-l1";
 import { getDepositTxStatus } from "../libs/utils";
 import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
-import { verticalGapStackTokens } from "../styles/common-styles";
+// import { verticalGapStackTokens } from "../styles/common-styles";
 import { Drawer, Tooltip } from "antd";
 import InputField from "../components/inputfield";
 import "../styles/modal.css";

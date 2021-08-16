@@ -1,16 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as react from "react";
-import { Modal } from "@fluentui/react";
-import { Label } from "@fluentui/react";
-import { TextField } from "@fluentui/react/lib/TextField";
-import { Stack } from "@fluentui/react/lib/Stack";
+// import { Modal } from "@fluentui/react";
+// import { Label } from "@fluentui/react";
+// import { TextField } from "@fluentui/react/lib/TextField";
+// import { Stack } from "@fluentui/react/lib/Stack";
 import { IDropdownStyles } from "@fluentui/react/lib/Dropdown";
 import { Drawer, Tooltip } from "antd";
 
 import { swap } from "../libs/utils";
 import { SubstrateAccountInfo } from "../libs/type";
 
-import { verticalGapStackTokens } from "../styles/common-styles";
+// import { verticalGapStackTokens } from "../styles/common-styles";
 import "../styles/modal.css";
 
 interface IProps {
@@ -23,11 +23,11 @@ interface IProps {
   close: () => void;
 }
 
-const dropdownStyles: Partial<IDropdownStyles> = {};
+// const dropdownStyles: Partial<IDropdownStyles> = {};
 
 export default function SwapModal(props: IProps) {
-  const [fromTokenKey, setFromTokenKey] = react.useState<number>(0);
-  const [defaultValue, setDefaultValue] = react.useState<number>(10);
+  // const [fromTokenKey, setFromTokenKey] = react.useState<number>(0);
+  // const [defaultValue, setDefaultValue] = react.useState<number>(10);
 
   return (
     <>

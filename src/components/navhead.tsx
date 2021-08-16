@@ -31,7 +31,7 @@ export default function NavHead(props: IProps) {
             <img src={MetaMaskLogo} className="icon"></img>
             <span className="navaddr"> {props.l1Account.address} </span>
           </div>
-          <div>
+          <div className="action-area">
             <button
               className="btn-switch"
               onClick={() => props.setL2Account()}
