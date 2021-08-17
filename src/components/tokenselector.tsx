@@ -5,9 +5,9 @@ import chainList from "../config/tokenlist";
 import { Dropdown } from "@fluentui/react";
 
 interface IProps {
-  default:string;
-  chainId:string;
-  setToken:(u:string) => void;
+  default: string;
+  chainId: string;
+  setToken: (u: string) => void;
 }
 
 interface ChainInfo {
@@ -26,26 +26,26 @@ const tokenOptions = (chainId: string) =>
     .find((c) => c.chainId === chainId)
     ?.tokens?.map((token) => ({
       key: token,
-      text: "Token: " + token,
+      text: token,
     })) ?? [];
-
-
-
 
 export default function TokenSelector(props: IProps) {
   const [selectedId, setSelectedId] = react.useState<string>(props.default);
 
   return (
-    <Dropdown
-      placeholder="Select Token"
-      options={tokenOptions(props.chainId)}
-      onChange={(_, option) => {
-        if (option) {
-          props.setToken(option.key as string);
-        }
-      }}
-      defaultSelectedKey={props.default}
-    />
+    <div className="hole">
+      <div>Token:</div>
+
+      <Dropdown
+        placeholder="Select Token"
+        options={tokenOptions(props.chainId)}
+        onChange={(_, option) => {
+          if (option) {
+            props.setToken(option.key as string);
+          }
+        }}
+        defaultSelectedKey={props.default}
+      />
+    </div>
   );
 }
-

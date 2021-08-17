@@ -1,17 +1,31 @@
 .navfr {
-  float:right;
-  margin:8px 2px 0px 0px;
-}
-.navaddr {
-  margin-right:4px;
-  color:#888;
+  float : right;
+  margin: 8px 2px 0px 0px;
 }
 
-.brand {
-  background-color:#333;
-  color:white;
-  padding:10px;
-  text-align:center;
-  font-size:1.5em;
-  height:60px;
+.navaddr {
+  margin-right: 4px;
+  color       : #A7ABC9;
+}
+
+/* .brand {
+  font-weight: 600;
+  background   : #2D325A;
+  color        : white;
+  padding      : 10px;
+  text-align   : center;
+  font-size    : 1.5em;
+  height       : 60px;
+} */
+
+
+.main-area {
+  background: #202442;
+}
+
+.ms-Nav {
+  background     : #1B1E39;
+  box-shadow     : inset -1px 4px 9px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(20px);
+  border: none;
 }

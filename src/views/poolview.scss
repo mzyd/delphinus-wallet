@@ -1,0 +1,45 @@
+.pools-page {
+    .board {
+        margin: 40px auto;
+    }
+    .pool-list {
+        .pool-item {
+            background: linear-gradient(266.73deg, #151936 -51.38%, #3b406c 95.03%);
+            border: 2px solid #4d5387;
+            box-sizing: border-box;
+            border-radius: 19px;
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all .2s;
+            cursor: pointer;
+            &:hover {
+                border: 2px solid #fff;
+            }
+            .left{
+                display: flex;
+            }
+            .right{
+
+            }
+            .value{
+                color: #fff;
+            }
+            .icon{
+                width: 44px;
+                margin-right: 12px;
+            }
+            .token-pair {
+                font-size: 18px;
+                font-weight: 800;
+                color: #ffffff;
+                margin-bottom: 4px;
+            }
+            .chain-pair {
+                font-size: 18px;
+                color: #a7abc9;
+            }
+        }
+    }
+}

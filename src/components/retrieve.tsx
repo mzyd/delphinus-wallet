@@ -3,11 +3,9 @@ import * as react from "react";
 
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
 import { TextField } from "@fluentui/react/lib/TextField";
+import InputField from "./inputfield";
 
-import {
-  queryPoolAmountAsync,
-  queryPoolShareAsync,
-} from "../libs/utils";
+import { queryPoolAmountAsync, queryPoolShareAsync } from "../libs/utils";
 import RetrieveModal from "../modals/retrievemodal";
 import ChainSelector from "./chainselector";
 import TokenSelector from "./tokenselector";
@@ -130,7 +128,60 @@ export default function Retrieve(props: IProps) {
 
   return (
     <>
-      <Stack
+      <div className="action-box">
+        <div className="header">Retrieve Liquidity</div>
+        <div className="content">
+          <div>
+            <ChainSelector
+              default={chainId0}
+              setToken={setToken0}
+              setChain={setChainId0}
+            />
+            <TokenSelector
+              default={token0}
+              chainId={chainId0}
+              setToken={setToken0}
+            />
+            <InputField
+              label="Amount"
+              value={amount0}
+              onChange={(e: any) => {
+                setAmount0(e.target.value);
+                setAmount1(e.target.value);
+              }}
+            />
+            {liquid0 && <div className="liquidity">Liquidity: {liquid0}</div>}
+            <div className="available">Available: 1024 USDT</div>
+          </div>
+
+          <div className="tag">SHARE {share && <span>: {share}</span>}</div>
+          <div>
+            <ChainSelector
+              default={chainId1}
+              setToken={setToken1}
+              setChain={setChainId1}
+            />
+            <TokenSelector
+              default={token1}
+              chainId={chainId1}
+              setToken={setToken1}
+            />
+          </div>
+          {liquid1 && <div className="liquidity">Liquidity: {liquid1}</div>}
+          <div className="will-get">You will get: {amount1}</div>
+          <button
+            type="button"
+            className="btn-confirm"
+            disabled={token0 === token1 && chainId0 === chainId1}
+            onClick={() => {
+              setSelectedPoolOps(PoolOps.Retrieve);
+            }}
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+      {/* <Stack
         horizontal
         horizontalAlign={"center"}
         tokens={verticalGapStackTokens}
@@ -217,7 +268,7 @@ export default function Retrieve(props: IProps) {
             </Stack>
           </div>
         </Stack>
-      </Stack>
+      </Stack> */}
       {selectedPoolOps === PoolOps.Retrieve && (
         <RetrieveModal
           l2Account={props.l2Account}

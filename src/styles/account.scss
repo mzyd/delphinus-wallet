@@ -1,0 +1,28 @@
+img.chain-icon {
+  float: left;
+  width: 36px;
+  height: 36px;
+  margin-right: 6px;
+}
+
+.metamask-zone {
+  padding: 8px 14px;
+  margin-bottom: 12px;
+  display: flex;
+
+  align-items: center;
+  .chain-icon {
+    margin-right: 10px;
+  }
+  .address {
+    font-size: 14px;
+    color: #7479a4;
+  }
+}
+
+/* img.chain-icon-head {
+  width:25px;
+  height:25px;
+  margin-right:5px;
+  margin-left:5px;
+} */

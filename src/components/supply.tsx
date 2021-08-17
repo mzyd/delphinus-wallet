@@ -1,17 +1,15 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, * as react from "react";
 
-import { Label } from "@fluentui/react";
-import { DefaultButton } from "@fluentui/react/lib/Button";
+// import { Label } from "@fluentui/react";
+// import { DefaultButton } from "@fluentui/react/lib/Button";
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
 import { Separator } from "@fluentui/react/lib/Separator";
-import { separatorStyles } from "../styles/common-styles";
+// import { separatorStyles } from "../styles/common-styles";
 import { TextField } from "@fluentui/react/lib/TextField";
+import InputField from "./inputfield";
 
-import {
-  queryPoolAmountAsync,
-  queryPoolShareAsync,
-} from "../libs/utils";
+import { queryPoolAmountAsync, queryPoolShareAsync } from "../libs/utils";
 
 import ChainSelector from "./chainselector";
 import TokenSelector from "./tokenselector";
@@ -67,7 +65,6 @@ export default function Supply(props: IProps) {
   const [share, setShare] = react.useState<string>();
 
   react.useEffect(() => {
-
     const _token0 = token0;
     const _token1 = token1;
     const _chainId0 = chainId0;
@@ -135,7 +132,65 @@ export default function Supply(props: IProps) {
 
   return (
     <>
-      <Stack
+      <div className="action-box">
+        <div className="header">Add Liquidity</div>
+        <div className="content">
+          <div>
+            <ChainSelector
+              default={chainId0}
+              setToken={setToken0}
+              setChain={setChainId0}
+            />
+            <TokenSelector
+              default={token0}
+              chainId={chainId0}
+              setToken={setToken0}
+            />
+            <InputField
+              label="Amount"
+              value={amount0}
+              onChange={(e: any) => {
+                setAmount0(e.target.value);
+                setAmount1(e.target.value);
+              }}
+            />
+            {liquid0 && <div className="liquidity">Liquidity: {liquid0}</div>}
+            <div className="available">Available: 1024 USDT</div>
+          </div>
+
+          <div className="tag">SHARE {share && <span>: {share}</span>}</div>
+          <div>
+            <ChainSelector
+              default={chainId1}
+              setToken={setToken1}
+              setChain={setChainId1}
+            />
+            <TokenSelector
+              default={token1}
+              chainId={chainId1}
+              setToken={setToken1}
+            />
+          </div>
+          {liquid1 && (
+            <div className="liquidity">
+              Liquidity: {liquid1}
+            </div>
+          )}
+          <div className="will-get">You will get: {amount1}</div>
+          <button
+            type="button"
+            className="btn-confirm"
+            disabled={token0 === token1 && chainId0 === chainId1}
+            onClick={() => {
+              setSelectedPoolOps(PoolOps.Supply);
+            }}
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+
+      {/* <Stack
         horizontal
         horizontalAlign={"center"}
         tokens={verticalGapStackTokens}
@@ -150,15 +205,15 @@ export default function Supply(props: IProps) {
             <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
               <ul className="list-group">
                 <ChainSelector
-                    default={chainId0}
-                    setToken={setToken0}
-                    setChain={setChainId0}
+                  default={chainId0}
+                  setToken={setToken0}
+                  setChain={setChainId0}
                 />
                 <div className="p-1" />
                 <TokenSelector
-                    default={token0}
-                    chainId={chainId0}
-                    setToken={setToken0}
+                  default={token0}
+                  chainId={chainId0}
+                  setToken={setToken0}
                 />
                 <div className="p-1" />
                 <TextField
@@ -182,15 +237,15 @@ export default function Supply(props: IProps) {
               <Separator>Share: {share ?? "loading..."}</Separator>
               <ul className="list-group">
                 <ChainSelector
-                    default={chainId1}
-                    setToken={setToken1}
-                    setChain={setChainId1}
+                  default={chainId1}
+                  setToken={setToken1}
+                  setChain={setChainId1}
                 />
                 <div className="p-1" />
                 <TokenSelector
-                    default={token1}
-                    chainId={chainId1}
-                    setToken={setToken1}
+                  default={token1}
+                  chainId={chainId1}
+                  setToken={setToken1}
                 />
                 <div className="p-1" />
                 <TextField
@@ -223,7 +278,7 @@ export default function Supply(props: IProps) {
             </Stack>
           </div>
         </Stack>
-      </Stack>
+      </Stack> */}
       {selectedPoolOps === PoolOps.Supply && (
         <SupplyModal
           l2Account={props.l2Account}

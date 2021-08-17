@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as react from "react";
-import './App.css';
+import './App.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'office-ui-fabric-core/dist/css/fabric.min.css'
 import SetAccount from './components/account';
@@ -43,7 +43,7 @@ function App() {
   }, []);
 
   return (
-    <div className="vh-100 vw-100">
+    <div>
       { (l2Account === undefined || l1Account === undefined)
         && <SetAccount done={confirmAccount} accounts={l2Addresses} l1Account={l1Account} ></SetAccount> }
       { (l2Account !== undefined && l1Account !== undefined)
