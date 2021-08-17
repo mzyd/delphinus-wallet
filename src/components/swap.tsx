@@ -125,9 +125,9 @@ export default function Swap(props: IProps) {
           <div className="tag">TO</div>
           <div>
             <ChainSelector
-              default={chainId0}
-              setToken={setToken0}
-              setChain={setChainId0}
+              default={chainId1}
+              setToken={setToken1}
+              setChain={setChainId1}
             />
             <TokenSelector
               default={token1}
