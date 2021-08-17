@@ -47,9 +47,34 @@
   }
 }
 
+.menu-drawer {
+  .ant-drawer-body {
+    padding: 0;
+    .sidebar{
+      display: block !important;
+    }
+  }
+}
+
 .sidebar {
   flex: 0 0 250px;
   min-height: calc(100vh - 60px);
+}
+
+.btn-mobile-menu {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    display: none;
+  }
+  .action-box {
+    width: 90% !important;
+  }
+  .btn-mobile-menu {
+    display: block;
+  }
 }
 
 .main-area {
