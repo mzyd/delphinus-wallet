@@ -1,11 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, * as react from "react";
 
-// import { Label } from "@fluentui/react";
-// import { DefaultButton } from "@fluentui/react/lib/Button";
 import { Stack, IStackTokens } from "@fluentui/react/lib/Stack";
 import { Separator } from "@fluentui/react/lib/Separator";
-// import { separatorStyles } from "../styles/common-styles";
 import { TextField } from "@fluentui/react/lib/TextField";
 import InputField from "./inputfield";
 
