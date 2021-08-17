@@ -10,23 +10,23 @@
             border-radius: 19px;
             padding: 22px;
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            transition: all .2s;
+            transition: all 0.2s;
             cursor: pointer;
             &:hover {
                 border: 2px solid #fff;
             }
-            .left{
+            .left {
                 display: flex;
             }
-            .right{
-
+            .right {
             }
-            .value{
+            .value {
                 color: #fff;
             }
-            .icon{
+            .icon {
                 width: 44px;
                 margin-right: 12px;
             }
@@ -39,6 +39,15 @@
             .chain-pair {
                 font-size: 18px;
                 color: #a7abc9;
+            }
+        }
+    }
+    @media screen and (max-width: 768px) {
+        .pool-list {
+            .pool-item {
+                .right {
+                    margin-top: 16px;
+                }
             }
         }
     }

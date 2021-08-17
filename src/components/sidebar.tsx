@@ -17,7 +17,7 @@ import "../styles/sidebar.scss";
 
 interface IProps {
   setPanel: (target: string) => void;
-  currentPanel: string;
+  currentPanel?: string;
 }
 
 export default function Sidebar(props: IProps) {

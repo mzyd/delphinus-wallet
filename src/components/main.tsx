@@ -36,19 +36,19 @@ export default function Main(props: IProps) {
       }
     }
   );
-  const navStyles: Partial<INavStyles> = {
-    root: {
-      width: 208,
-      boxSizing: "border-box",
-      border: "1px solid #eee",
-      overflowY: "auto",
-    },
-    // these link styles override the default truncation behavior
-    link: {
-      whiteSpace: "normal",
-      lineHeight: "inherit",
-    },
-  };
+  // const navStyles: Partial<INavStyles> = {
+  //   root: {
+  //     width: 208,
+  //     boxSizing: "border-box",
+  //     border: "1px solid #eee",
+  //     overflowY: "auto",
+  //   },
+  //   // these link styles override the default truncation behavior
+  //   link: {
+  //     whiteSpace: "normal",
+  //     lineHeight: "inherit",
+  //   },
+  // };
 
   // const links = [
   //   {
@@ -189,6 +189,8 @@ export default function Main(props: IProps) {
         l2Account={props.l2Account}
         l1Account={props.l1Account}
         setL2Account={props.setL2Account}
+        setPanel={(val) => setCurrentPanel(val)}
+        currentPanel={currentPanel}
         charge={()=>{setCurrentModal("Charge")}}
       />
       <div className="main-area">

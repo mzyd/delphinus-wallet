@@ -11,13 +11,31 @@
 
     color: #ffffff;
   }
-  .action-area{
-    .btn-switch{
+  .address-box {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .action-area {
+    display: flex;
+    .btn-switch {
       margin: 0 4px;
       padding: 10px 12px;
       line-height: 1;
       font-size: 14px;
       font-weight: 800;
+    }
+  }
+  @media (max-width: 992px) {
+    .address-box {
+      display: none;
+    }
+  }
+  @media (max-width: 576px) {
+    .brand{
+      flex: unset;
+      font-size: 20px;
+      padding-left: 24px;
     }
   }
 
@@ -29,12 +47,17 @@
   // margin: 15px;
   width: 100%;
   display: flex;
-    align-items: center;
-    justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
   .box {
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+  @media (max-width: 992px) {
+    .box {
+      justify-content: flex-end;
+    }
   }
 }
 

@@ -66,14 +66,13 @@ export default function SetAccount(props: IProps) {
   return (
     <>
       <Modal visible={true} title="Welcome to Delphinus" footer={null}>
-        <div className="modal-label">
-          Connecting Account for Aggregate Layer
-        </div>
-
         {props.accounts && props.accounts.length != 0 && (
           <div>
+            <div className="modal-label">
+              Connecting Account for Aggregate Layer
+            </div>
             <div className="hole">
-            <img src={PolkaLogo} className="chain-icon"></img>
+              <img src={PolkaLogo} className="chain-icon"></img>
               <Dropdown
                 placeholder="Select Account From Polkadot Wallets"
                 className="account-dropdown"
@@ -91,21 +90,37 @@ export default function SetAccount(props: IProps) {
           </div>
         )}
         {(props.accounts === undefined || props.accounts.length === 0) && (
-          <a href="https://polkadot.js.org/extension/">
-            connecting aggregate layer with polkadot.js
+          <a target="_blank" className="install-zone" href="https://polkadot.js.org/extension/">
+            <img src={PolkaLogo} className="chain-icon"></img>
+            <span className="address">
+              Connect Wallet for Aggregate Layer (L2)
+            </span>
           </a>
+          // <a href="https://polkadot.js.org/extension/">
+          //   connecting aggregate layer with polkadot.js
+          // </a>
         )}
-        <div className="modal-label">Connecting Account for Source Layer</div>
         {props.l1Account === undefined && (
-          <a href="https://polkadot.js.org/extension/">
-            connecting source layer with metamask
+          <a target="_blank" className="install-zone" href="https://metamask.io/download">
+            <img src={MetaMaskLogo} className="chain-icon"></img>
+            <span className="address">
+              Connect Wallet for Source Layer (L1)
+            </span>
           </a>
+          // <a href="https://polkadot.js.org/extension/">
+          //   connecting source layer with metamask
+          // </a>
         )}
         {props.l1Account && (
-          <div className="metamask-zone">
-            <img src={MetaMaskLogo} className="chain-icon"></img>
-            <span className="address">{props.l1Account.address}</span>
-          </div>
+          <>
+            <div className="modal-label">
+              Connecting Account for Source Layer
+            </div>
+            <div className="metamask-zone">
+              <img src={MetaMaskLogo} className="chain-icon"></img>
+              <span className="address">{props.l1Account.address}</span>
+            </div>
+          </>
         )}
       </Modal>
       {/* <div className="h-75 w-100 d-flex justify-content-center align-items-center">
