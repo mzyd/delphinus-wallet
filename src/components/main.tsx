@@ -36,19 +36,19 @@ export default function Main(props: IProps) {
       }
     }
   );
-  const navStyles: Partial<INavStyles> = {
-    root: {
-      width: 208,
-      boxSizing: "border-box",
-      border: "1px solid #eee",
-      overflowY: "auto",
-    },
-    // these link styles override the default truncation behavior
-    link: {
-      whiteSpace: "normal",
-      lineHeight: "inherit",
-    },
-  };
+  // const navStyles: Partial<INavStyles> = {
+  //   root: {
+  //     width: 208,
+  //     boxSizing: "border-box",
+  //     border: "1px solid #eee",
+  //     overflowY: "auto",
+  //   },
+  //   // these link styles override the default truncation behavior
+  //   link: {
+  //     whiteSpace: "normal",
+  //     lineHeight: "inherit",
+  //   },
+  // };
 
   // const links = [
   //   {
