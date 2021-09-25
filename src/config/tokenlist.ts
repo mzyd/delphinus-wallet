@@ -19,7 +19,7 @@ const _tokenList = [
   {
     chainId: "16",
     chainName: "local-test-net2",
-    enable:true,
+    enable:false,
     tokens: [
       {
         address:L1TokenInfo.networks["16"].address.replace("0x", ""),
