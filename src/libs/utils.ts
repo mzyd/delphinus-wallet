@@ -9,6 +9,7 @@ import {
   web3Enable,
   web3FromAddress,
 } from "@polkadot/extension-dapp";
+import tokenIndex from "solidity/clients/token-index.json"
 
 import { SubstrateAccountInfo } from "./type";
 
@@ -83,6 +84,14 @@ export function loginL2Account(
   tryLoginL2Account(account, callback);
 }
 
+function getTokenIndex(
+  chainId: string,
+  tokenAddress: string,
+) {
+  const gTokenAddress = compressToken(chainId, tokenAddress).toString(10);
+  return Object.entries(tokenIndex).find(x => x[0] === gTokenAddress)![1];
+}
+
 export async function queryTokenAmountAsync(
   l2Account: SubstrateAccountInfo,
   chainId: string,
@@ -93,14 +102,11 @@ export async function queryTokenAmountAsync(
   const fn = async () => {
     const api = await getAPI();
 
-    const gTokenAddress = compressToken(chainId, tokenAddress, true);
+    const gTokenAddress = new BN(compressToken(chainId, tokenAddress, true), 16).toString(10);
     const accountIdx = (
       await api.query.swapModule.accountIndexMap(accountAddress)
     ).toString();
-    const tokenIdx = (
-      await api.query.swapModule.tokenIndexMap("0x" + gTokenAddress)
-    ).toString();
-
+    const tokenIdx = getTokenIndex(chainId, tokenAddress);
     const result = await api.query.swapModule.balanceMap([
       accountIdx,
       tokenIdx,
@@ -259,7 +265,7 @@ export async function withdraw(
     const tx = api.tx.swapModule.withdraw(
       l2Account.address,
       l1account,
-      compressToken(chainId, token),
+      getTokenIndex(chainId, token),
       new BN(amount),
       l2nonce
     );
