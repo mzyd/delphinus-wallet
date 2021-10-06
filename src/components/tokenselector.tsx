@@ -4,6 +4,11 @@ import * as react from "react";
 import chainList from "../config/tokenlist";
 import { Dropdown } from "@fluentui/react";
 
+import {
+  BridgeMetadata,
+} from "../libs/type";
+
+
 interface IProps {
   default: string;
   chainId: string;
@@ -13,23 +18,25 @@ interface IProps {
 interface ChainInfo {
   chainId: string;
   tokens: string[];
+  bridgeMetadata: BridgeMetadata;
 }
 
-const chainInfoList: ChainInfo[] = chainList.map((c) => ({
-  chainId: c.chainId,
-  chainName: c.chainName,
-  tokens: c.tokens.map((t) => t.address.replace("0x", "")),
-}));
-
-const tokenOptions = (chainId: string) =>
-  chainInfoList
-    .find((c) => c.chainId === chainId)
-    ?.tokens?.map((token) => ({
-      key: token,
-      text: token,
-    })) ?? [];
-
 export default function TokenSelector(props: IProps) {
+  const chainInfoList: ChainInfo[] = props.bridgeMetadata.poolInfo.map((c) => ({
+    chainId: c.chainId,
+    chainName: c.chainName,
+    tokens: c.tokens.map((t) => t.address.replace("0x", "")),
+  }));
+
+  const tokenOptions = (chainId: string) =>
+    chainInfoList
+      .find((c) => c.chainId === chainId)
+      ?.tokens?.map((token) => ({
+        key: token,
+        text: token,
+      })) ?? [];
+
+
   const [selectedId, setSelectedId] = react.useState<string>(props.default);
 
   return (

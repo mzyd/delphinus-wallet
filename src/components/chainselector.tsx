@@ -8,6 +8,7 @@ interface IProps {
   default: string;
   setChain: (u: string) => void;
   setToken: (u: string) => void;
+  bridgeMetadata: BridgeMetadata;
 }
 
 interface ChainInfo {
@@ -16,19 +17,21 @@ interface ChainInfo {
   tokens: string[];
 }
 
-const chainInfoList: ChainInfo[] = chainList.map((c) => ({
-  chainId: c.chainId,
-  chainName: c.chainName,
-  tokens: c.tokens.map((t) => t.address.replace("0x", "")),
-}));
-
-const chainOptions = chainInfoList.map((c) => ({
-  key: c.chainId,
-  text: "Chain ID: " + c.chainName + "[" + c.chainId + "]",
-}));
-
 export default function ChainSelect(props: IProps) {
   const [selectedId, setSelectedId] = react.useState<string>(props.default);
+
+  const chainInfoList: ChainInfo[] = props.bridgeMetadata.poolInfo.map((c) => ({
+    chainId: c.chainId,
+    chainName: c.chainName,
+    tokens: c.tokens.map((t) => t.address.replace("0x", "")),
+  }));
+
+  const chainOptions = chainInfoList.map((c) => ({
+    key: c.chainId,
+    text: "Chain ID: " + c.chainName + "[" + c.chainId + "]",
+  }));
+
+
 
   return (
     <div className="hole">

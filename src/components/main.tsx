@@ -7,7 +7,12 @@ import { Stack } from "@fluentui/react/lib/Stack";
 import { Nav, INavStyles, INavLinkGroup } from "@fluentui/react";
 import "../styles/main.css";
 import { loginL2Account } from "../libs/utils";
-import { TXProps, L1AccountInfo, SubstrateAccountInfo } from "../libs/type";
+import {
+    TXProps,
+    L1AccountInfo,
+    SubstrateAccountInfo,
+    BridgeMetadata,
+} from "../libs/type";
 import ChargeModal from "../modals/chargemodal";
 import NavHead from "./navhead";
 import Sidebar from "./sidebar";
@@ -21,6 +26,7 @@ import ChargeToken from "../config/charge";
 interface IProps {
   l2Account: SubstrateAccountInfo;
   l1Account: L1AccountInfo;
+  bridgeMetadata: BridgeMetaData;
   setL2Account: () => void;
 }
 
@@ -36,152 +42,6 @@ export default function Main(props: IProps) {
       }
     }
   );
-  // const navStyles: Partial<INavStyles> = {
-  //   root: {
-  //     width: 208,
-  //     boxSizing: "border-box",
-  //     border: "1px solid #eee",
-  //     overflowY: "auto",
-  //   },
-  //   // these link styles override the default truncation behavior
-  //   link: {
-  //     whiteSpace: "normal",
-  //     lineHeight: "inherit",
-  //   },
-  // };
-
-  // const links = [
-  //   {
-  //     links: [
-  //       {
-  //         name: 'Wallet',
-  //         key:'wallet',
-  //         url: '#wallet',
-  //         onClick: () => setCurrentPanel("wallet"),
-  //         iconProps: {
-  //           //iconName: 'News',
-  //           styles: {
-  //             root: {
-  //               fontSize: 20,
-  //               color: '#106ebe',
-  //             },
-  //           }
-  //         }
-  //       },
-  //       {
-  //         name: 'Swapp',
-  //         key: 'swap',
-  //         url: '#swap',
-  //         iconProps: {
-  //           //iconName: 'PlayerSettings',
-  //           styles: {
-  //             root: {
-  //               width:0,
-  //               fontSize: 20,
-  //               color: '#106ebe',
-  //             },
-  //           }
-  //         },
-  //         isExpanded: true,
-  //         links: [
-  //           {
-  //             name: 'Within Aggregator',
-  //             key: 'aggregator',
-  //             url: '#swap/aggregator',
-  //             onClick: () => setCurrentPanel("aggregator"),
-  //             iconProps: {
-  //               //iconName: 'PlayerSettings',
-  //               styles: {
-  //                 root: {
-  //                   fontSize: 20,
-  //                   color: '#106ebe',
-  //                 },
-  //               }
-  //             }
-  //           },
-  //           {
-  //             name: 'Cross Chains',
-  //             key: 'cross',
-  //             url: '#swap/cross',
-  //             onClick: () => setCurrentPanel("cross"),
-  //             iconProps: {
-  //               //iconName: 'PlayerSettings',
-  //               styles: {
-  //                 root: {
-  //                   fontSize: 20,
-  //                   color: '#106ebe',
-  //                 },
-  //               }
-  //             },
-  //             disable:true,
-  //           },
-  //         ]
-  //       },
-  //       {
-  //         name: 'Pools',
-  //         key: 'pool',
-  //         url: '#pools',
-  //         iconProps: {
-  //           //iconName: 'SwitcherStartEnd',
-  //           styles: {
-  //             root: {
-  //               fontSize: 20,
-  //               color: '#106ebe',
-  //             },
-  //           }
-  //         },
-  //         isExpanded: true,
-  //         links: [
-  //           {
-  //             name: 'Overview',
-  //             key: 'overview',
-  //             url: '#pools/overview',
-  //             onClick: () => setCurrentPanel("overview"),
-  //             iconProps: {
-  //               //iconName: 'PlayerSettings',
-  //               styles: {
-  //                 root: {
-  //                   fontSize: 20,
-  //                   color: '#106ebe',
-  //                 },
-  //               }
-  //             }
-  //           },
-  //           {
-  //             name: 'Add Liquidity',
-  //             key: 'supply',
-  //             url: '#pools/supply',
-  //             onClick: () => setCurrentPanel("supply"),
-  //             iconProps: {
-  //               //iconName: 'PlayerSettings',
-  //               styles: {
-  //                 root: {
-  //                   fontSize: 20,
-  //                   color: '#106ebe',
-  //                 },
-  //               }
-  //             }
-  //           },
-  //           {
-  //             name: 'Retrieve Liquidity',
-  //             key: 'retrieve',
-  //             url: '#pools/retrive',
-  //             onClick: () => setCurrentPanel("retrieve"),
-  //             iconProps: {
-  //               //iconName: 'PlayerSettings',
-  //               styles: {
-  //                 root: {
-  //                   fontSize: 20,
-  //                   color: '#106ebe',
-  //                 },
-  //               }
-  //             }
-  //           },
-  //         ]
-  //       },
-  //     ],
-  //   },
-  // ];
 
   return (
     <>
@@ -200,7 +60,10 @@ export default function Main(props: IProps) {
         />
         <div className="route-area">
           {(currentPanel === "wallet" && (
-            <Token l1Account={props.l1Account} l2Account={props.l2Account} />
+            <Token l1Account={props.l1Account}
+                   l2Account={props.l2Account}
+                   bridgeMetadata={props.bridgeMetadata}
+            />
           )) ||
             (currentPanel === "aggregator" && (
               <Swap l2Account={props.l2Account} />

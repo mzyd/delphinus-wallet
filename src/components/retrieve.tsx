@@ -10,13 +10,17 @@ import RetrieveModal from "../modals/retrievemodal";
 import ChainSelector from "./chainselector";
 import TokenSelector from "./tokenselector";
 import { Label, Separator } from "@fluentui/react";
-import { SubstrateAccountInfo } from "../libs/type";
+import {
+    SubstrateAccountInfo,
+    BridgeMetadata,
+} from "../libs/type";
 
 import "../styles/panel.css";
 import chainList from "../config/tokenlist";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
+  bridgeMetadata: BridgeMetadata;
 }
 
 const verticalGapStackTokens: IStackTokens = {
@@ -34,11 +38,6 @@ interface ChainInfo {
   chainId: string;
   tokens: string[];
 }
-
-const chainInfoList: ChainInfo[] = chainList.map((c) => ({
-  chainId: c.chainId,
-  tokens: c.tokens.map((t) => t.address.replace("0x", "")),
-}));
 
 export default function Retrieve(props: IProps) {
   const [selectedPoolOps, setSelectedPoolOps] = react.useState<PoolOps>();
@@ -59,6 +58,13 @@ export default function Retrieve(props: IProps) {
   const [liquid0, setLiquid0] = react.useState<string>();
   const [liquid1, setLiquid1] = react.useState<string>();
   const [share, setShare] = react.useState<string>();
+
+  const chainInfoList: ChainInfo[] = props.bridgeMetadata.chainInfo.map((c) => ({
+    chainId: c.chainId,
+    tokens: c.tokens.map((t) => t.address.replace("0x", "")),
+  }));
+
+
 
   react.useEffect(() => {
     const _token0 = token0;
@@ -181,94 +187,6 @@ export default function Retrieve(props: IProps) {
           </button>
         </div>
       </div>
-      {/* <Stack
-        horizontal
-        horizontalAlign={"center"}
-        tokens={verticalGapStackTokens}
-      >
-        <Stack tokens={verticalGapStackTokens}>
-          <div className="swap-selector" key="retrieve">
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-              <a className="navbar-brand" href="#">
-                Retrieve Liquidity:
-              </a>
-            </nav>
-            <Stack verticalAlign={"start"} tokens={verticalGapStackTokens}>
-              <ul className="list-group">
-                <ChainSelector
-                    default={chainId0}
-                    setToken={setToken0}
-                    setChain={setChainId0}
-                />
-                <div className="p-1" />
-                <TokenSelector
-                    default={token0}
-                    chainId={chainId0}
-                    setToken={setToken0}
-                />
-                <div className="p-1" />
-                <TextField
-                  label="Liquidity"
-                  underlined
-                  readOnly
-                  disabled
-                  value={liquid0 ?? "loading ..."}
-                />
-                <div className="p-1" />
-                <TextField
-                  label="Amount"
-                  underlined
-                  value={amount0 ?? "loading ..."}
-                  onChange={(e: any) => {
-                    setAmount0(e.target.value);
-                    setAmount1(e.target.value);
-                  }}
-                />
-              </ul>
-              <Separator>Share: {share ?? "loading..."}</Separator>
-              <ul className="list-group">
-                <ChainSelector
-                    default={chainId1}
-                    setToken={setToken1}
-                    setChain={setChainId1}
-                />
-                <div className="p-1" />
-                <TokenSelector
-                    default={token1}
-                    chainId={chainId1}
-                    setToken={setToken1}
-                />
-                <div className="p-1" />
-                <TextField
-                  label="Liquidity"
-                  readOnly
-                  underlined
-                  disabled
-                  value={liquid1 ?? "loading ..."}
-                />
-                <div className="p-1" />
-                <TextField
-                  label="Amount"
-                  readOnly
-                  underlined
-                  disabled
-                  value={amount1 ?? "loading ..."}
-                />
-              </ul>
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                disabled={token0 === token1 && chainId0 === chainId1}
-                onClick={() => {
-                  setSelectedPoolOps(PoolOps.Retrieve);
-                }}
-              >
-                Retrieve Liquidity
-              </button>
-            </Stack>
-          </div>
-        </Stack>
-      </Stack> */}
       {selectedPoolOps === PoolOps.Retrieve && (
         <RetrieveModal
           l2Account={props.l2Account}

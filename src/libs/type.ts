@@ -54,8 +54,7 @@ export interface PoolInfo {
   amount?: string;
 }
 
-
-
-
-
-
+export interface BridgeMetadata {
+  chainInfo: ChainInfo;
+  poolInfo: PoolInfo;
+}
