@@ -103,11 +103,13 @@ export default function Swap(props: IProps) {
               default={chainId0}
               setToken={setToken0}
               setChain={setChainId0}
+              bridgeMetadata={props.bridgeMetadata}
             />
             <TokenSelector
               default={token0}
               chainId={chainId0}
               setToken={setToken0}
+              bridgeMetadata={props.bridgeMetadata}
             />
             <InputField
               label="Amount"
@@ -128,11 +130,13 @@ export default function Swap(props: IProps) {
               default={chainId1}
               setToken={setToken1}
               setChain={setChainId1}
+              bridgeMetadata={props.bridgeMetadata}
             />
             <TokenSelector
               default={token1}
               chainId={chainId1}
               setToken={setToken1}
+              bridgeMetadata={props.bridgeMetadata}
             />
           </div>
           {liquid1 && (
@@ -171,12 +175,14 @@ export default function Swap(props: IProps) {
                   default={chainId0}
                   setToken={setToken0}
                   setChain={setChainId0}
+                  bridgeMetadata={props.bridgeMetadata}
                 />
                 <div className="p-1" />
                 <TokenSelector
                   default={token0}
                   chainId={chainId0}
                   setToken={setToken0}
+                  bridgeMetadata={props.bridgeMetadata}
                 />
                 <div className="p-1" />
                 <TextField
@@ -203,12 +209,14 @@ export default function Swap(props: IProps) {
                   default={chainId1}
                   setToken={setToken1}
                   setChain={setChainId1}
+                  bridgeMetadata={props.bridgeMetadata}
                 />
                 <div className="p-1" />
                 <TokenSelector
                   default={token1}
                   chainId={chainId1}
                   setToken={setToken1}
+                  bridgeMetadata={props.bridgeMetadata}
                 />
                 <div className="p-1" />
                 <TextField

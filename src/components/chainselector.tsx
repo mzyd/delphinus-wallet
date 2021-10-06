@@ -1,8 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as react from "react";
 
-import chainList from "../config/tokenlist";
 import { Dropdown } from "@fluentui/react";
+import {
+  BridgeMetadata,
+} from "../libs/type";
+
 
 interface IProps {
   default: string;
@@ -20,7 +23,7 @@ interface ChainInfo {
 export default function ChainSelect(props: IProps) {
   const [selectedId, setSelectedId] = react.useState<string>(props.default);
 
-  const chainInfoList: ChainInfo[] = props.bridgeMetadata.poolInfo.map((c) => ({
+  const chainInfoList: ChainInfo[] = props.bridgeMetadata.chainInfo.map((c) => ({
     chainId: c.chainId,
     chainName: c.chainName,
     tokens: c.tokens.map((t) => t.address.replace("0x", "")),

@@ -25,11 +25,11 @@ export default function PoolView(props: IProps) {
                     <img src={EthIcon} className="icon" />
                     <div>
                       <div className="token-pair">
-                        {item.tokenName1} - {item.tokenName2}
+                        {item.tokens[0].tokenName} - {item.tokens[1].tokenName}
                       </div>
                       <div className="chain-pair">
-                        {item.chainName1}[{item.chainId1}] - {item.chainName2}[
-                        {item.chainId2}]
+                        {item.tokens[0].chainName}[{item.tokens[0].chainId}] - {item.tokens[1].chainName}[
+                        {item.tokens[1].chainId}]
                       </div>
                     </div>
                   </div>
@@ -61,13 +61,13 @@ export default function PoolView(props: IProps) {
                 {poolInfoList.map((pi) => (
                   <tr key="pool-{pi.id}">
                     <th>{pi.id}</th>
-                    <th>{pi.tokenName1}</th>
+                    <th>{pi.tokens[0].tokenName}</th>
                     <th>
-                      {pi.chainName1}[{pi.chainId1}]
+                      {pi.tokens[0].chainName}[{pi.tokens[0].chainId}]
                     </th>
-                    <th>{pi.tokenName2}</th>
+                    <th>{pi.tokens[1].tokenName}</th>
                     <th>
-                      {pi.chainName2}[{pi.chainId2}]
+                      {pi.tokens[1].chainName}[{pi.tokens[1].chainId}]
                     </th>
                     <th>{pi.amount}</th>
                     <th>{pi.share}</th>
@@ -96,13 +96,13 @@ export default function PoolView(props: IProps) {
             {poolInfoList.map((pi) => (
               <tr key="pool-{pi.id}">
                 <th>{pi.id}</th>
-                <th>{pi.tokenName1}</th>
+                <th>{pi.tokens[0].tokenName}</th>
                 <th>
-                  {pi.chainName1}[{pi.chainId1}]
+                  {pi.tokens[0].chainName}[{pi.tokens[0].chainId}]
                 </th>
-                <th>{pi.tokenName2}</th>
+                <th>{pi.tokens[1].tokenName}</th>
                 <th>
-                  {pi.chainName2}[{pi.chainId2}]
+                  {pi.tokens[1].chainName}[{pi.tokens[1].chainId}]
                 </th>
                 <th>{pi.amount}</th>
                 <th>{pi.share}</th>

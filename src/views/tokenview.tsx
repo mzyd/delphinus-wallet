@@ -61,7 +61,7 @@ export default function TokenView(props: IProps) {
             {chainInfoList
               .filter((item) => item.chainId === currentChainId)[0]
               .tokens.map((token) => (
-                <div className="token-item">
+                <div className="token-item" key={currentChainId + token.address}>
                   <img src={UsdtIcon} className="icon" />
                   <div className="top">
                     <div className="balance">

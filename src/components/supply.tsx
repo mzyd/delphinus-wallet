@@ -20,7 +20,6 @@ import {
 } from "../libs/type";
 
 import "../styles/panel.css";
-import chainList from "../config/tokenlist";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
@@ -45,7 +44,7 @@ interface ChainInfo {
 
 export default function Supply(props: IProps) {
 
-  const chainInfoList: ChainInfo[] = props.bridgeMetadata.map((c) => ({
+  const chainInfoList: ChainInfo[] = props.bridgeMetadata.chainInfo.map((c) => ({
     chainId: c.chainId,
     tokens: c.tokens.map((t) => t.address.replace("0x", "")),
   }));
@@ -145,11 +144,13 @@ export default function Supply(props: IProps) {
               default={chainId0}
               setToken={setToken0}
               setChain={setChainId0}
+              bridgeMetadata={props.bridgeMetadata}
             />
             <TokenSelector
               default={token0}
               chainId={chainId0}
               setToken={setToken0}
+              bridgeMetadata={props.bridgeMetadata}
             />
             <InputField
               label="Amount"
@@ -169,11 +170,13 @@ export default function Supply(props: IProps) {
               default={chainId1}
               setToken={setToken1}
               setChain={setChainId1}
+              bridgeMetadata={props.bridgeMetadata}
             />
             <TokenSelector
               default={token1}
               chainId={chainId1}
               setToken={setToken1}
+              bridgeMetadata={props.bridgeMetadata}
             />
           </div>
           {liquid1 && (
