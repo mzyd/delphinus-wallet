@@ -486,3 +486,18 @@ export async function charge(
     return;
   }
 }
+
+let poolInfo: any[];
+
+export async function getPoolList() {
+  if (!poolInfo) {
+    const api = await getAPI();
+    const poolEntries = await api.query.swapModule.poolMap.entries();
+    poolInfo = poolEntries.map(kv => {
+      const data = kv[1] as any;
+      return [kv[0].args[0].toString(), data[0].toString(), data[1].toString()];
+    })
+  }
+
+  return poolInfo;
+}
