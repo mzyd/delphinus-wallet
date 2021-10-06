@@ -9,13 +9,13 @@ import ChainSelector from "./chainselector";
 import InputField from "./inputfield";
 import TokenSelector from "./tokenselector";
 import { Dropdown, Label, Separator } from "@fluentui/react";
-import { TXProps, SubstrateAccountInfo } from "../libs/type";
+import { TXProps, SubstrateAccountInfo, BridgeMetadata } from "../libs/type";
 
 import "../styles/panel.css";
-import chainList from "../config/tokenlist";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
+  bridgeMetadata: BridgeMetadata;
 }
 
 const verticalGapStackTokens: IStackTokens = {
@@ -34,12 +34,12 @@ interface ChainInfo {
   tokens: string[];
 }
 
-const chainInfoList: ChainInfo[] = chainList.map((c) => ({
-  chainId: c.chainId,
-  tokens: c.tokens.map((t) => t.address.replace("0x", "")),
-}));
-
 export default function Swap(props: IProps) {
+  const chainInfoList: ChainInfo[] = props.bridgeMetadata.chainInfo.map((c) => ({
+    chainId: c.chainId,
+    tokens: c.tokens.map((t) => t.address.replace("0x", "")),
+  }));
+
   const [selectedPoolOps, setSelectedPoolOps] = react.useState<PoolOps>();
   const [chainId0, setChainId0] = react.useState<string>(
     chainInfoList[0].chainId

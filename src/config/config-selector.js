@@ -6,5 +6,6 @@ module.exports = {
     "97": EthConfig.bsctestnet,
     "15": EthConfig.localtestnet1,
     "16": EthConfig.localtestnet2,
-  }
+  },
+  snap: "3"
 }

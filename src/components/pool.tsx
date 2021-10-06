@@ -8,15 +8,19 @@ import {
   queryPoolAmountAsync,
   queryPoolShareAsync,
 } from "../libs/utils";
-import { registerTask, unregisterTask } from "../libs/query-fresher";
-import { PoolInfo, SubstrateAccountInfo } from "../libs/type";
 
-import chainList from "../config/tokenlist";
+import { registerTask, unregisterTask } from "../libs/query-fresher";
+import {
+    PoolInfo,
+    SubstrateAccountInfo,
+    BridgeMetadata,
+} from "../libs/type";
 
 import "../styles/theme.css";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
+  bridgeMetadata: BridgeMetadata;
 }
 
 enum PoolOps {
@@ -26,25 +30,7 @@ enum PoolOps {
 }
 
 export default function Pool(props: IProps) {
-  const [poolInfoList, setPoolInfoList] = react.useState<PoolInfo[]>([
-    {
-      id: "1",
-      chainId1: chainList[0].chainId,
-      chainName1: chainList[0].chainName,
-      tokenAddress1: chainList[0].tokens[0].address.replace(
-        "0x",
-        ""
-      ),
-      tokenName1: chainList[0].tokens[0].name,
-      chainId2: chainList[1].chainId,
-      chainName2: chainList[1].chainName,
-      tokenAddress2: chainList[1].tokens[0].address.replace(
-        "0x",
-        ""
-      ),
-      tokenName2: chainList[1].tokens[0].name,
-    },
-  ]);
+  const [poolInfoList, setPoolInfoList] = react.useState<PoolInfo[]>(props.bridgeMetadata.poolInfo);
 
   const updator = async (pool: any) => {
     await queryPoolAmountAsync(

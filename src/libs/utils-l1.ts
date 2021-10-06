@@ -114,3 +114,15 @@ export async function queryCurrentL1Account(
 export function loginL1Account(cb:(u: L1AccountInfo) => void) {
   Client.getAccountInfo(null, true).then((account:L1AccountInfo) => cb(account));
 }
+
+async function prepareMetaData() {
+    let meta_bridge = await getBridge(configSelector.snap);
+    return {
+      chainInfo: meta_bridge.getMetaData().chainInfo,
+      poolInfo: undefined,
+    }
+}
+
+export function loadMetaData(cb:(metadata: Metadata) => void) {
+    prepareMetaData().then(meta => cb(meta));
+}

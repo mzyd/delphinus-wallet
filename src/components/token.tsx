@@ -9,24 +9,24 @@ import {
   ChainInfo,
   L1AccountInfo,
   TokenInfo,
+  BridgeMetadata,
 } from "../libs/type";
 import { registerTask, unregisterTask } from "../libs/query-fresher";
 import WithdrawBox from "../modals/withdraw";
 import DepositBox from "../modals/deposit";
 import TokenView from "../views/tokenview";
 
-import chainList from "../config/tokenlist";
-
 interface IProps {
   l2Account: SubstrateAccountInfo;
   l1Account: L1AccountInfo;
+  bridgeMetadata: BridgeMetadata;
 }
 
 export default function Token(props: IProps) {
   const [currentModal, setCurrentModal] = react.useState<string>();
   const [currentTXProps, setCurrentTXProps] = react.useState<TXProps>();
   const [chainInfoList, setTokenInfoList] = react.useState<ChainInfo[]>(
-    chainList.filter((x) => x.enable)
+    props.bridgeMetadata.chainInfo
   );
 
   const setTXProps = (cid: string, addr: string) => {
