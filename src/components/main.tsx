@@ -26,19 +26,21 @@ import ChargeToken from "../config/charge";
 interface IProps {
   l2Account: SubstrateAccountInfo;
   l1Account: L1AccountInfo;
-  bridgeMetadata: BridgeMetaData;
+  bridgeMetadata: BridgeMetadata;
   setL2Account: () => void;
 }
 
 export default function Main(props: IProps) {
+  const snap = props.bridgeMetadata.snap;
   const [currentPanel, setCurrentPanel] = react.useState<string>("wallet");
   const [currentModal, setCurrentModal] = react.useState<string>("");
   const [currentTXProps, setCurrentTXProps] = react.useState<TXProps>(
     {
       substrateAccount: props.l2Account,
       selectedToken: {
-        chainId: "3",
-        tokenAddress: ChargeToken.networks["3"].address.replace("0x",""),
+        chainId: snap,
+        //tokenAddress: ChargeToken.networks[snap].address.replace("0x",""),
+        tokenAddress: "0x12",
       }
     }
   );
@@ -59,28 +61,38 @@ export default function Main(props: IProps) {
           currentPanel={currentPanel}
         />
         <div className="route-area">
-          {(currentPanel === "wallet" && (
-            <Token l1Account={props.l1Account}
+            {(currentPanel === "wallet" && (
+              <Token l1Account={props.l1Account}
                    l2Account={props.l2Account}
                    bridgeMetadata={props.bridgeMetadata}
-            />
-          )) ||
+              />
+            )) ||
             (currentPanel === "aggregator" && (
-              <Swap l2Account={props.l2Account} />
+              <Swap l2Account={props.l2Account}
+                    bridgeMetadata={props.bridgeMetadata}
+               />
             )) ||
             (currentPanel === "cross" && (
-              <Swap l2Account={props.l2Account} />
+              <Swap l2Account={props.l2Account}
+                    bridgeMetadata={props.bridgeMetadata}
+               />
             )) ||
             (currentPanel === "supply" && (
-              <Supply l2Account={props.l2Account} />
+              <Supply l2Account={props.l2Account}
+                    bridgeMetadata={props.bridgeMetadata}
+               />
             )) ||
             (currentPanel === "retrieve" && (
-              <Retrieve l2Account={props.l2Account} />
+              <Retrieve l2Account={props.l2Account}
+                    bridgeMetadata={props.bridgeMetadata}
+               />
             )) ||
             (currentPanel === "overview" && (
-              <Pool l2Account={props.l2Account} />
+              <Pool l2Account={props.l2Account}
+                    bridgeMetadata={props.bridgeMetadata}
+               />
             ))}
-                {
+            {
             currentModal === "Charge" && (
             <ChargeModal
               txprops = {currentTXProps}

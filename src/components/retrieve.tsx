@@ -16,7 +16,6 @@ import {
 } from "../libs/type";
 
 import "../styles/panel.css";
-import chainList from "../config/tokenlist";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
@@ -40,6 +39,13 @@ interface ChainInfo {
 }
 
 export default function Retrieve(props: IProps) {
+
+  const chainInfoList: ChainInfo[] = props.bridgeMetadata.chainInfo.map((c) => ({
+    chainId: c.chainId,
+    tokens: c.tokens.map((t) => t.address.replace("0x", "")),
+  }));
+
+
   const [selectedPoolOps, setSelectedPoolOps] = react.useState<PoolOps>();
   const [chainId0, setChainId0] = react.useState<string>(
     chainInfoList[0].chainId
@@ -58,13 +64,6 @@ export default function Retrieve(props: IProps) {
   const [liquid0, setLiquid0] = react.useState<string>();
   const [liquid1, setLiquid1] = react.useState<string>();
   const [share, setShare] = react.useState<string>();
-
-  const chainInfoList: ChainInfo[] = props.bridgeMetadata.chainInfo.map((c) => ({
-    chainId: c.chainId,
-    tokens: c.tokens.map((t) => t.address.replace("0x", "")),
-  }));
-
-
 
   react.useEffect(() => {
     const _token0 = token0;
@@ -142,11 +141,13 @@ export default function Retrieve(props: IProps) {
               default={chainId0}
               setToken={setToken0}
               setChain={setChainId0}
+              bridgeMetadata={props.bridgeMetadata}
             />
             <TokenSelector
               default={token0}
               chainId={chainId0}
               setToken={setToken0}
+              bridgeMetadata={props.bridgeMetadata}
             />
             <InputField
               label="Amount"
@@ -166,11 +167,13 @@ export default function Retrieve(props: IProps) {
               default={chainId1}
               setToken={setToken1}
               setChain={setChainId1}
+              bridgeMetadata={props.bridgeMetadata}
             />
             <TokenSelector
               default={token1}
               chainId={chainId1}
               setToken={setToken1}
+              bridgeMetadata={props.bridgeMetadata}
             />
           </div>
           {liquid1 && <div className="liquidity">Liquidity: {liquid1}</div>}

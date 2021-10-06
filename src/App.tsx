@@ -10,7 +10,7 @@ import {
     BridgeMetadata,
 } from "./libs/type";
 import { loginL2Account, fetchL2Accounts } from "./libs/utils";
-import { loginL1Account } from "./libs/utils-l1";
+import { loginL1Account, loadMetadata } from "./libs/utils-l1";
 import Main from './components/main';
 const Client = require("web3subscriber/client")
 
@@ -18,7 +18,7 @@ function App() {
   const [l2Account, setL2Account] = react.useState<SubstrateAccountInfo>();
   const [l1Account, setL1Account] = react.useState<L1AccountInfo>();
   const [l2Addresses, setL2Addresses] = react.useState<string[]>();
-  const [bridgeMetaData, setBridgeMetaData] = react.useState<BridgeMetadata>();
+  const [bridgeMetadata, setBridgeMetadata] = react.useState<BridgeMetadata>();
 
   const updateL1AccountAddress = (l1address:string) => {
     console.log("switch account:", l1address);
@@ -45,23 +45,24 @@ function App() {
   react.useEffect(() => {
     fetchL2Accounts(setL2Addresses);
     loginL1Account(updateL1Account);
+    loadMetadata([[0,4,5]], setBridgeMetadata);
 
   }, []);
 
   return (
     <div>
-      { (l2Account === undefined || l1Account === undefined || bridgeMetaData === undefined)
+      { (l2Account === undefined || l1Account === undefined || bridgeMetadata === undefined)
         && <SetAccount done={confirmAccount} accounts={l2Addresses} l1Account={l1Account} ></SetAccount>
       }
       {
         (l2Account !== undefined
             && l1Account !== undefined
-            && bridgeMetaData !== undefined)
+            && bridgeMetadata !== undefined)
         && <Main
             l1Account={l1Account!}
             l2Account={l2Account!}
             setL2Account={switchL2Account}
-            bridgeMetadata={BridgeMetadata}
+            bridgeMetadata={bridgeMetadata}
           />
       }
     </div>

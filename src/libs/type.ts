@@ -12,7 +12,7 @@ export interface L1AccountInfo {
    web3: any;
 }
 
-interface SelectedToken {
+export interface SelectedToken {
   chainId: string;
   tokenAddress: string;
 }
@@ -40,21 +40,25 @@ export interface ChainInfo{
   tokens: TokenInfo[];
 }
 
+export interface TokenInfoFull {
+  address: string;
+  tokenName: string;
+  chainId: string;
+  chainName: string;
+}
+
 export interface PoolInfo {
-  id: string;
-  chainId1: string;
-  chainName1: string;
-  tokenAddress1: string;
-  tokenName1: string;
-  chainId2: string;
-  chainName2: string;
-  tokenAddress2: string;
-  tokenName2: string;
+  id: number;
+  tokens: TokenInfoFull[];
   share?: string;
   amount?: string;
 }
 
 export interface BridgeMetadata {
-  chainInfo: ChainInfo;
-  poolInfo: PoolInfo;
+  chainInfo: ChainInfo[];
+  poolInfo: PoolInfo[];
+  snap: string;
 }
+
+
+
