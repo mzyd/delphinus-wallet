@@ -19,6 +19,8 @@ interface IProps {
   token0: string;
   chainId1: string;
   token1: string;
+  tokenIndex0: number;
+  tokenIndex1: number;
   amount?: string;
   close: () => void;
 }
@@ -73,10 +75,8 @@ export default function SwapModal(props: IProps) {
           onClick={() => {
             swap(
               props.l2Account,
-              props.chainId0,
-              props.token0,
-              props.chainId1,
-              props.token1,
+              props.tokenIndex0,
+              props.tokenIndex1,
               props.amount!
             );
             props.close();

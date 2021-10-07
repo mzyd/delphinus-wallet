@@ -29,6 +29,8 @@ export interface TXProps {
 export interface TokenInfo {
   address: string;
   name: string;
+  chainId: string;
+  index: number;
   l2Balance?: string;
   l1Balance?: string;
 }
