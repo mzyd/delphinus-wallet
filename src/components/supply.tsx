@@ -21,6 +21,7 @@ import {
 } from "../libs/type";
 
 import "../styles/panel.css";
+import { getTokenIndex } from "../libs/utils-l1";
 
 interface IProps {
   l2Account: SubstrateAccountInfo;
@@ -298,6 +299,8 @@ export default function Supply(props: IProps) {
           chainId1={chainId1}
           token0={token0}
           token1={token1}
+          tokenIndex0={getTokenIndex(props.bridgeMetadata, chainId0, token0)}
+          tokenIndex1={getTokenIndex(props.bridgeMetadata, chainId1, token1)}
           amount={amount0}
           close={() => {
             setSelectedPoolOps(undefined);

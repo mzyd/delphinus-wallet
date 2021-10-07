@@ -255,24 +255,16 @@ function compressToken(chainId: string, token: string, query = false) {
 
 export async function swap(
   l2Account: SubstrateAccountInfo,
-  chain_from: string,
-  token_from: string,
-  chain_to: string,
-  token_to: string,
+  tokenIndex0: number,
+  tokenIndex1: number,
   amount: string
 ) {
-  const account = l2Account.account;
   const api = await getAPI();
   await cryptoWaitReady();
-  const keyring = new Keyring({ type: "sr25519" });
   const signer = l2Account.injector.signer;
   const accountId = ss58.addressToAddressId(l2Account.address);
   const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
-    checkNumberString(token_from, "token_from", true);
-    checkNumberString(token_to, "token_to", true);
-    checkNumberString(chain_from, "chain_from");
-    checkNumberString(chain_to, "chain_to");
     checkNumberString(amount, "amount");
   } catch (e) {
     alert(e.message);
@@ -280,8 +272,8 @@ export async function swap(
   }
   const tx = api.tx.swapModule.swap(
     l2Account.address,
-    compressToken(chain_from, token_from),
-    compressToken(chain_to, token_to),
+    tokenIndex0,
+    tokenIndex1,
     new BN(amount),
     l2nonce
   );
@@ -300,26 +292,19 @@ export async function swap(
 
 export async function supply(
   l2Account: SubstrateAccountInfo,
-  chain_from: string,
-  token_from: string,
-  chain_to: string,
-  token_to: string,
+  tokenIndex0: number,
+  tokenIndex1: number,
   amount_from: string,
   amount_to: string
 ) {
   const account = l2Account.account;
   const api = await getAPI();
   await cryptoWaitReady();
-  const keyring = new Keyring({ type: "sr25519" });
   console.log("l2 account name:", account);
   const signer = l2Account.injector.signer;
   const accountId = ss58.addressToAddressId(l2Account.address);
   const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
-    checkNumberString(token_from, "token", true);
-    checkNumberString(token_to, "token", true);
-    checkNumberString(chain_from, "chain");
-    checkNumberString(chain_to, "chain");
     checkNumberString(amount_from, "amount");
     checkNumberString(amount_to, "amount");
   } catch (e) {
@@ -328,8 +313,8 @@ export async function supply(
   }
   const tx = api.tx.swapModule.poolSupply(
     l2Account.address,
-    compressToken(chain_from, token_from),
-    compressToken(chain_to, token_to),
+    tokenIndex0,
+    tokenIndex1,
     amount_from,
     amount_to,
     l2nonce
@@ -349,10 +334,8 @@ export async function supply(
 
 export async function retrieve(
   l2Account: SubstrateAccountInfo,
-  chain_from: string,
-  token_from: string,
-  chain_to: string,
-  token_to: string,
+  tokenIndex0: number,
+  tokenIndex1: number,
   amount_from: string,
   amount_to: string
 ) {
@@ -364,10 +347,6 @@ export async function retrieve(
   const accountId = ss58.addressToAddressId(l2Account.address);
   const l2nonce = await api.query.swapModule.nonceMap(accountId);
   try {
-    checkNumberString(token_from, "token", true);
-    checkNumberString(token_to, "token", true);
-    checkNumberString(chain_from, "chain");
-    checkNumberString(chain_to, "chain");
     checkNumberString(amount_from, "amount");
     checkNumberString(amount_to, "amount");
   } catch (e) {
@@ -376,8 +355,8 @@ export async function retrieve(
   }
   const tx = api.tx.swapModule.poolRetrieve(
     l2Account.address,
-    compressToken(chain_from, token_from),
-    compressToken(chain_to, token_to),
+    tokenIndex0,
+    tokenIndex1,
     amount_from,
     amount_to,
     l2nonce
