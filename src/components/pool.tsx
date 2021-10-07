@@ -32,12 +32,9 @@ enum PoolOps {
 export default function Pool(props: IProps) {
   const [poolInfoList, setPoolInfoList] = react.useState<PoolInfo[]>(props.bridgeMetadata.poolInfo);
 
-  const updator = async (pool: any) => {
+  const updator = async (pool: PoolInfo) => {
     await queryPoolAmountAsync(
-      pool.chainId1,
-      pool.tokenAddress1,
-      pool.chainId2,
-      pool.tokenAddress2,
+      pool.id,
       (value: string) => {
         setPoolInfoList((_list) =>
           _list?.map((e) => (e.id === pool.id ? { ...e, amount: value } : e))
@@ -49,10 +46,7 @@ export default function Pool(props: IProps) {
 
     await queryPoolShareAsync(
       props.l2Account,
-      pool.chainId1,
-      pool.tokenAddress1,
-      pool.chainId2,
-      pool.tokenAddress2,
+      pool.id,
       (value: string) => {
         setPoolInfoList((_list) =>
           _list?.map((e) => (e.id === pool.id ? { ...e, share: value } : e))

@@ -41,10 +41,11 @@ export interface ChainInfo{
 }
 
 export interface TokenInfoFull {
-  address: string;
+  tokenAddress: string;
   tokenName: string;
   chainId: string;
   chainName: string;
+  index: number;
 }
 
 export interface PoolInfo {
@@ -59,6 +60,3 @@ export interface BridgeMetadata {
   poolInfo: PoolInfo[];
   snap: string;
 }
-
-
-
