@@ -9,7 +9,7 @@ import {
   web3Enable,
   web3FromAddress,
 } from "@polkadot/extension-dapp";
-import tokenIndex from "solidity/clients/token-index.json"
+import tokenIndex from "solidity/clients/token-index.json";
 
 import { SubstrateAccountInfo } from "./type";
 
@@ -84,12 +84,9 @@ export function loginL2Account(
   tryLoginL2Account(account, callback);
 }
 
-function getTokenIndex(
-  chainId: string,
-  tokenAddress: string,
-) {
+function getTokenIndex(chainId: string, tokenAddress: string) {
   const gTokenAddress = compressToken(chainId, tokenAddress).toString(10);
-  return Object.entries(tokenIndex).find(x => x[0] === gTokenAddress)![1];
+  return Object.entries(tokenIndex).find((x) => x[0] === gTokenAddress)![1];
 }
 
 export async function queryTokenAmountAsync(
@@ -102,7 +99,10 @@ export async function queryTokenAmountAsync(
   const fn = async () => {
     const api = await getAPI();
 
-    const gTokenAddress = new BN(compressToken(chainId, tokenAddress, true), 16).toString(10);
+    const gTokenAddress = new BN(
+      compressToken(chainId, tokenAddress, true),
+      16
+    ).toString(10);
     const accountIdx = (
       await api.query.swapModule.accountIndexMap(accountAddress)
     ).toString();
@@ -122,51 +122,16 @@ export async function queryTokenAmountAsync(
 }
 
 export async function queryPoolAmountAsync(
-  chainId1: string,
-  tokenAddress1: string,
-  chainId2: string,
-  tokenAddress2: string,
+  poolIndex: number,
   callback: (v1: string, v2: string) => void
 ) {
-  const fn = async () => {
-    const api = await getAPI();
-    if (
-      compressToken(chainId1, tokenAddress1) >
-      compressToken(chainId2, tokenAddress2)
-    ) {
-      const result = await api.query.swapModule.poolMap(
-        "0x" +
-          compressToken(chainId1, tokenAddress1, true) +
-          compressToken(chainId2, tokenAddress2, true)
-      );
-      console.log("pool liquidity:", result.toString());
-      const values = result
-        .toString()
-        .replace(/[\[ \]]/g, "")
-        .split(",");
-      if (values.length !== 2) {
-        throw new Error(`Got unexpected pool liquids: ${result.toString()}`);
-      }
-      callback(values[0], values[1]);
-    } else {
-      const result = await api.query.swapModule.poolMap(
-        "0x" +
-          compressToken(chainId2, tokenAddress2, true) +
-          compressToken(chainId1, tokenAddress1, true)
-      );
-      console.log("pool liquidity:", result.toString());
-      const values = result
-        .toString()
-        .replace(/[\[ \]]/g, "")
-        .split(",");
-      if (values.length !== 2) {
-        throw new Error(`Got unexpected pool liquids: ${result.toString()}`);
-      }
-      callback(values[1], values[0]);
-    }
-  };
   try {
-    await fn();
+    const api = await getAPI();
+    const result = (await (
+      await api.query.swapModule.poolMap(poolIndex)
+    ).toJSON()) as any;
+    console.log(result);
+    callback(result[2].toString(), result[3].toString());
   } catch (e) {
     callback("failed", "failed");
   }
@@ -174,37 +139,18 @@ export async function queryPoolAmountAsync(
 
 export async function queryPoolShareAsync(
   l2Account: SubstrateAccountInfo,
-  chainId1: string,
-  tokenAddress1: string,
-  chainId2: string,
-  tokenAddress2: string,
+  poolIndex: number,
   callback: (number: string) => void
 ) {
-  const accountAddress = l2Account.address;
-  const fn = async () => {
-    const api = await getAPI();
-    const accountId = ss58.addressToAddressId(accountAddress);
-    if (
-      compressToken(chainId1, tokenAddress1) >
-      compressToken(chainId2, tokenAddress2)
-    ) {
-      const result = await api.query.swapModule.shareMap(
-        accountId +
-          compressToken(chainId1, tokenAddress1, true) +
-          compressToken(chainId2, tokenAddress2, true)
-      );
-      callback(result.toString());
-    } else {
-      const result = await api.query.swapModule.shareMap(
-        accountId +
-          compressToken(chainId2, tokenAddress2, true) +
-          compressToken(chainId1, tokenAddress1, true)
-      );
-      callback(result.toString());
-    }
-  };
   try {
-    await fn();
+    const api = await getAPI();
+    const accountIndex = (
+      await api.query.swapModule.accountIndexMap(l2Account.address)
+    ).toString();
+    const share = (
+      await api.query.swapModule.shareMap([accountIndex, poolIndex])
+    ).toString();
+    callback(share);
   } catch (e) {
     callback("failed");
   }
@@ -297,10 +243,8 @@ function compressToken(chainId: string, token: string, query = false) {
   checkNumberString(token, "token", true);
 
   if (query) {
-    const chainIdString = new BN(chainId)
-      .toString(16, 24);
-    const tokenString = new BN(token, 16)
-      .toString(16, 40);
+    const chainIdString = new BN(chainId).toString(16, 24);
+    const tokenString = new BN(token, 16).toString(16, 40);
     return chainIdString + tokenString;
   }
 
@@ -493,10 +437,14 @@ export async function getPoolList() {
   if (!poolInfo) {
     const api = await getAPI();
     const poolEntries = await api.query.swapModule.poolMap.entries();
-    poolInfo = poolEntries.map(kv => {
+    poolInfo = poolEntries.map((kv) => {
       const data = kv[1] as any;
-      return [kv[0].args[0].toString(), data[0].toString(), data[1].toString()];
-    })
+      return [
+        kv[0].args[0].toString(),
+        data[0].toString(),
+        data[1].toString(),
+      ].map((x) => parseInt(x));
+    });
   }
 
   return poolInfo;

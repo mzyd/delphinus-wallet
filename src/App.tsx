@@ -45,8 +45,7 @@ function App() {
   react.useEffect(() => {
     fetchL2Accounts(setL2Addresses);
     loginL1Account(updateL1Account);
-    loadMetadata([[0,4,5]], setBridgeMetadata);
-
+    loadMetadata(setBridgeMetadata);
   }, []);
 
   return (

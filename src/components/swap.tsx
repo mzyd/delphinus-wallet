@@ -9,7 +9,7 @@ import ChainSelector from "./chainselector";
 import InputField from "./inputfield";
 import TokenSelector from "./tokenselector";
 import { Dropdown, Label, Separator } from "@fluentui/react";
-import { TXProps, SubstrateAccountInfo, BridgeMetadata } from "../libs/type";
+import { TXProps, SubstrateAccountInfo, BridgeMetadata, TokenInfoFull } from "../libs/type";
 
 import "../styles/panel.css";
 
@@ -65,20 +65,28 @@ export default function Swap(props: IProps) {
     const _chainId1 = chainId1;
 
     const updator = async () => {
-      await queryPoolAmountAsync(
-        chainId0,
-        token0,
-        chainId1,
-        token1,
+      const tokenEqual = (x: TokenInfoFull, chainId: string, token: string) => {
+        console.log(x);
+      return x.tokenAddress.toLowerCase() === token?.toLowerCase() && x.chainId === chainId;
+      }
+
+      const pool = props.bridgeMetadata.poolInfo.find(
+        (x) =>
+          (tokenEqual(x.tokens[0], chainId0, token0) &&
+            tokenEqual(x.tokens[1], chainId1, token1)) ||
+          (tokenEqual(x.tokens[1], chainId0, token0) &&
+            tokenEqual(x.tokens[0], chainId1, token1))
+      );
+
+      pool && await queryPoolAmountAsync(
+        pool.id,
         (v0: string, v1: string) => {
-          if (
-            _token0 === token0 &&
-            _token1 === token1 &&
-            _chainId0 === chainId0 &&
-            _chainId1 === chainId1
-          ) {
+          if (pool.tokens[0].tokenAddress === token0) {
             setLiquid0(v0);
             setLiquid1(v1);
+          } else {
+            setLiquid0(v1);
+            setLiquid1(v0);
           }
         }
       );

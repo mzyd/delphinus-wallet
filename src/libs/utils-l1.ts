@@ -1,13 +1,14 @@
+import BN from "bn.js";
 import {
     L1AccountInfo,
     SubstrateAccountInfo,
     BridgeMetadata,
 } from "./type";
+import { getPoolList } from "./utils";
+
 const TokenInfo = require("solidity/build/contracts/ERC20.json")
 const Client = require("web3subscriber/client")
 
-
-const BN = require("bn.js");
 const abi: any = require("solidity/clients/bridge/abi");
 const ss58 = require("substrate-ss58");
 const configSelector: any = require("../config/config-selector");
@@ -88,7 +89,9 @@ export async function queryTokenL1Balance(
 ) {
   let config = configSelector.configMap[chainId];
   let web3 = await Client.initWeb3(config, false);
-  let token= Client.getContractByAddress(web3, tokenAddress, TokenInfo, l1Account.address);
+  let token= Client.getContractByAddress(web3, new BN(tokenAddress, 16).toString(16, 20), TokenInfo, l1Account.address);
+  console.log("nid is", await web3.eth.net.getId());
+  console.log("token is", token);
   let balance = await Client.getBalance(token, l1Account.address);
   return balance;
 }
@@ -119,8 +122,9 @@ export function loginL1Account(cb:(u: L1AccountInfo) => void) {
   Client.getAccountInfo(null, true).then((account:L1AccountInfo) => cb(account));
 }
 
-async function prepareMetaData(pool_list: number[][]) {
+async function prepareMetaData() {
     let meta_bridge = await getBridge(configSelector.snap);
+    let pool_list = await getPoolList();
     let pools = pool_list.map(info => {
       let poolidx = info[0];
       let t1 = meta_bridge.getTokenInfo(info[1]);
@@ -132,16 +136,13 @@ async function prepareMetaData(pool_list: number[][]) {
     });
     return {
       chainInfo: meta_bridge.getMetaData().chainInfo,
-      poolInfo: pools, //[[0,4,5]]
+      poolInfo: pools,
       snap: configSelector.snap,
     }
 }
 
 export function loadMetadata(
-    pool_list: number[][],
     cb:(metadata: BridgeMetadata) => void
 ) {
-    prepareMetaData(pool_list).then(meta => cb(meta));
+    prepareMetaData().then(meta => cb(meta));
 }
-
-
