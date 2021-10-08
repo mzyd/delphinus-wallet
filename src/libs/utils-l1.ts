@@ -88,9 +88,9 @@ export async function queryTokenL1Balance(
   l1Account:L1AccountInfo
 ) {
   let config = configSelector.configMap[chainId];
-  let web3 = await Client.initWeb3(config, true);
-  let token= Client.getContractByAddress(web3, new BN(tokenAddress, 16).toString(16, 20), TokenInfo, l1Account.address);
-  console.log("nid is", await web3.eth.net.getId());
+  let bridge = await getBridge(chainId, false);
+  let token= Client.getContractByAddress(bridge.web3, new BN(tokenAddress, 16).toString(16, 20), TokenInfo, l1Account.address);
+  console.log("nid is", await bridge.web3.eth.net.getId());
   console.log("token is", token);
   let balance = await Client.getBalance(token, l1Account.address);
   return balance;
@@ -103,7 +103,7 @@ export async function queryBridgeStatus(
   fromChainId: string,
 ) {
   const accountAddress = l2Account.address;
-  let bridge = await getBridge(fromChainId);
+  let bridge = await getBridge(fromChainId, false);
   let fullTokenAddress = new BN(tokenChainId).shln(160).add(new BN(tokenAddress, 16));
   console.log(fullTokenAddress.toString(16), ss58.addressToAddressId(accountAddress));
   let balance = await bridge.balanceOf(ss58.addressToAddressId(accountAddress), "0x" + fullTokenAddress.toString(16));
@@ -123,7 +123,7 @@ export function loginL1Account(cb:(u: L1AccountInfo) => void) {
 }
 
 async function prepareMetaData() {
-    let meta_bridge = await getBridge(configSelector.snap);
+    let meta_bridge = await getBridge(configSelector.snap, false);
     let pool_list = await getPoolList();
     let pools = pool_list.map(info => {
       let poolidx = info[0];
