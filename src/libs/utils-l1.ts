@@ -5,8 +5,7 @@ import {
     BridgeMetadata,
 } from "./type";
 import { getPoolList } from "./utils";
-
-const TokenInfo = require("solidity/build/contracts/ERC20.json")
+const TokenInfo = require("solidity/build/contracts/IERC20.json")
 const Client = require("web3subscriber/client")
 
 const abi: any = require("solidity/clients/bridge/abi");
