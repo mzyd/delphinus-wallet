@@ -238,7 +238,7 @@ function checkNumberString(v: string, name: string, hex = false) {
   }
 }
 
-function compressToken(chainId: string, token: string, query = false) {
+export function compressToken(chainId: string, token: string, query = false) {
   checkNumberString(chainId, "chainId");
   checkNumberString(token, "token", true);
 
