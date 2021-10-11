@@ -7,5 +7,6 @@ module.exports = {
     "15": EthConfig.localtestnet1,
     "16": EthConfig.localtestnet2,
   },
-  snap: "15"
+  //snap: "15"
+  snap: "3"
 }
