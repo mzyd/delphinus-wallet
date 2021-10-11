@@ -23,6 +23,8 @@ import Supply from "./supply";
 import Retrieve from "./retrieve";
 import ChargeToken from "../config/charge";
 
+const charge_address = ChargeToken.networks['3'].address.replace("0x","");
+
 interface IProps {
   l2Account: SubstrateAccountInfo;
   l1Account: L1AccountInfo;
@@ -53,7 +55,16 @@ export default function Main(props: IProps) {
         setL2Account={props.setL2Account}
         setPanel={(val) => setCurrentPanel(val)}
         currentPanel={currentPanel}
-        charge={()=>{setCurrentModal("Charge")}}
+        charge={()=>{
+          setCurrentTXProps({
+            ...currentTXProps,
+            selectedToken: {
+              chainId: snap,
+              tokenAddress: charge_address,
+            }
+          });
+          setCurrentModal("Charge")}
+        }
       />
       <div className="main-area">
         <Sidebar
