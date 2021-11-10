@@ -12,7 +12,7 @@ import {
 import { loginL2Account, fetchL2Accounts } from "./libs/utils";
 import { loginL1Account, loadMetadata } from "./libs/utils-l1";
 import Main from './components/main';
-const Client = require("web3subscriber/client")
+const Client = require("web3subscriber/src/client")
 
 function App() {
   const [l2Account, setL2Account] = react.useState<SubstrateAccountInfo>();

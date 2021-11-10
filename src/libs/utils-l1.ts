@@ -6,7 +6,7 @@ import {
 } from "./type";
 import { getPoolList } from "./utils";
 const TokenInfo = require("solidity/build/contracts/IERC20.json")
-const Client = require("web3subscriber/client")
+const Client = require("web3subscriber/src/client")
 
 const abi: any = require("solidity/clients/bridge/abi");
 const ss58 = require("substrate-ss58");
