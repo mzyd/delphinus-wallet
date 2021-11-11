@@ -12,7 +12,7 @@ import {
 import { loginL2Account, fetchL2Accounts } from "./libs/utils";
 import { loginL1Account, loadMetadata } from "./libs/utils-l1";
 import Main from './components/main';
-const Client = require("web3subscriber/src/client")
+import { DelphinusWeb3, Web3BrowsersMode, withBrowerWeb3 } from 'web3subscriber/src/client';
 
 function App() {
   const [l2Account, setL2Account] = react.useState<SubstrateAccountInfo>();
@@ -24,9 +24,11 @@ function App() {
     console.log("switch account:", l1address);
     setL1Account({...l1Account!, address:l1address});
   }
-  const updateL1Account = (account:L1AccountInfo) => {
+  const updateL1Account = async (account:L1AccountInfo) => {
     setL1Account(account);
-    Client.subscribeAccountChange(true, updateL1AccountAddress);
+    await withBrowerWeb3(async (web3: DelphinusWeb3) => {
+      return (web3 as Web3BrowsersMode).subscribeAccountChange(updateL1AccountAddress);
+    });
   };
   const updateL2Account = (account:SubstrateAccountInfo) => {
     setL2Account(account);

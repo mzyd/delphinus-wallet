@@ -5,17 +5,19 @@ import {
     BridgeMetadata,
 } from "./type";
 import { getPoolList } from "./utils";
-const TokenInfo = require("solidity/build/contracts/IERC20.json")
-const Client = require("web3subscriber/src/client")
+import { Bridge, withBridgeClient } from "solidity/clients/bridge/bridge";
+import { DelphinusWeb3, Web3BrowsersMode, withBrowerWeb3 } from "web3subscriber/src/client";
 
-const abi: any = require("solidity/clients/bridge/abi");
+const TokenInfo = require("solidity/build/contracts/IERC20.json")
+
 const ss58 = require("substrate-ss58");
 const configSelector: any = require("../config/config-selector");
 
 
 async function getBridge(chainId: string, mode = true) {
     try {
-      let bridge = await abi.getBridge(configSelector.configMap[chainId], mode);
+      let bridge = new Bridge(configSelector.configMap[chainId], mode);
+      await bridge.init();
       return bridge;
     } catch(e) {
       if (e.message === "UnmatchedNetworkId") {
@@ -76,6 +78,7 @@ export async function deposit(
       else throw("Unexpected TxStatus");
     };
     await p();
+    await bridge.close();
   } catch (e){
     error(e.message);
   }
@@ -87,14 +90,16 @@ export async function queryTokenL1Balance(
   l1Account:L1AccountInfo
 ) {
   let config = configSelector.configMap[chainId];
-  let bridge = await getBridge(chainId, false);
-  let token= Client.getContractByAddress(bridge.web3, new BN(tokenAddress, 16).toString(16, 20), TokenInfo, l1Account.address);
-  console.log("nid is", await bridge.web3.eth.net.getId());
-  console.log("token is", token);
-  let balance = await Client.getBalance(token, l1Account.address);
-  return balance;
+  return withBridgeClient(config, false, async (bridge:Bridge) => {
+    let token = bridge.web3.getContract(TokenInfo, new BN(tokenAddress, 16).toString(16, 20), l1Account.address);
+    console.log("nid is", await bridge.web3.web3Instance.eth.net.getId());
+    console.log("token is", token);
+    let balance = await token.getBalance(l1Account.address);
+    return balance;
+  });
 }
 
+/*
 export async function queryBridgeStatus(
   l2Account: SubstrateAccountInfo,
   tokenChainId: string,
@@ -108,36 +113,41 @@ export async function queryBridgeStatus(
   let balance = await bridge.balanceOf(ss58.addressToAddressId(accountAddress), "0x" + fullTokenAddress.toString(16));
   return balance;
 }
-
+*/
 
 export async function queryCurrentL1Account(
   chainId: string
 ) {
-  let bridge = await getBridge(chainId);
-  return bridge.encode_l1address(bridge.account);
+  return await withBridgeClient(configSelector.configMap[chainId], true, async (bridge: Bridge) => {
+    return bridge.encodeL1address(bridge.account!);
+  });
 }
 
-export function loginL1Account(cb:(u: L1AccountInfo) => void) {
-  Client.getAccountInfo(null, true).then((account:L1AccountInfo) => cb(account));
+export async function loginL1Account(cb:(u: L1AccountInfo) => void) {
+  await withBrowerWeb3(async (web3:DelphinusWeb3) => {
+    await web3.getAccountInfo().then((account: L1AccountInfo) => cb(account));
+  });
 }
 
 async function prepareMetaData() {
-    let meta_bridge = await getBridge(configSelector.snap, false);
+  let config = configSelector.configMap[configSelector.snap];
+  return await withBridgeClient(config, false, async (bridge:Bridge) => {
     let pool_list = await getPoolList();
     let pools = pool_list.map(info => {
       let poolidx = info[0];
-      let t1 = meta_bridge.getTokenInfo(info[1]);
-      let t2 = meta_bridge.getTokenInfo(info[2]);
+      let t1 = bridge.getTokenInfo(info[1]);
+      let t2 = bridge.getTokenInfo(info[2]);
       return {
           id: poolidx,
           tokens: [t1,t2],
       }
     });
     return {
-      chainInfo: meta_bridge.getMetaData().chainInfo,
+      chainInfo: (await bridge.getMetaData()).chainInfo,
       poolInfo: pools,
       snap: configSelector.snap,
     }
+  });
 }
 
 export function loadMetadata(

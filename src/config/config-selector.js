@@ -12,10 +12,10 @@ const Secrets =  {
 module.exports = {
   /* No secrets should leak into userland via chainname(secrets) */
   configMap: {
-    "3": EthConfig.ropsten(Secrets),
-    "97": EthConfig.bsctestnet(Secrets),
-    "15": EthConfig.localtestnet1(Secrets),
-    "16": EthConfig.localtestnet2(Secrets),
+    "3": EthConfig.EthConfig.ropsten(Secrets),
+    "97": EthConfig.EthConfig.bsctestnet(Secrets),
+    "15": EthConfig.EthConfig.localtestnet1(Secrets),
+    "16": EthConfig.EthConfig.localtestnet2(Secrets),
   },
   //snap: "15"
   snap: "3"
