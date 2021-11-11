@@ -119,7 +119,7 @@ export async function queryCurrentL1Account(
   chainId: string
 ) {
   return await withBridgeClient(configSelector.configMap[chainId], true, async (bridge: Bridge) => {
-    return bridge.encodeL1address(bridge.account!);
+    return bridge.encodeL1address(bridge.web3.getDefaultAccount());
   });
 }
 
@@ -133,15 +133,15 @@ async function prepareMetaData() {
   let config = configSelector.configMap[configSelector.snap];
   return await withBridgeClient(config, false, async (bridge:Bridge) => {
     let pool_list = await getPoolList();
-    let pools = pool_list.map(info => {
+    let pools = await Promise.all(pool_list.map(async info => {
       let poolidx = info[0];
-      let t1 = bridge.getTokenInfo(info[1]);
-      let t2 = bridge.getTokenInfo(info[2]);
+      let t1 = await bridge.getTokenInfo(info[1]);
+      let t2 = await bridge.getTokenInfo(info[2]);
       return {
           id: poolidx,
           tokens: [t1,t2],
       }
-    });
+    }));
     return {
       chainInfo: (await bridge.getMetaData()).chainInfo,
       poolInfo: pools,
