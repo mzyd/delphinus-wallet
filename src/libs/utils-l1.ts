@@ -5,7 +5,7 @@ import {
     BridgeMetadata,
 } from "./type";
 import { getPoolList } from "./utils";
-import { Bridge, withBridgeClient } from "solidity/clients/bridge/bridge";
+import { L1Client, withL1Client } from "solidity/clients/client";
 import { DelphinusWeb3, Web3BrowsersMode, withBrowerWeb3 } from "web3subscriber/src/client";
 
 const TokenInfo = require("solidity/build/contracts/IERC20.json")
@@ -14,11 +14,11 @@ const ss58 = require("substrate-ss58");
 const configSelector: any = require("../config/config-selector");
 
 
-async function getBridge(chainId: string, mode = true) {
+async function getL1Client(chainId: string, mode = true) {
     try {
-      let bridge = new Bridge(configSelector.configMap[chainId], mode);
-      await bridge.init();
-      return bridge;
+      let l1client = new L1Client(configSelector.configMap[chainId], mode);
+      await l1client.init();
+      return l1client;
     } catch(e) {
       if (e.message === "UnmatchedNetworkId") {
         alert("Please switch your metamask to correct chain!");
@@ -38,11 +38,13 @@ export async function deposit(
 ) {
   const accountAddress = l2Account.address;
   console.log('call deposit', accountAddress, chainId, tokenAddress, amount);
+  withL1Client(configSelector.configMap[chainId], true, async (l1client:L1Client) => {
   try {
-    let bridge = await getBridge(chainId);
     let token_address = "0x" + tokenAddress;
     let token_id = ss58.addressToAddressId(accountAddress);
-    let r = bridge.deposit(token_address, parseInt(amount), token_id);
+    let tokenContract = l1client.getTokenContract(token_address);
+    let BridgeContract = l1client.getBridgeContract();
+    let r = BridgeContract.deposit(tokenContract, parseInt(amount), token_id);
     r.when("snapshot", "Approve",
         () => progress("Approve", "Wait confirm ...", "", 10))
      .when("Approve", "transactionHash",
@@ -78,10 +80,10 @@ export async function deposit(
       else throw("Unexpected TxStatus");
     };
     await p();
-    await bridge.close();
   } catch (e){
     error(e.message);
   }
+});
 }
 
 export async function queryTokenL1Balance(
@@ -90,11 +92,11 @@ export async function queryTokenL1Balance(
   l1Account:L1AccountInfo
 ) {
   let config = configSelector.configMap[chainId];
-  return withBridgeClient(config, false, async (bridge:Bridge) => {
-    let token = bridge.web3.getContract(TokenInfo, new BN(tokenAddress, 16).toString(16, 20), l1Account.address);
-    console.log("nid is", await bridge.web3.web3Instance.eth.net.getId());
+  return withL1Client(config, false, async (l1client:L1Client) => {
+    let token = l1client.getTokenContract(new BN(tokenAddress, 16).toString(16, 20), l1Account.address);
+    console.log("nid is", await l1client.web3.web3Instance.eth.net.getId());
     console.log("token is", token);
-    let balance = await token.getBalance(l1Account.address);
+    let balance = await token.balanceOf(l1Account.address);
     return balance;
   });
 }
@@ -118,8 +120,8 @@ export async function queryBridgeStatus(
 export async function queryCurrentL1Account(
   chainId: string
 ) {
-  return await withBridgeClient(configSelector.configMap[chainId], true, async (bridge: Bridge) => {
-    return bridge.encodeL1address(bridge.web3.getDefaultAccount());
+  return await withL1Client(configSelector.configMap[chainId], true, async (l1client: L1Client) => {
+    return l1client.encodeL1Address(l1client.getDefaultAccount());
   });
 }
 
@@ -131,7 +133,8 @@ export async function loginL1Account(cb:(u: L1AccountInfo) => void) {
 
 async function prepareMetaData() {
   let config = configSelector.configMap[configSelector.snap];
-  return await withBridgeClient(config, false, async (bridge:Bridge) => {
+  return await withL1Client(config, false, async (l1client:L1Client) => {
+    let bridge = l1client.getBridgeContract();
     let pool_list = await getPoolList();
     let pools = await Promise.all(pool_list.map(async info => {
       let poolidx = info[0];
