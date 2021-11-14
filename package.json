@@ -29,7 +29,8 @@
     "substrate-ss58": "^1.0.3",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
-    "web3subscriber": "*"
+    "web3subscriber": "*",
+    "delphinus-deployment": "*"
   },
   "scripts": {
     "start": "react-scripts start",

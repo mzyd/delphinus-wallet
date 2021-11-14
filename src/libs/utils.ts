@@ -1,7 +1,8 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Keyring } from "@polkadot/api";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
-import l2ServerConfig from "./substrate-node.json";
+import { SubstrateNodeConfig as L2ServerConfig } from "delphinus-deployment/src/config";
+import { getTokenIndex as getTokenIndexFromDeploy } from "delphinus-deployment/src/token-index";
 import l2types from "./types.json";
 import { queryCurrentL1Account } from "./utils-l1";
 import {
@@ -9,7 +10,7 @@ import {
   web3Enable,
   web3FromAddress,
 } from "@polkadot/extension-dapp";
-import tokenIndex from "solidity/clients/token-index.json";
+
 
 import { SubstrateAccountInfo } from "./type";
 
@@ -22,7 +23,7 @@ let api: ApiPromise;
 export async function getAPI() {
   if (!api?.isConnected) {
     const provider = new WsProvider(
-      `${l2ServerConfig.host}:${l2ServerConfig.port}`
+      `${L2ServerConfig.address}:${L2ServerConfig.port}`
     );
     api = await ApiPromise.create({ provider, types: l2types });
   }
@@ -86,7 +87,7 @@ export function loginL2Account(
 
 function getTokenIndex(chainId: string, tokenAddress: string) {
   const gTokenAddress = compressToken(chainId, tokenAddress).toString(10);
-  return Object.entries(tokenIndex).find((x) => x[0] === gTokenAddress)![1];
+  return Object.entries(getTokenIndexFromDeploy()).find((x) => x[0] === gTokenAddress)![1];
 }
 
 export async function queryTokenAmountAsync(

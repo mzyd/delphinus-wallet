@@ -6,26 +6,10 @@ import {
 } from "./type";
 import { getPoolList } from "./utils";
 import { L1Client, withL1Client } from "solidity/clients/client";
-import { DelphinusWeb3, Web3BrowsersMode, withBrowerWeb3 } from "web3subscriber/src/client";
-
-const TokenInfo = require("solidity/build/contracts/IERC20.json")
+import { DelphinusWeb3, withBrowerWeb3 } from "web3subscriber/src/client";
+import { walletConfigByChainId, WalletSnap } from "delphinus-deployment/src/config";
 
 const ss58 = require("substrate-ss58");
-const configSelector: any = require("../config/config-selector");
-
-
-async function getL1Client(chainId: string, mode = true) {
-    try {
-      let l1client = new L1Client(configSelector.configMap[chainId], mode);
-      await l1client.init();
-      return l1client;
-    } catch(e) {
-      if (e.message === "UnmatchedNetworkId") {
-        alert("Please switch your metamask to correct chain!");
-      }
-      throw e;
-    }
-}
 
 export async function deposit(
   l2Account: SubstrateAccountInfo,
@@ -38,7 +22,7 @@ export async function deposit(
 ) {
   const accountAddress = l2Account.address;
   console.log('call deposit', accountAddress, chainId, tokenAddress, amount);
-  withL1Client(configSelector.configMap[chainId], true, async (l1client:L1Client) => {
+  withL1Client(walletConfigByChainId(chainId), true, async (l1client:L1Client) => {
   try {
     let token_address = "0x" + tokenAddress;
     let token_id = ss58.addressToAddressId(accountAddress);
@@ -91,7 +75,7 @@ export async function queryTokenL1Balance(
   tokenAddress: string,
   l1Account:L1AccountInfo
 ) {
-  let config = configSelector.configMap[chainId];
+  let config = walletConfigByChainId(chainId);
   return withL1Client(config, false, async (l1client:L1Client) => {
     let token = l1client.getTokenContract(new BN(tokenAddress, 16).toString(16, 20), l1Account.address);
     console.log("nid is", await l1client.web3.web3Instance.eth.net.getId());
@@ -120,7 +104,7 @@ export async function queryBridgeStatus(
 export async function queryCurrentL1Account(
   chainId: string
 ) {
-  return await withL1Client(configSelector.configMap[chainId], true, async (l1client: L1Client) => {
+  return await withL1Client(walletConfigByChainId(chainId), true, async (l1client: L1Client) => {
     return l1client.encodeL1Address(l1client.getDefaultAccount());
   });
 }
@@ -132,7 +116,7 @@ export async function loginL1Account(cb:(u: L1AccountInfo) => void) {
 }
 
 async function prepareMetaData() {
-  let config = configSelector.configMap[configSelector.snap];
+  let config = walletConfigByChainId(WalletSnap);
   return await withL1Client(config, false, async (l1client:L1Client) => {
     let bridge = l1client.getBridgeContract();
     let pool_list = await getPoolList();
@@ -148,7 +132,7 @@ async function prepareMetaData() {
     return {
       chainInfo: (await bridge.getMetaData()).chainInfo,
       poolInfo: pools,
-      snap: configSelector.snap,
+      snap: WalletSnap,
     }
   });
 }
