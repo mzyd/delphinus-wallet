@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { Keyring } from "@polkadot/api";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
-import { SubstrateNodeConfig as L2ServerConfig } from "delphinus-deployment/src/config";
+import { getSubstrateNodeConfig } from "delphinus-deployment/src/config";
 import { getTokenIndex as getTokenIndexFromDeploy } from "delphinus-deployment/src/token-index";
 import l2types from "./types.json";
 import { queryCurrentL1Account } from "./utils-l1";
@@ -13,6 +13,7 @@ import {
 
 
 import { SubstrateAccountInfo } from "./type";
+import { L1ClientRole } from "delphinus-deployment/src/types";
 
 const BN = require("bn.js");
 const ss58 = require("substrate-ss58");
@@ -22,8 +23,9 @@ let api: ApiPromise;
 
 export async function getAPI() {
   if (!api?.isConnected) {
+    let config = await getSubstrateNodeConfig();
     const provider = new WsProvider(
-      `${L2ServerConfig.address}:${L2ServerConfig.port}`
+      `${config.address}:${config.port}`
     );
     api = await ApiPromise.create({ provider, types: l2types });
   }

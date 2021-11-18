@@ -7,7 +7,8 @@ import {
 import { getPoolList } from "./utils";
 import { L1Client, withL1Client } from "solidity/clients/client";
 import { DelphinusWeb3, withBrowerWeb3 } from "web3subscriber/src/client";
-import { walletConfigByChainId, WalletSnap } from "delphinus-deployment/src/config";
+import { getConfigByChainId, WalletSnap } from "delphinus-deployment/src/config";
+import { L1ClientRole } from "delphinus-deployment/src/types";
 
 const ss58 = require("substrate-ss58");
 
@@ -22,7 +23,7 @@ export async function deposit(
 ) {
   const accountAddress = l2Account.address;
   console.log('call deposit', accountAddress, chainId, tokenAddress, amount);
-  withL1Client(walletConfigByChainId(chainId), true, async (l1client:L1Client) => {
+  await withL1Client(await getConfigByChainId(L1ClientRole.Wallet, chainId), true, async (l1client:L1Client) => {
   try {
     let token_address = "0x" + tokenAddress;
     let token_id = ss58.addressToAddressId(accountAddress);
@@ -75,7 +76,7 @@ export async function queryTokenL1Balance(
   tokenAddress: string,
   l1Account:L1AccountInfo
 ) {
-  let config = walletConfigByChainId(chainId);
+  let config = await getConfigByChainId(L1ClientRole.Wallet, chainId);
   return withL1Client(config, false, async (l1client:L1Client) => {
     let token = l1client.getTokenContract(new BN(tokenAddress, 16).toString(16, 20), l1Account.address);
     console.log("nid is", await l1client.web3.web3Instance.eth.net.getId());
@@ -104,7 +105,7 @@ export async function queryBridgeStatus(
 export async function queryCurrentL1Account(
   chainId: string
 ) {
-  return await withL1Client(walletConfigByChainId(chainId), true, async (l1client: L1Client) => {
+  return await withL1Client(await getConfigByChainId(L1ClientRole.Wallet, chainId), true, async (l1client: L1Client) => {
     return l1client.encodeL1Address(l1client.getDefaultAccount());
   });
 }
@@ -116,7 +117,7 @@ export async function loginL1Account(cb:(u: L1AccountInfo) => void) {
 }
 
 async function prepareMetaData() {
-  let config = walletConfigByChainId(WalletSnap);
+  let config = await getConfigByChainId(L1ClientRole.Wallet, WalletSnap);
   return await withL1Client(config, false, async (l1client:L1Client) => {
     let bridge = l1client.getBridgeContract();
     let pool_list = await getPoolList();
